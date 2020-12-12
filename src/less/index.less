@@ -1,0 +1,52 @@
+@primary-color: #027aff;
+@success-color: #19be6b;
+@warning-color: #ff9900;
+@error-color: #ed4014;
+
+@text-color: rgba(0, 0, 0, 0.65);
+@text-sub-color: rgba(0, 0, 0, 0.45);
+@border-color: #d9d9d9;
+@disabled-color: #c5c8ce;
+@background-color: #f3f3f3;
+@background-sub-color: #eeeeee;
+
+
+@toolsHeight: 40px;
+.icon {
+  width: @toolsHeight;
+  height: @toolsHeight;
+  min-width: @toolsHeight;
+  min-height: @toolsHeight;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  a {
+    color: initial;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    position: relative;
+    z-index: 1;
+  }
+  .iconfont {
+    font-size: 16px;
+    width: 22px;
+    position: relative;
+  }
+  &:hover {
+    &::before {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}

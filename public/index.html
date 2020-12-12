@@ -1,17 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <% if (NODE_ENV === 'development') {%>
+      <link rel="stylesheet" href="//at.alicdn.com/t/font_2233096_2hudv5645vf.css">
+      <link rel="stylesheet" href="<%= BASE_URL %>css/style.css">
+      <link rel="stylesheet" href="<%= BASE_URL %>css/common.css">
+    <% } else {%>
+      <link rel="stylesheet" href="<%= BASE_URL %>font/iconfont.css">
+      <link rel="stylesheet" href="<%= BASE_URL %>css/style.min.css">
+      <link rel="stylesheet" href="<%= BASE_URL %>css/common.min.css">
+    <%}%>
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <div id="app" class="app app-show" ondragstart="return false"></div>
   </body>
 </html>

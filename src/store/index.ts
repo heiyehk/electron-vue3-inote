@@ -1,8 +1,15 @@
-import { createStore } from "vuex";
+import { createStore } from 'vuex';
 
-export default createStore({
+const store = createStore({
   state: {},
   mutations: {},
   actions: {},
   modules: {}
 });
+
+declare module 'vuex' {
+  type StoreStateType = typeof store.state;
+  export function useStore<S = StoreStateType>(): Store<S>;
+}
+
+export default store;

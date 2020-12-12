@@ -1,0 +1,198 @@
+{
+  "id": "2233096",
+  "name": "notes",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "619187",
+      "name": "图标1_新窗口打开",
+      "font_class": "newopen",
+      "unicode": "e68d",
+      "unicode_decimal": 59021
+    },
+    {
+      "icon_id": "8144689",
+      "name": "垃圾桶",
+      "font_class": "delete",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "16554097",
+      "name": "editor-bold",
+      "font_class": "editor-bold",
+      "unicode": "e8ce",
+      "unicode_decimal": 59598
+    },
+    {
+      "icon_id": "7617106",
+      "name": "ol",
+      "font_class": "ol",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7617111",
+      "name": "ul",
+      "font_class": "ul",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1917135",
+      "name": "导出文件",
+      "font_class": "export",
+      "unicode": "e802",
+      "unicode_decimal": 59394
+    },
+    {
+      "icon_id": "1917138",
+      "name": "导入文件",
+      "font_class": "inport",
+      "unicode": "e803",
+      "unicode_decimal": 59395
+    },
+    {
+      "icon_id": "12567143",
+      "name": "图钉选中",
+      "font_class": "thepin-active",
+      "unicode": "e715",
+      "unicode_decimal": 59157
+    },
+    {
+      "icon_id": "13479020",
+      "name": "bold",
+      "font_class": "bold",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "13479053",
+      "name": "italic",
+      "font_class": "italic",
+      "unicode": "e6f7",
+      "unicode_decimal": 59127
+    },
+    {
+      "icon_id": "13479115",
+      "name": "underline",
+      "font_class": "underline",
+      "unicode": "e6f8",
+      "unicode_decimal": 59128
+    },
+    {
+      "icon_id": "13479356",
+      "name": "strikethrough",
+      "font_class": "strikethrough",
+      "unicode": "e6fb",
+      "unicode_decimal": 59131
+    },
+    {
+      "icon_id": "13479631",
+      "name": "image",
+      "font_class": "image",
+      "unicode": "e702",
+      "unicode_decimal": 59138
+    },
+    {
+      "icon_id": "13480098",
+      "name": "unordered-list",
+      "font_class": "unordered-list",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    },
+    {
+      "icon_id": "13480129",
+      "name": "ordered-list",
+      "font_class": "ordered-list",
+      "unicode": "e710",
+      "unicode_decimal": 59152
+    },
+    {
+      "icon_id": "3217868",
+      "name": "分类",
+      "font_class": "list",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "4432162",
+      "name": "上一步",
+      "font_class": "back",
+      "unicode": "e636",
+      "unicode_decimal": 58934
+    },
+    {
+      "icon_id": "12567144",
+      "name": "图钉",
+      "font_class": "thepin",
+      "unicode": "e714",
+      "unicode_decimal": 59156
+    },
+    {
+      "icon_id": "3217800",
+      "name": "加载中",
+      "font_class": "refresh",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "3217801",
+      "name": "退出",
+      "font_class": "close",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "3217811",
+      "name": "设置",
+      "font_class": "setting",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "3217829",
+      "name": "放大镜",
+      "font_class": "search",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "3217833",
+      "name": "使用说明",
+      "font_class": "warning",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "3217835",
+      "name": "信封",
+      "font_class": "mail",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "3217841",
+      "name": "图片",
+      "font_class": "picture",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "3217895",
+      "name": "更多",
+      "font_class": "more",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "3217896",
+      "name": "添加",
+      "font_class": "add",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    }
+  ]
+}
