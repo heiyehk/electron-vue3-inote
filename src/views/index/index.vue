@@ -12,13 +12,13 @@
     </div>
     <section class="content-container" :class="fadein ? 'fadein' : ''">
       <vueScroll />
-      <button @click="getAll">getAllDBNotes</button>
+      <!-- <button @click="getAll">getAllDBNotes</button> -->
       <template v-if="viewNotesList.length">
         <ul class="edit-list">
           <template v-for="item in viewNotesList" :key="item.uid">
             <li
               class="edit-item"
-              :class="[item.class, item.content ? '' : 'empty-item', item.remove ? 'remove-item' : '']"
+              :class="[item.className, item.content ? '' : 'empty-item', item.remove ? 'remove-item' : '']"
               @dblclick="dbclickOpenNote(item.uid)"
               @contextmenu.prevent="contextMenu($event, item.uid)"
             >
@@ -47,7 +47,6 @@ import { defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
 import { browserWindowOption, winURL } from '@/config';
-import uuid from '@/utils/uuid';
 import inotedb from '@/inotedb';
 import vueScroll from '@/components/vue3scroll/index.vue';
 import CreateRightClick from '@/components/rightClick';
@@ -76,6 +75,7 @@ export default defineComponent({
     onBeforeMount(() => {
       // inotedb.remove({}, { multi: true });
       getAllDBNotes();
+      electronIpcEditor();
     });
 
     const getAllDBNotes = async () => {
@@ -106,15 +106,6 @@ export default defineComponent({
       if (nowTimeStamp - dateTimeStamp > todayZeroTimeStamp) return date.format('MM-DD');
       // 否则渲染时分
       return date.format('HH:mm');
-    };
-
-    const insertDBItem = async () => {
-      const data = {
-        uid: uuid(),
-        content: '',
-        class: ''
-      };
-      inotedb.insert(data);
     };
 
     const openEditorWindow = (uid: string) => {
@@ -149,7 +140,7 @@ export default defineComponent({
           iconName: ['iconfont', 'icon-delete'],
           handler: () => {
             /**
-             * 持久型通信 deleteActiveItem_{uid}
+             * deleteActiveItem_{uid}
              * 此处通信便笺编辑
              * 场景：如果打开窗口就进行关闭
              */
@@ -172,45 +163,57 @@ export default defineComponent({
       }, 400);
     };
 
-    /**
-     * 持久型通信 createNewNote
-     * 持续监听创建便笺
-     */
-    remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotes) => {
-      viewNotesList.value.unshift(noteItem);
-    });
+    const electronIpcEditor = (): void => {
+      /**
+       * createNewNote
+       * 持续监听创建便笺
+       */
+      remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotes) => {
+        viewNotesList.value.unshift(noteItem);
+      });
 
-    /**
-     * 持久型通信 updateNoteItem
-     * 获取更新便笺内容
-     */
-    remote.ipcMain.on('updateNoteItem', async (event, updateItem: DBNotes) => {
-      const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
-      viewNotesList.value[cntIndex] = updateItem;
-      inotedb.update(
-        {
-          uid: updateItem.uid
-        },
-        {
-          ...updateItem
-        }
-      );
-    });
+      /**
+       * updateNoteItem_className
+       * 更新背景样式
+       */
+      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: UpdateNote) => {
+        const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+        viewNotesList.value[cntIndex].className = updateItem.className as string;
+      });
 
-    /**
-     * 持久型通信 removeEmptyNoteItem
-     * 获取便笺编辑关闭后如果是空就进行删除
-     */
-    remote.ipcMain.on('removeEmptyNoteItem', async (event, uid: string) => {
-      removeDbItem(uid);
-    });
+      /**
+       * updateNoteItem_content
+       * 更新content内容
+       */
+      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: UpdateNote) => {
+        console.log(updateItem);
+        const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+        viewNotesList.value[cntIndex].content = updateItem.content as string;
+      });
+
+      /**
+       * removeEmptyNoteItem
+       * 获取便笺编辑关闭后如果是空就进行删除
+       */
+      remote.ipcMain.on('removeEmptyNoteItem', async (event, uid: string) => {
+        removeDbItem(uid);
+      });
+
+      /**
+       * whetherToOpen
+       * 判断本列表是否打开，聚焦显示
+       */
+      remote.ipcMain.on('whetherToOpen', event => {
+        remote.getCurrentWindow().show();
+        event.sender.send('getWhetherToOpen');
+      });
+    };
 
     return {
       fadein,
       viewNotesList,
       dbclickOpenNote,
       contextMenu,
-      insertDBItem,
       getTime,
       getAll
     };
@@ -265,20 +268,20 @@ export default defineComponent({
   }
 }
 
-@keyframes fadein {
-  0% {
-    position: relative;
-    top: 60px;
-  }
-  100% {
-    position: relative;
-    top: 0;
-  }
-}
+// @keyframes fadein {
+//   0% {
+//     position: relative;
+//     top: 60px;
+//   }
+//   100% {
+//     position: relative;
+//     top: 0;
+//   }
+// }
 
-.fadein {
-  // animation: fadein 0.6s;
-}
+// .fadein {
+//   animation: fadein 0.6s;
+// }
 
 // 减去搜索和外边距高度
 .content-container {

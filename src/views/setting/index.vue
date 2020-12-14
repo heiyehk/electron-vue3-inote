@@ -38,14 +38,12 @@
       <p class="block-title">关于I便笺</p>
       <div class="block-content">
         <div class="about-app-description">
-          <pre>
-版本：{{ appVersion }}
-Electron: {{ appInfo.electron }}
-Chrome: {{ appInfo.chrome }}
-Node.js: {{ appInfo.node }}
-V8: {{ appInfo.v8 }}
-Copyright (c) {{ currentYear }} heiye.
-          </pre>
+          <p>版本：{{ appVersion }}</p>
+          <p>Electron: {{ appInfo.electron }}</p>
+          <p>Chrome: {{ appInfo.chrome }}</p>
+          <p>Node.js: {{ appInfo.node }}</p>
+          <p>V8: {{ appInfo.v8 }}</p>
+          <p>Copyright (c) {{ currentYear }} heiyehk.</p>
         </div>
       </div>
     </div>
@@ -160,6 +158,8 @@ export default defineComponent({
 }
 
 .about-app-description {
+  font-size: 14px;
+  color: @text-color;
   pre {
     font-size: 14px;
   }

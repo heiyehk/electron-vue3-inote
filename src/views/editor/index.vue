@@ -1,7 +1,7 @@
 <template>
   <Header
     title=""
-    :class="['header-editor', !showOptionsStatus ? 'header-show-style' : 'header-hide-style', currentBgColor]"
+    :class="['header-editor', !showOptionsStatus ? 'header-show-style' : 'header-hide-style', currentBgClassName]"
     @option-click="clickOption"
     @on-close="closeWindow"
   />
@@ -9,8 +9,8 @@
     <div class="options-cover" @click="showOptionsStatus = false"></div>
     <div class="options-content">
       <ul class="colors flex-between">
-        <template v-for="item in colors" :key="item.color">
-          <li class="flex1" :title="item.title" :class="item.color" @click="changeBgColor(item.color)"></li>
+        <template v-for="item in classNames" :key="item.className">
+          <li class="flex1" :title="item.title" :class="item.className" @click="changeBgClassName(item.className)"></li>
         </template>
       </ul>
       <p class="back-list" @click="openIndex">
@@ -19,7 +19,7 @@
       </p>
     </div>
   </div>
-  <main class="page-editor" :class="currentBgColor">
+  <main class="page-editor" :class="currentBgClassName">
     <section class="editor-container">
       <editor :content="editContent" @on-input="changeEditContent" />
     </section>
@@ -31,7 +31,7 @@ import { defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import Header from '@/components/header.vue';
 import editor from '@/components/editor.vue';
-import { browserWindowOption, winURL, colors } from '@/config';
+import { browserWindowOption, winURL, classNames } from '@/config';
 import uuid from '@/utils/uuid';
 import { useRoute, useRouter } from 'vue-router';
 import inotedb from '@/inotedb';
@@ -44,7 +44,7 @@ export default defineComponent({
   setup() {
     let showOptionsStatus = ref(false);
     const uid = ref('');
-    const currentBgColor = ref('');
+    const currentBgClassName = ref('');
     const editContent = ref('');
 
     onBeforeMount(() => {
@@ -65,16 +65,18 @@ export default defineComponent({
             uid: uuidString
           }
         });
+        console.log(123);
         // 往数据库插入创建数据
         inotedb
           .insert({
             uid: uid.value,
             content: '',
-            class: ''
+            className: ''
           })
           .then(res => {
+            console.log(res);
             /**
-             * 持久型通信 createNewNote
+             * createNewNote
              * 持续监听创建便笺
              */
             ipcRenderer.send('createNewNote', res);
@@ -87,7 +89,7 @@ export default defineComponent({
         uid
       })) as DBNotes;
       if (info) {
-        currentBgColor.value = info.class;
+        currentBgClassName.value = info.className;
         editContent.value = info.content;
       }
     };
@@ -98,63 +100,109 @@ export default defineComponent({
 
     let childrenWindow: BrowserWindow | null;
     const openIndex = () => {
-      childrenWindow = new remote.BrowserWindow(browserWindowOption());
-      if (process.env.NODE_ENV === 'development') {
-        childrenWindow.webContents.openDevTools();
-      }
-      childrenWindow.loadURL(`${winURL}/`);
-      childrenWindow.on('closed', () => {
-        childrenWindow = null;
-      });
-      showOptionsStatus.value = false;
-    };
-
-    const changeBgColor = (color: string) => {
-      if (currentBgColor.value !== color) {
-        currentBgColor.value = color;
-        /**
-         * 持久型通信 updateNoteItem
-         * 更新便笺内容
-         */
-        ipcRenderer.send('updateNoteItem', {
-          uid: uid.value,
-          content: editContent.value,
-          class: currentBgColor.value
-        });
-      }
-      showOptionsStatus.value = false;
-    };
-
-    const changeEditContent = (e: string) => {
-      editContent.value = e;
-      if (!uid.value) return false;
+      let countFlag = false;
       /**
-       * 持久型通信 updateNoteItem
-       * 更新便笺内容
+       * whetherToOpen
+       * 判断列表窗口是否存在
        */
-      ipcRenderer.send('updateNoteItem', {
-        uid: uid.value,
-        content: e,
-        class: currentBgColor.value
+      ipcRenderer.send('whetherToOpen');
+      ipcRenderer.on('getWhetherToOpen', () => {
+        countFlag = true;
       });
+      showOptionsStatus.value = false;
+
+      // 存在就不进行创建
+      if (childrenWindow) return;
+
+      setTimeout(() => {
+        // 如果不存在就重新创建窗口
+        if (!countFlag) {
+          childrenWindow = new remote.BrowserWindow(browserWindowOption());
+          if (process.env.NODE_ENV === 'development') {
+            childrenWindow.webContents.openDevTools();
+          }
+          childrenWindow.loadURL(`${winURL}/`);
+          childrenWindow.on('closed', () => {
+            childrenWindow = null;
+          });
+        }
+      }, 100);
+    };
+
+    const changeBgClassName = (className: string) => {
+      if (currentBgClassName.value !== className) {
+        currentBgClassName.value = className;
+        inotedb
+          .update(
+            {
+              uid: uid.value
+            },
+            {
+              uid: uid.value,
+              content: editContent.value,
+              className
+            }
+          )
+          .then(() => {
+            /**
+             * updateNoteItem_className
+             * 更新便笺内容
+             */
+            ipcRenderer.send('updateNoteItem_className', {
+              uid: uid.value,
+              className: currentBgClassName.value
+            } as UpdateNote);
+          });
+      }
+      showOptionsStatus.value = false;
+    };
+
+    const changeEditContent = (content: string) => {
+      editContent.value = content;
+      if (!uid.value) return false;
+      inotedb
+        .update(
+          {
+            uid: uid.value
+          },
+          {
+            uid: uid.value,
+            content,
+            className: currentBgClassName.value
+          }
+        )
+        .then(() => {
+          /**
+           * updateNoteItem_content
+           * 更新便笺内容
+           */
+          ipcRenderer.send('updateNoteItem_content', {
+            uid: uid.value,
+            content
+          } as UpdateNote);
+        });
     };
 
     const closeWindow = () => {
       if (!editContent.value) {
         // 如果是空就直接从数据库删除
-        inotedb.remove({
-          uid: uid.value
-        });
-        /**
-         * 持久型通信 removeEmptyNoteItem
-         * 在关闭的时候如果没有内容就通知列表进行删除操作
-         */
-        ipcRenderer.send('removeEmptyNoteItem', uid.value);
+        console.log('removeEmptyNoteItem ==>', uid.value);
+        inotedb
+          .remove({
+            uid: uid.value
+          })
+          .then(() => {
+            /**
+             * removeEmptyNoteItem
+             * 在关闭的时候如果没有内容就通知列表进行删除操作
+             */
+            ipcRenderer.send('removeEmptyNoteItem', uid.value);
+          });
       }
     };
 
     /**
-     * 持久型通信 deleteActiveItem_{uid}
+     * deleteActiveItem_{uid}
      * 此处通信便笺列表，如果接收到删除的消息就退出
      * 场景：如果打开窗口就进行关闭
      */
@@ -168,11 +216,11 @@ export default defineComponent({
 
     return {
       clickOption,
-      colors,
+      classNames,
       openIndex,
       showOptionsStatus,
-      changeBgColor,
-      currentBgColor,
+      changeBgClassName,
+      currentBgClassName,
       editContent,
       changeEditContent,
       closeWindow

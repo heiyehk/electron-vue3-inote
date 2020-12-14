@@ -8,15 +8,18 @@
  * 电脑自动创建缓存
  * C:\Windows\Prefetch\I-NOTES.EXE{xx}
  */
+
+/** */
 const globalEnv = process.env.NODE_ENV;
 
 const devWid = globalEnv === 'development' ? 950 : 0;
 const devHei = globalEnv === 'development' ? 600 : 0;
 
+// 底部icon: 40*40
 const editorWindowOptions = {
   width: devWid || 290,
   height: devHei || 350,
-  minWidth: 290
+  minWidth: 250
 };
 
 /**
@@ -49,7 +52,8 @@ const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructor
 };
 
 /**
- * 开发和正式环境
+ * 开发环境: http://localhost:8080
+ * 正式环境: file://${__dirname}/index.html
  */
 const winURL = globalEnv === 'development' ? 'http://localhost:8080' : `file://${__dirname}/index.html`;
 

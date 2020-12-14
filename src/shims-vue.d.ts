@@ -17,8 +17,8 @@ declare global {
  * 储存数据库的
  */
 interface DBNotes {
-  readonly class: string;
-  readonly content: string;
+  className: string;
+  content: string;
   readonly createdAt: Date;
   readonly uid: string;
   readonly updatedAt: Date;
@@ -31,4 +31,13 @@ interface DBNotes {
  */
 interface ListDbNotes extends DBNotes {
   remove?: boolean;
+}
+
+/**
+ * ipc通信传输更新内容
+ */
+interface UpdateNote {
+  uid: string;
+  content?: string;
+  className?: string;
 }

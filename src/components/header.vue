@@ -15,7 +15,7 @@
     </template>
     <!-- 标题拖动 -->
     <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
-      <template v-if="title">
+      <template>
         <transition name="header-fadein">
           <span :key="title">{{ title }}</span>
         </transition>

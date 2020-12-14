@@ -2,8 +2,8 @@
   <Header v-if="routeName !== 'editor'" />
   <div class="bg-white">
     <router-view v-slot="{ Component }">
-      <transition name="fade">
-        <div class="transition" :key="routeName">
+      <transition name="main-fade">
+        <div class="transition" :key="routeName" :data-title="routeName">
           <keep-alive>
             <component :is="Component" />
           </keep-alive>
@@ -39,18 +39,18 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-.fade-enter,
-.fade-leave-to {
+.main-fade-enter,
+.main-fade-leave-to {
   display: none;
   opacity: 0;
-  animation: fade 0.4s reverse;
+  animation: main-fade 0.4s reverse;
 }
-.fade-enter-active,
-.fade-leave-active {
+.main-fade-enter-active,
+.main-fade-leave-active {
   opacity: 0;
-  animation: fade 0.4s;
+  animation: main-fade 0.4s;
 }
-@keyframes fade {
+@keyframes main-fade {
   from {
     opacity: 0;
     transform: scale(0.96);

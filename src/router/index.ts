@@ -21,7 +21,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/editor',
         name: 'editor',
-        component: () => import('../views/editor/index.vue')
+        component: () => import('../views/editor/index.vue'),
+        meta: {
+          title: ''
+        }
       },
       {
         path: '/setting',

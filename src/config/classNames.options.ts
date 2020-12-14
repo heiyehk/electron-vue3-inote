@@ -7,39 +7,39 @@
  * - `gray-content` 灰色
  * - `black-content` 黑色
  */
-const colors = [
+const classNames = [
   // {
   //   color: 'white-content',
   //   title: '白色'
   // },
   {
-    color: 'yellow-content',
+    className: 'yellow-content',
     title: '黄色'
   },
   {
-    color: 'green-content',
+    className: 'green-content',
     title: '绿色'
   },
   {
-    color: 'pink-content',
+    className: 'pink-content',
     title: '粉色'
   },
   {
-    color: 'purple-content',
+    className: 'purple-content',
     title: '紫色'
   },
   {
-    color: 'blue-content',
+    className: 'blue-content',
     title: '蓝色'
   },
   {
-    color: 'gray-content',
+    className: 'gray-content',
     title: '灰色'
   },
   {
-    color: 'black-content',
+    className: 'black-content',
     title: '黑色'
   }
 ];
 
-export default colors;
+export default classNames;

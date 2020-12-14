@@ -37,11 +37,11 @@ const editorIcons = [
     name: 'insertOrderedList',
     title: '有序列表',
     icon: 'icon-ol'
-  },
-  {
-    name: 'image',
-    title: '图片',
-    icon: 'icon-image'
+    // },
+    // {
+    //   name: 'image',
+    //   title: '图片',
+    //   icon: 'icon-image'
   }
 ];
 

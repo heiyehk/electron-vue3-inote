@@ -132,9 +132,8 @@ class INoteDB<G = any> {
         query,
         updateQuery,
         options,
-        (error: Error | null, numberOfUpdated: number, affectedDocuments: any, upsert: boolean) => {
+        (error: Error | null, numberOfUpdated: number, affectedDocuments: any) => {
           if (error) reject(error);
-          console.log(numberOfUpdated, affectedDocuments, upsert);
           resolve(affectedDocuments);
         }
       );
