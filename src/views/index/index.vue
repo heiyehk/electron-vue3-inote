@@ -12,8 +12,8 @@
     </div>
     <section class="content-container" :class="fadein ? 'fadein' : ''">
       <vueScroll />
-      <!-- <button @click="getAll">getAllDBNotes</button> -->
-      <template v-if="viewNotesList.length">
+      <button @click="getAll">getAllDBNotes</button>
+      <template v-if="emptyBlockState === 1">
         <ul class="edit-list">
           <template v-for="item in viewNotesList" :key="item.uid">
             <li
@@ -28,13 +28,15 @@
           </template>
         </ul>
       </template>
-      <template v-else>
+      <template v-else-if="emptyBlockState === 2">
         <div class="index-empty-container flex-center">
           <div class="index-empty-content">
+            <div class="index-empty-content-text" style="margin-top: 0;margin-bottom: 40px;">双击此处，或</div>
             <div class="index-empty-content-img">
-              <img src="/images/empty-content.svg" />
+              <img src="../../assets/empty-content.svg" />
             </div>
-            <div class="index-empty-content-text">点击上方“+”按钮创建新的便笺内容</div>
+            <div class="index-empty-content-text">点击上方“+”按钮创建</div>
+            <div class="index-empty-content-text" style="margin-top: 4px;">新的便笺内容</div>
           </div>
         </div>
       </template>
@@ -56,11 +58,17 @@ export default defineComponent({
     vueScroll
   },
   setup() {
+    // TODO
+    // 进来的时候判断是否已经打开，使用窗口句柄判断
+    // ipcMain
     const fadein = ref(false);
     let viewNotesList = ref([] as ListDbNotes[]);
     const rightClick = new CreateRightClick();
     let childrenWindow: BrowserWindow | null;
     const year = dayjs().year();
+
+    // 控制主页的显示接面
+    let emptyBlockState = ref(0);
 
     // 今天0点时间戳
     const todayZeroTimeStamp = dayjs()
@@ -84,6 +92,11 @@ export default defineComponent({
         .sort({ updatedAt: -1 })
         .exec((e, d) => {
           viewNotesList.value = d as DBNotes[];
+          if (d.length) {
+            emptyBlockState.value = 1;
+          } else {
+            emptyBlockState.value = 2;
+          }
         });
     };
 
@@ -130,6 +143,7 @@ export default defineComponent({
           once: true,
           iconName: ['iconfont', 'icon-newopen'],
           handler: () => {
+            // TODO 判断是否打开，否则就聚焦显示
             openEditorWindow(uid);
           }
         },
@@ -158,8 +172,13 @@ export default defineComponent({
       const rntIndex = viewNotesList.value.findIndex(x => x.uid === uid);
       if (rntIndex === -1) return;
       viewNotesList.value[rntIndex].remove = true;
+      console.log(viewNotesList.value.length);
       setTimeout(() => {
         viewNotesList.value.splice(rntIndex, 1);
+        if (!viewNotesList.value.length) {
+          console.log(123);
+          emptyBlockState.value = 2;
+        }
       }, 400);
     };
 
@@ -170,6 +189,7 @@ export default defineComponent({
        */
       remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotes) => {
         viewNotesList.value.unshift(noteItem);
+        emptyBlockState.value = 1;
       });
 
       /**
@@ -215,7 +235,8 @@ export default defineComponent({
       dbclickOpenNote,
       contextMenu,
       getTime,
-      getAll
+      getAll,
+      emptyBlockState
     };
   }
 });
@@ -223,7 +244,7 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .page-index {
-  height: calc(100% - 40px);
+  height: calc(100% - @iconSize);
   background-color: #fff;
 }
 
@@ -418,9 +439,10 @@ export default defineComponent({
 
 .index-empty-container {
   height: 100%;
+  cursor: pointer;
   .index-empty-content {
     &-img {
-      width: 50%;
+      width: 74%;
       margin: 0 auto;
       img {
         display: block;
@@ -431,6 +453,7 @@ export default defineComponent({
       font-size: 14px;
       color: @text-color;
       margin-top: 40px;
+      text-align: center;
     }
   }
 }

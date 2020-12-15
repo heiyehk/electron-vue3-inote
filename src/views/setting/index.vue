@@ -89,7 +89,7 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .page-setting {
-  height: calc(100% - 40px);
+  height: calc(100% - @iconSize);
   background-color: #fff;
   padding: 12px;
   box-sizing: border-box;

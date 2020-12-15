@@ -140,8 +140,6 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-@headerHeight: 40px;
-
 .header-fadein-enter,
 .header-fadein-leave-to {
   display: none;
@@ -166,7 +164,7 @@ export default defineComponent({
 }
 
 .header {
-  height: @headerHeight;
+  height: @iconSize;
   background-color: #fff;
   button {
     padding: 0;
@@ -181,12 +179,11 @@ export default defineComponent({
     outline: none;
   }
   .icon {
-    width: @headerHeight;
-    height: @headerHeight;
+    width: @iconSize;
+    height: @iconSize;
     .iconfont {
-      font-size: 24px;
-      width: 22px;
-      position: relative;
+      // 头部icon大小在这里设置
+      font-size: @headerIconFontSize;
       padding-bottom: 2px;
     }
   }

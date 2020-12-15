@@ -10,13 +10,16 @@
 @background-color: #f3f3f3;
 @background-sub-color: #eeeeee;
 
+// 头部iconsize
+@headerIconFontSize: 20px;
 
-@toolsHeight: 40px;
+// 头部高度、底部功能按钮和icon的宽高大小是一致的
+@iconSize: 40px;
 .icon {
-  width: @toolsHeight;
-  height: @toolsHeight;
-  min-width: @toolsHeight;
-  min-height: @toolsHeight;
+  width: @iconSize;
+  height: @iconSize;
+  min-width: @iconSize;
+  min-height: @iconSize;
   outline: none;
   border: none;
   background-color: transparent;
@@ -40,7 +43,6 @@
     z-index: 1;
   }
   .iconfont {
-    font-size: 16px;
     width: 22px;
     position: relative;
   }

@@ -4,6 +4,7 @@
     <router-view v-slot="{ Component }">
       <transition name="main-fade">
         <div class="transition" :key="routeName" :data-title="routeName">
+          <!-- TODO 处理在切换页面的时候，主页数据库导入一次之后更改数据不更新问题 -->
           <keep-alive>
             <component :is="Component" />
           </keep-alive>

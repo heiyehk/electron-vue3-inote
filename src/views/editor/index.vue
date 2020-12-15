@@ -233,8 +233,8 @@ export default defineComponent({
 .page-editor {
   height: 100%;
   background-color: #fff;
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: @iconSize;
+  padding-bottom: @iconSize;
   box-sizing: border-box;
   .editor-container {
     width: 100%;
@@ -254,7 +254,7 @@ export default defineComponent({
   transition: all 0.4s;
 }
 .header-hide-style {
-  top: -40px;
+  top: -@iconSize;
   transition: all 0.4s;
 }
 .header-show-style {
