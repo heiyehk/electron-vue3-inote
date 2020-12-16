@@ -59,27 +59,19 @@
 </template>
 
 <script lang="ts">
-import { BrowserWindow, remote } from 'electron';
+import { remote } from 'electron';
 import { computed, defineComponent, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
-import { browserWindowOption, winURL } from '@/config';
+import { browserWindowOption } from '@/config';
+import { createBrowserWindow, transitCloseWindow } from '@/utils';
 
 export default defineComponent({
   emits: ['option-click', 'on-close'],
   setup(props, { emit }) {
-    let childrenWindow: BrowserWindow | null;
     const editorWinOptions = browserWindowOption('editor');
     // 打开新窗口
     const openNewWindow = () => {
-      childrenWindow = new remote.BrowserWindow(editorWinOptions);
-
-      if (process.env.NODE_ENV === 'development') {
-        childrenWindow.webContents.openDevTools();
-      }
-      childrenWindow.loadURL(`${winURL}/#/editor`);
-      childrenWindow.on('closed', () => {
-        childrenWindow = null;
-      });
+      createBrowserWindow(editorWinOptions, '/editor');
     };
 
     // 获取窗口固定状态
@@ -120,9 +112,7 @@ export default defineComponent({
     // 关闭窗口
     const closeWindow = () => {
       emit('on-close');
-      document.querySelector('#app')?.classList.remove('app-show');
-      document.querySelector('#app')?.classList.add('app-hide');
-      remote.getCurrentWindow().close();
+      transitCloseWindow();
     };
 
     return {

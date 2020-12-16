@@ -31,10 +31,11 @@ import { defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import Header from '@/components/header.vue';
 import editor from '@/components/editor.vue';
-import { browserWindowOption, winURL, classNames } from '@/config';
+import { browserWindowOption, classNames } from '@/config';
 import uuid from '@/utils/uuid';
 import { useRoute, useRouter } from 'vue-router';
 import inotedb from '@/inotedb';
+import { createBrowserWindow, transitCloseWindow } from '@/utils';
 
 export default defineComponent({
   components: {
@@ -65,8 +66,6 @@ export default defineComponent({
             uid: uuidString
           }
         });
-        console.log(123);
-        // 往数据库插入创建数据
         inotedb
           .insert({
             uid: uid.value,
@@ -74,7 +73,6 @@ export default defineComponent({
             className: ''
           })
           .then(res => {
-            console.log(res);
             /**
              * createNewNote
              * 持续监听创建便笺
@@ -88,10 +86,9 @@ export default defineComponent({
       const info = (await inotedb.findOne({
         uid
       })) as DBNotes;
-      if (info) {
-        currentBgClassName.value = info.className;
-        editContent.value = info.content;
-      }
+      if (!info) return;
+      currentBgClassName.value = info.className;
+      editContent.value = info.content;
     };
 
     const clickOption = () => {
@@ -101,6 +98,7 @@ export default defineComponent({
     let childrenWindow: BrowserWindow | null;
     const openIndex = () => {
       let countFlag = false;
+
       /**
        * whetherToOpen
        * 判断列表窗口是否存在
@@ -117,14 +115,7 @@ export default defineComponent({
       setTimeout(() => {
         // 如果不存在就重新创建窗口
         if (!countFlag) {
-          childrenWindow = new remote.BrowserWindow(browserWindowOption());
-          if (process.env.NODE_ENV === 'development') {
-            childrenWindow.webContents.openDevTools();
-          }
-          childrenWindow.loadURL(`${winURL}/`);
-          childrenWindow.on('closed', () => {
-            childrenWindow = null;
-          });
+          childrenWindow = createBrowserWindow(browserWindowOption(), '/');
         }
       }, 100);
     };
@@ -207,10 +198,8 @@ export default defineComponent({
      * 场景：如果打开窗口就进行关闭
      */
     const afterDeleteIpc = () => {
-      remote.ipcMain.on(`deleteActiveItem_${uid.value}`, () => {
-        document.querySelector('#app')?.classList.remove('app-show');
-        document.querySelector('#app')?.classList.add('app-hide');
-        remote.getCurrentWindow().close();
+      remote.ipcMain.once(`deleteActiveItem_${uid.value}`, () => {
+        transitCloseWindow();
       });
     };
 

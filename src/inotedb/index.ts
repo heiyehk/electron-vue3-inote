@@ -2,9 +2,7 @@ import Datastore from 'nedb';
 import path from 'path';
 import { remote } from 'electron';
 
-type Query<T> = { [K in keyof T]: any };
-
-type BackPromise<CB> = Promise<unknown | CB>;
+type BackPromise<CB> = Promise<CB | null>;
 
 /**
  * @see https://www.npmjs.com/package/nedb
@@ -16,27 +14,33 @@ class INoteDB<G = any> {
    */
   // dbPath = path.join(remote.app.getPath('userData'), 'db/inote.db');
   // dbPath = './db/inote.db';
-  dbPath = path.join(__dirname, 'db/inote.db');
+  dbPath = this.path;
 
-  _db: Datastore<Datastore.DataStoreOptions> = new Datastore({
-    /**
-     * autoload
-     * default: false
-     * 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase
-     * 注意所有命令操作只有在数据加载完成后才会被执行
-     */
-    autoload: true,
-    filename: this.dbPath,
-    timestampData: true
-  });
+  _db: Datastore<Datastore.DataStoreOptions> = this.backDatastore;
 
-  constructor() {
+  get path() {
     if (process.env.NODE_ENV === 'development') {
-      this.dbPath = path.join(remote.app.getPath('userData'), 'db/inote.db');
-    } else {
-      this.dbPath = path.join(__dirname, 'db/inote.db');
+      return path.join(__dirname, 'db/inote.db');
     }
-    // this.initEnsureIndex();
+    return path.join(remote.app.getPath('userData'), 'db/inote.db');
+  }
+
+  get backDatastore() {
+    return new Datastore({
+      /**
+       * autoload
+       * default: false
+       * 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase
+       * 注意所有命令操作只有在数据加载完成后才会被执行
+       */
+      autoload: true,
+      filename: this.dbPath,
+      timestampData: true
+    });
+  }
+
+  refreshDB() {
+    this._db = this.backDatastore;
   }
 
   /**
@@ -59,13 +63,13 @@ class INoteDB<G = any> {
   }
 
   insert<T extends G>(doc: T): BackPromise<T> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: (value: T) => void) => {
       this._db.insert(doc, (error: Error | null, document: T) => {
-        if (error) reject(error);
-        resolve(document);
+        if (!error) resolve(document);
       });
     }).catch(err => {
       console.error(err.message);
+      return null;
     });
   }
 
@@ -77,13 +81,13 @@ class INoteDB<G = any> {
    * 正则表达式进行查询。
    */
   find<T extends G>(query: T): BackPromise<T[]> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: (value: T[]) => void) => {
       this._db.find(query, (error: Error | null, document: T[]) => {
-        if (error) reject(error);
-        resolve(document);
+        if (!error) resolve(document);
       });
     }).catch(err => {
       console.error(err.message);
+      return null;
     });
   }
 
@@ -91,14 +95,14 @@ class INoteDB<G = any> {
    * db.findOne(query)
    * @param query
    */
-  findOne<T extends G>(query: Query<T>): BackPromise<T> {
-    return new Promise((resolve, reject) => {
-      this._db.findOne(query, (error: Error | null, document: T) => {
-        if (error) reject(error);
-        resolve(document);
+  findOne(query: Record<string, any>) {
+    return new Promise((resolve: (value: DBNotes) => void) => {
+      this._db.findOne(query, (error: Error | null, document) => {
+        if (!error) resolve(document as DBNotes);
       });
     }).catch(err => {
       console.error(err.message);
+      return null;
     });
   }
 
@@ -108,51 +112,38 @@ class INoteDB<G = any> {
    * @param {Nedb.RemoveOptions} options
    * @return {BackPromise<number>}
    */
-  remove<T extends G>(query: T, options?: Nedb.RemoveOptions): BackPromise<number | unknown> {
-    return new Promise((resolve, reject) => {
+  remove<T extends G>(query: T, options?: Nedb.RemoveOptions) {
+    return new Promise((resolve: (value: number) => void) => {
       if (options) {
         this._db.remove(query, options, (error: Error | null, n: number) => {
-          if (error) reject(error);
-          resolve(n);
+          if (!error) resolve(n);
         });
       } else {
         this._db.remove(query, (error: Error | null, n: number) => {
-          if (error) reject(error);
-          resolve(n);
+          if (!error) resolve(n);
         });
       }
     }).catch(err => {
       console.error(err.message);
+      return null;
     });
   }
 
-  update<T extends G>(query: T, updateQuery: T, options: Nedb.UpdateOptions = {}): BackPromise<number | unknown> {
-    return new Promise((resolve, reject) => {
+  update<T extends G>(query: T, updateQuery: T, options: Nedb.UpdateOptions = {}): BackPromise<T> {
+    return new Promise((resolve: (value: T) => void) => {
       this._db.update(
         query,
         updateQuery,
         options,
-        (error: Error | null, numberOfUpdated: number, affectedDocuments: any) => {
-          if (error) reject(error);
-          resolve(affectedDocuments);
+        (error: Error | null, numberOfUpdated: number, affectedDocuments: T) => {
+          if (!error) resolve(affectedDocuments);
         }
       );
     }).catch(err => {
       console.error(err.message);
+      return null;
     });
   }
 }
-
-// const doc = {
-//   id: 'uuidString',
-//   content: '',
-//   classType: ''
-// };
-// const a = new INoteDB();
-// a.insert(doc);
-
-// INoteDB.find({ id: 3 }, function(err: any, docs: any) {
-//   console.log(err, docs);
-// });
 
 export default new INoteDB();

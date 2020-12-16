@@ -1,25 +1,54 @@
-export default class {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  debounce(fn: Function, delay = 1000): () => void {
-    let timer: NodeJS.Timeout | null = null;
-    return (...args: any) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        fn.apply(this, args);
-      }, delay);
-    };
-  }
+/* eslint-disable @typescript-eslint/ban-types */
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  throttle(fn: Function, delay = 500): () => void {
-    let flag = true;
-    return (...args: any) => {
-      if (!flag) return;
-      flag = false;
-      setTimeout(() => {
-        fn.apply(this, args);
-        flag = true;
-      }, delay);
-    };
+import { winURL } from '@/config';
+import { BrowserWindow, remote } from 'electron';
+
+type FunctionalControl = (this: any, fn: any, delay?: number) => (...args: any) => void;
+type DebounceEvent = FunctionalControl;
+type ThrottleEvent = FunctionalControl;
+
+// 防抖函数
+export const debounce: DebounceEvent = function(fn, delay = 1000) {
+  let timer: NodeJS.Timeout | null = null;
+  return (...args: any) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+};
+
+// 节流函数
+export const throttle: ThrottleEvent = function(fn, delay = 500) {
+  let flag = true;
+  return (...args: any) => {
+    if (!flag) return;
+    flag = false;
+    setTimeout(() => {
+      fn.apply(this, args);
+      flag = true;
+    }, delay);
+  };
+};
+
+// 创建窗口
+export const createBrowserWindow = (bwopt = {}, url = '/', devTools?: boolean): BrowserWindow | null => {
+  let childrenWindow: BrowserWindow | null;
+  childrenWindow = new remote.BrowserWindow(bwopt);
+
+  if (process.env.NODE_ENV === 'development' || devTools) {
+    childrenWindow.webContents.openDevTools();
   }
-}
+  childrenWindow.loadURL(`${winURL}/#${url}`);
+  childrenWindow.on('closed', () => {
+    childrenWindow = null;
+  });
+  return childrenWindow;
+};
+
+// 过渡关闭窗口
+export const transitCloseWindow = (): void => {
+  document.querySelector('#app')?.classList.remove('app-show');
+  document.querySelector('#app')?.classList.add('app-hide');
+  remote.getCurrentWindow().close();
+};

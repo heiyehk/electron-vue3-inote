@@ -6,8 +6,6 @@
   "description": "I便笺个人开发者heiyehk独立开发，在Windows中更方便的记录文字。",
   "main": "background.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "node src/script/deleteBuild && vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve"

@@ -29,20 +29,29 @@ export default function(error: unknown, vm: ComponentPublicInstance | null, info
   const { outerWidth, outerHeight, innerWidth, innerHeight } = window;
   const { width, height } = window.screen;
 
+  // 报错信息
+  const errorInfo = {
+    errorInfo: info,
+    errorMessage: message,
+    errorStack: getShortStack(stack)
+  };
+
+  // electron
+  const electronInfo = { electron, chrome, node, v8 };
+
+  // 浏览器窗口信息
+  const browserInfo = { outerWidth, outerHeight, innerWidth, innerHeight };
+
   const errorLog = {
     version,
     date: dayjs().format('YYYY-MM-DD HH:mm'),
-    error: {
-      errorInfo: info,
-      errorMessage: message,
-      errorStack: getShortStack(stack)
-    },
-    electron: { electron, chrome, node, v8 },
+    error: errorInfo,
+    electron: electronInfo,
     window: {
       type: os.type(),
       platform: os.platform()
     },
-    browser: { outerWidth, outerHeight, innerWidth, innerHeight },
+    browser: browserInfo,
     screen: { width, height }
   };
 

@@ -1,62 +1,8 @@
 <template>
-  <div class="scrollbar" ref="scrollbar" :style="scrollbarStyle">
-    <div class="thumb" ref="thumb" @mousedown="thumbDown" @mouseup="thumbUp"></div>
+  <div class="scrollbar" ref="scrollbar">
+    <div class="thumb" ref="thumb"></div>
   </div>
 </template>
-
-<script lang="ts">
-import { ComponentInternalInstance, defineComponent, getCurrentInstance, onMounted, Ref, ref } from 'vue';
-
-export default defineComponent({
-  setup() {
-    const vm = getCurrentInstance() as ComponentInternalInstance;
-    let scrollbar: Ref<HTMLDivElement>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let thumb: Ref<HTMLDivElement>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let scrollbarParent: Ref<HTMLElement>;
-    const scrollbarStyle = ref('');
-
-    onMounted(() => {
-      scrollbar = ref(vm.refs.scrollbar as HTMLDivElement);
-      thumb = ref(vm.refs.thumb as HTMLDivElement);
-      getParentInfo();
-      // window.onresize = (e: Event) => {
-      //   console.log(e);
-      //   getParentInfo();
-      // };
-    });
-
-    const getParentInfo = () => {
-      scrollbarParent = ref(scrollbar.value?.parentElement as HTMLElement);
-      const { clientHeight } = scrollbar.value?.parentElement as HTMLElement;
-      scrollbarStyle.value = `height: ${clientHeight}px;display: block;`;
-    };
-
-    const thumbDown = (ed: MouseEvent) => {
-      console.log(ed);
-      document.onmousemove = (em: MouseEvent) => {
-        console.log(em);
-      };
-    };
-
-    document.onmouseup = function() {
-      document.onmousemove = null;
-    };
-
-    const thumbUp = () => {
-      console.log('up');
-    };
-
-    return {
-      getParentInfo,
-      scrollbarStyle,
-      thumbDown,
-      thumbUp
-    };
-  }
-});
-</script>
 
 <style lang="less" scoped>
 .scrollbar {

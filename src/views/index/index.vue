@@ -11,7 +11,7 @@
       </div>
     </div>
     <section class="content-container" :class="fadein ? 'fadein' : ''">
-      <vueScroll />
+      <!-- <vueScroll /> -->
       <button @click="getAll">getAllDBNotes</button>
       <template v-if="emptyBlockState === 1">
         <ul class="edit-list">
@@ -19,7 +19,7 @@
             <li
               class="edit-item"
               :class="[item.className, item.content ? '' : 'empty-item', item.remove ? 'remove-item' : '']"
-              @dblclick="dbclickOpenNote(item.uid)"
+              @dblclick="openEditorWindow(item.uid)"
               @contextmenu.prevent="contextMenu($event, item.uid)"
             >
               <span class="update-time">{{ getTime(item.updatedAt) }}</span>
@@ -46,25 +46,22 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, ref } from 'vue';
-import { BrowserWindow, remote, ipcRenderer } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
-import { browserWindowOption, winURL } from '@/config';
+import { browserWindowOption } from '@/config';
 import inotedb from '@/inotedb';
-import vueScroll from '@/components/vue3scroll/index.vue';
 import CreateRightClick from '@/components/rightClick';
+import { createBrowserWindow } from '@/utils';
 
 export default defineComponent({
-  components: {
-    vueScroll
-  },
   setup() {
     // TODO
     // 进来的时候判断是否已经打开，使用窗口句柄判断
     // ipcMain
+    inotedb.refreshDB();
     const fadein = ref(false);
     let viewNotesList = ref([] as ListDbNotes[]);
     const rightClick = new CreateRightClick();
-    let childrenWindow: BrowserWindow | null;
     const year = dayjs().year();
 
     // 控制主页的显示接面
@@ -88,7 +85,7 @@ export default defineComponent({
 
     const getAllDBNotes = async () => {
       inotedb._db
-        .find({})
+        ?.find({})
         .sort({ updatedAt: -1 })
         .exec((e, d) => {
           viewNotesList.value = d as DBNotes[];
@@ -102,7 +99,7 @@ export default defineComponent({
 
     const getAll = () => {
       inotedb._db
-        .find({})
+        ?.find({})
         .sort({ updatedAt: -1 })
         .exec((e, d) => {
           console.log(d);
@@ -121,19 +118,9 @@ export default defineComponent({
       return date.format('HH:mm');
     };
 
+    const bwsWinOption = browserWindowOption('editor');
     const openEditorWindow = (uid: string) => {
-      childrenWindow = new remote.BrowserWindow(browserWindowOption('editor'));
-      if (process.env.NODE_ENV === 'development') {
-        childrenWindow.webContents.openDevTools();
-      }
-      childrenWindow.loadURL(`${winURL}/#/editor?uid=${uid}`);
-      childrenWindow.on('closed', () => {
-        childrenWindow = null;
-      });
-    };
-
-    const dbclickOpenNote = (uid: string) => {
-      openEditorWindow(uid);
+      createBrowserWindow(bwsWinOption, `/editor?uid=${uid}`);
     };
 
     const contextMenu = (event: MouseEvent, uid: string) => {
@@ -176,7 +163,6 @@ export default defineComponent({
       setTimeout(() => {
         viewNotesList.value.splice(rntIndex, 1);
         if (!viewNotesList.value.length) {
-          console.log(123);
           emptyBlockState.value = 2;
         }
       }, 400);
@@ -198,6 +184,7 @@ export default defineComponent({
        */
       remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: UpdateNote) => {
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+        if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].className = updateItem.className as string;
       });
 
@@ -206,8 +193,8 @@ export default defineComponent({
        * 更新content内容
        */
       remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: UpdateNote) => {
-        console.log(updateItem);
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+        if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].content = updateItem.content as string;
       });
 
@@ -232,11 +219,11 @@ export default defineComponent({
     return {
       fadein,
       viewNotesList,
-      dbclickOpenNote,
       contextMenu,
       getTime,
       getAll,
-      emptyBlockState
+      emptyBlockState,
+      openEditorWindow
     };
   }
 });

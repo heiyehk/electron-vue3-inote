@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, getCurrentInstance, onMounted } from 'vue';
-import Utils from '@/utils';
+import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
 
 export default defineComponent({
@@ -32,7 +32,6 @@ export default defineComponent({
     const vm = getCurrentInstance();
     const bottomIcons = editorIcons;
     const editorContent = ref('');
-    const utils = new Utils();
 
     onMounted(() => {
       (vm?.refs.editor as HTMLElement).focus();
@@ -43,9 +42,8 @@ export default defineComponent({
       document.execCommand(name, false);
     };
 
-    const changeEditorContent = utils.debounce((e: InputEvent) => {
+    const changeEditorContent = debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
-      console.log(editorHtml);
       emit('on-input', editorHtml);
     });
 

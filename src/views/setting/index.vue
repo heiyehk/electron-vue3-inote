@@ -1,7 +1,15 @@
 <template>
   <main class="page-setting">
+    <!-- TODO 设置信息 -->
     <div class="block">
-      <p class="block-title">操作</p>
+      <p class="block-title">通用设置</p>
+      <div class="block-content">
+        <div class="operation">编辑和列表同步</div>
+        <input type="number" />
+      </div>
+    </div>
+    <div class="block">
+      <p class="block-title">导入导出</p>
       <div class="block-content">
         <div class="operation link-style">
           <div class="inline-block flex-items">
@@ -18,19 +26,20 @@
       </div>
     </div>
     <div class="block">
-      <p class="block-title">反馈</p>
-      <div class="block-content">
-        <div class="inline-block flex-items gray-text">
-          <i class="iconfont icon-eport"></i>
-          <span>↓↓↓如果你有更好的建议或者动效，请联系我</span>
-        </div>
-      </div>
+      <p class="block-title">反馈问题</p>
       <div class="block-content">
         <div class="operation flex-items">
           <i class="iconfont icon-mail"></i>
           <span class="inline-block">heiyehk@foxmail.com</span>
           <a href="javascript:void(0)" class="inline-block" @click="copyEmail">复制</a>
           <tick v-model="tickStatus" :duration="1000" />
+        </div>
+      </div>
+      <!-- TODO 打开buglog反馈 -->
+      <div class="block-content">
+        <div class="inline-block flex-items gray-text">
+          <i class="iconfont icon-eport"></i>
+          <span>⬆⬆⬆如果你有更好的建议或者动画效果，请联系我</span>
         </div>
       </div>
     </div>

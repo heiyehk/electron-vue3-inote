@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const rm = require('rimraf');
 const path = require('path');
 const pluginOptions = require('../../vue.config').pluginOptions;
