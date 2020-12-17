@@ -15,11 +15,9 @@
     </template>
     <!-- 标题拖动 -->
     <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
-      <template>
-        <transition name="header-fadein">
-          <span :key="title">{{ title }}</span>
-        </transition>
-      </template>
+      <transition name="header-fadein">
+        <span :key="title">{{ title }}</span>
+      </transition>
     </div>
     <!-- 右侧操作 -->
     <div class="operation-btn flex-items">
@@ -155,7 +153,7 @@ export default defineComponent({
 
 .header {
   height: @iconSize;
-  background-color: #fff;
+  background-color: @white-color;
   button {
     padding: 0;
     outline: none;
@@ -179,7 +177,7 @@ export default defineComponent({
   }
   .close-window:hover {
     background-color: @error-color;
-    color: #fff;
+    color: @white-color;
   }
   @keyframes fades {
     30% {

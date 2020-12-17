@@ -21,7 +21,7 @@
   </div>
   <main class="page-editor" :class="currentBgClassName">
     <section class="editor-container">
-      <editor :content="editContent" @on-input="changeEditContent" />
+      <Editor v-model="editContent" @on-input="changeEditContent" />
     </section>
   </main>
 </template>
@@ -29,18 +29,20 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
-import Header from '@/components/header.vue';
-import editor from '@/components/editor.vue';
-import { browserWindowOption, classNames } from '@/config';
-import uuid from '@/utils/uuid';
 import { useRoute, useRouter } from 'vue-router';
+
+import Header from '@/components/header.vue';
+import Editor from '@/components/editor.vue';
+
+import { browserWindowOption, classNames } from '@/config';
+import { uuid } from '@/utils';
 import inotedb from '@/inotedb';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 
 export default defineComponent({
   components: {
     Header,
-    editor
+    Editor
   },
   setup() {
     let showOptionsStatus = ref(false);
@@ -221,7 +223,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .page-editor {
   height: 100%;
-  background-color: #fff;
+  background-color: @white-color;
   padding-top: @iconSize;
   padding-bottom: @iconSize;
   box-sizing: border-box;
@@ -274,9 +276,9 @@ export default defineComponent({
     width: 100%;
     z-index: 2;
     top: -300px;
-    box-shadow: 0 0 4px #ccc;
+    box-shadow: 0 0 4px @border-color;
     transition: top 0.4s;
-    background-color: #fff;
+    background-color: @white-color;
   }
   .colors {
     height: 50px;

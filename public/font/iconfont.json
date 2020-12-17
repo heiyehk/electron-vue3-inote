@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18406194",
+      "name": "arrow-up",
+      "font_class": "arrow-up",
+      "unicode": "e6f0",
+      "unicode_decimal": 59120
+    },
+    {
+      "icon_id": "18406197",
+      "name": "arrow-down",
+      "font_class": "arrow-down",
+      "unicode": "e6f1",
+      "unicode_decimal": 59121
+    },
+    {
+      "icon_id": "1888665",
+      "name": "空_内容",
+      "font_class": "kong_neirong",
+      "unicode": "e6ce",
+      "unicode_decimal": 59086
+    },
+    {
       "icon_id": "619187",
       "name": "图标1_新窗口打开",
       "font_class": "newopen",

@@ -11,8 +11,7 @@
       </div>
     </div>
     <section class="content-container" :class="fadein ? 'fadein' : ''">
-      <!-- <vueScroll /> -->
-      <button @click="getAll">getAllDBNotes</button>
+      <!-- <button @click="getAll">getAllDBNotes</button> -->
       <template v-if="emptyBlockState === 1">
         <ul class="edit-list">
           <template v-for="item in viewNotesList" :key="item.uid">
@@ -232,7 +231,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .page-index {
   height: calc(100% - @iconSize);
-  background-color: #fff;
+  background-color: @white-color;
 }
 
 .search-box {
@@ -310,18 +309,16 @@ export default defineComponent({
         opacity: 0;
         min-height: 30px;
         padding: 24px 14px 14px;
-        background-color: #fff;
+        background-color: @white-color;
       }
       100% {
         opacity: 1;
         min-height: 30px;
         padding: 24px 14px 14px;
-        // background-color: @background-sub-color;
       }
     }
     .empty-item {
       animation: fadeintop 0.6s forwards;
-      // background-color: @background-sub-color;
       transition: all 0.4s;
     }
     li {
@@ -339,7 +336,7 @@ export default defineComponent({
       max-height: 164px;
       overflow: hidden;
       box-shadow: 0 0 4px #ddd;
-      background-color: #fff;
+      background-color: @white-color;
       .update-time {
         font-size: 12px;
         position: absolute;
@@ -364,6 +361,7 @@ export default defineComponent({
           word-break: break-all;
         }
       }
+      // hover时候的遮罩
       &::before {
         content: '';
         position: absolute;
@@ -380,7 +378,7 @@ export default defineComponent({
       }
       &:hover {
         opacity: 0.8;
-        box-shadow: 0 0 4px #ccc;
+        box-shadow: 0 0 4px @shadown-color;
         transition: all 0.4s;
         &::before {
           opacity: 1;
@@ -388,7 +386,7 @@ export default defineComponent({
       }
       &:active {
         transform: scale(0.97);
-        box-shadow: 0 0 6px #ccc;
+        box-shadow: 0 0 6px @shadown-color;
         transition: all 0.4s;
       }
     }
@@ -421,7 +419,7 @@ export default defineComponent({
 
 /deep/ .error-bg {
   background-color: red;
-  color: #fff;
+  color: @white-color;
 }
 
 .index-empty-container {

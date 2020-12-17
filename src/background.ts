@@ -32,7 +32,7 @@ function createWindow() {
     createProtocol('app');
     win.loadURL(winURL);
   }
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;

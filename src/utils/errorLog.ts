@@ -1,8 +1,8 @@
 import { ComponentPublicInstance } from 'vue';
 import dayjs from 'dayjs';
-import version from './version';
 import fs from 'fs-extra';
 import os from 'os';
+import { remote } from 'electron';
 
 function getShortStack(stack?: string): string {
   const splitStack = stack?.split('\n    ');
@@ -43,7 +43,7 @@ export default function(error: unknown, vm: ComponentPublicInstance | null, info
   const browserInfo = { outerWidth, outerHeight, innerWidth, innerHeight };
 
   const errorLog = {
-    version,
+    versions: remote.app.getVersion(),
     date: dayjs().format('YYYY-MM-DD HH:mm'),
     error: errorInfo,
     electron: electronInfo,
@@ -57,5 +57,7 @@ export default function(error: unknown, vm: ComponentPublicInstance | null, info
 
   if (process.env.NODE_ENV === 'production') {
     fs.writeFileSync('./inoteError.log', JSON.stringify(errorLog) + '\n', { flag: 'a' });
+  } else {
+    console.log(errorInfo.errorStack);
   }
 }

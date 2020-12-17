@@ -3,10 +3,10 @@
     ref="editor"
     class="editor-layout module-editor empty-content"
     contenteditable
-    v-html="content"
+    v-html="modelValue"
     spellcheck="false"
     placeholder="记笔记..."
-    @paste.prevent="paste"
+    @paste.prevent="pasteHa"
     @input="changeEditorContent"
   ></div>
   <section class="bottom-editor-tools">
@@ -19,22 +19,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, getCurrentInstance, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
 
 export default defineComponent({
   props: {
-    content: String
+    modelValue: String
   },
-  emits: ['on-input'],
+  emits: ['update:modelValue', 'on-input'],
   setup(props, { emit }) {
-    const vm = getCurrentInstance();
+    const editor = ref();
     const bottomIcons = editorIcons;
     const editorContent = ref('');
 
+    watch(props, () => {
+      console.log(props.modelValue);
+      editorContent.value = props.modelValue as string;
+    });
+
     onMounted(() => {
-      (vm?.refs.editor as HTMLElement).focus();
+      editor.value.focus();
     });
 
     const editorIconHandle = (e: Event, name: string) => {
@@ -50,14 +55,16 @@ export default defineComponent({
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
       document.execCommand('insertText', false, pasteText);
+      console.log(editor.value);
     };
 
     return {
+      editor,
       editorIconHandle,
       bottomIcons,
       changeEditorContent,
-      editorContent,
-      paste
+      paste,
+      editorContent
     };
   }
 });
