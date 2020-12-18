@@ -1,13 +1,21 @@
 <template>
   <div class="hy-input flex">
     <div class="hy-input-box flex1">
-      <input maxlength="4" readonly v-model="inputValue" />
+      <input maxlength="4" :readonly="readonly" v-model="inputValue" />
     </div>
-    <div class="hy-number-control flex">
-      <div class="hy-number-control-add hy-number-button" @click="calculateDelay('add')">
+    <div class="hy-number-control flex" v-if="control">
+      <div
+        class="hy-number-control-add hy-number-button"
+        :class="modelValue === max ? 'disabled' : ''"
+        @click="calculateDelay('add')"
+      >
         <i class="iconfont icon-arrow-up"></i>
       </div>
-      <div class="hy-number-control-sub hy-number-button" @click="calculateDelay('sub')">
+      <div
+        class="hy-number-control-sub hy-number-button"
+        :class="modelValue === min ? 'disabled' : ''"
+        @click="calculateDelay('sub')"
+      >
         <i class="iconfont icon-arrow-down"></i>
       </div>
     </div>
@@ -22,9 +30,19 @@ export default defineComponent({
     modelValue: {
       type: Number,
       default: 1000
+    },
+    min: Number,
+    max: Number,
+    control: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: [Boolean, String],
+      default: false
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'on-change'],
   setup(props, { emit }) {
     let inputValue = ref('1000');
     inputValue.value = String(props.modelValue);
@@ -45,6 +63,7 @@ export default defineComponent({
       }
       inputValue.value = String(afterNumber);
       emit('update:modelValue', afterNumber);
+      emit('on-change', afterNumber);
     };
 
     return {
@@ -92,6 +111,11 @@ export default defineComponent({
         position: absolute;
         z-index: 1;
       }
+    }
+    .disabled {
+      cursor: no-drop;
+      background-color: @background-sub-color;
+      color: @text-sub-color;
     }
     .iconfont {
       display: block;

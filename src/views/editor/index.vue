@@ -21,7 +21,7 @@
   </div>
   <main class="page-editor" :class="currentBgClassName">
     <section class="editor-container">
-      <Editor v-model="editContent" @on-input="changeEditContent" />
+      <Editor v-model="editContent" :className="currentBgClassName" @on-input="changeEditContent" />
     </section>
   </main>
 </template>
@@ -37,6 +37,7 @@ import Editor from '@/components/editor.vue';
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
 import inotedb from '@/inotedb';
+
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 
 export default defineComponent({
@@ -49,6 +50,20 @@ export default defineComponent({
     const uid = ref('');
     const currentBgClassName = ref('');
     const editContent = ref('');
+    const currentWindow = remote.getCurrentWindow();
+    let currentWindowSize = currentWindow.getSize();
+
+    currentWindow.on('resized', () => {
+      currentWindowSize = currentWindow.getSize();
+    });
+
+    currentWindow.on('blur', () => {
+      currentWindow.setSize(250, 48);
+    });
+
+    currentWindow.on('focus', () => {
+      currentWindow.setSize(currentWindowSize[0], currentWindowSize[1]);
+    });
 
     onBeforeMount(() => {
       initEditorContent();
@@ -108,14 +123,16 @@ export default defineComponent({
       ipcRenderer.send('whetherToOpen');
       ipcRenderer.on('getWhetherToOpen', () => {
         countFlag = true;
+        return;
       });
       showOptionsStatus.value = false;
 
-      // 存在就不进行创建
-      if (childrenWindow) return;
+      if (childrenWindow) {
+        childrenWindow = null;
+      }
 
       setTimeout(() => {
-        // 如果不存在就重新创建窗口
+        // 如果窗口不在
         if (!countFlag) {
           childrenWindow = createBrowserWindow(browserWindowOption(), '/');
         }

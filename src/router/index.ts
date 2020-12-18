@@ -2,8 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import main from '../views/main/index.vue';
 
-// declare type RouteRecordRaw = any;
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

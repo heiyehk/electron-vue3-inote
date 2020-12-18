@@ -1,12 +1,45 @@
 <template>
   <main class="page-setting">
-    <!-- TODO 设置信息 -->
     <div class="block">
       <p class="block-title">通用设置</p>
       <div class="block-content">
         <div class="block-line flex-items">
           <span>编辑和列表同步速度</span>
-          <Input style="width: 86px;margin-left: 10px;" v-model="configOptiosn.syncDelay" />
+          <Input
+            :max="1000"
+            :min="100"
+            readonly="readonly"
+            :control="true"
+            style="width: 86px;margin-left: 10px;"
+            v-model="exeConfig.syncDelay"
+            @on-change="changeDelay"
+          />
+          <Tick v-model="inputStatus" :duration="1000" />
+        </div>
+        <div class="block-line flex-items">
+          <span>开启提示</span>
+          <Switch styled="margin-left: 10px;" v-model="textTipsSwitchStatus" />
+        </div>
+        <div class="block-line flex-items">
+          <span>删除确认</span>
+          <Switch styled="margin-left: 10px;" v-model="autoHideSwitchStatus" />
+        </div>
+        <div class="block-line flex-items">
+          <span>自动缩小</span>
+          <Switch styled="margin-left: 10px;" v-model="narrowSwitchStatus" />
+        </div>
+        <div class="block-line flex-items">
+          <span>靠边隐藏</span>
+          <Switch styled="margin-left: 10px;" v-model="autoHideSwitchStatus" />
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <p class="block-title">同步设置</p>
+      <div class="block-content">
+        <div class="block-line flex-items">
+          <span>开启同步</span>
+          <Switch styled="margin-left: 10px;" v-model="autoHideSwitchStatus" />
         </div>
       </div>
     </div>
@@ -34,7 +67,7 @@
           <i class="iconfont icon-mail"></i>
           <span>heiyehk@foxmail.com</span>
           <a class="link-style link-margin" href="javascript:void(0)" @click="copyEmail">复制</a>
-          <Tick v-model="tickStatus" :duration="1000" />
+          <Tick v-model="copyStatus" :duration="1000" />
         </div>
         <div class="block-line flex-items gray-text">如果你有更好的建议或者动画效果，请联系我</div>
         <div class="block-line flex-items" style="margin-bottom: 0;">
@@ -43,6 +76,13 @@
         </div>
         <div class="block-line flex-items gray-text">
           检测到软件使用过程中出现异常，为了更好的使用，建议将错误日志发送至上面邮箱
+        </div>
+        <div class="block-line flex-items" style="margin-bottom: 0;">
+          <span>提交issue</span>
+          <a class="link-style link-margin flex-items" @click="openExternal(issueLink)">
+            <span>GitHub Issue</span>
+            <i class="iconfont icon-link"></i>
+          </a>
         </div>
       </div>
     </div>
@@ -56,6 +96,10 @@
           <p>Node.js: {{ appInfo.node }}</p>
           <p>V8: {{ appInfo.v8 }}</p>
           <p>Copyright (c) {{ currentYear }} heiyehk.</p>
+          <p class="link-style flex-items" style="margin-top: 10px;" @click="openExternal(githubLink)">
+            <span>github地址</span>
+            <i class="iconfont icon-link"></i>
+          </p>
         </div>
       </div>
     </div>
@@ -64,33 +108,41 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { remote, shell } from 'electron';
+import path from 'path';
+
 import Tick from '@/components/tick.vue';
 import Input from '@/components/input.vue';
-import { remote } from 'electron';
-import path from 'path';
+import Switch from '@/components/switch.vue';
+
+import { exeConfig } from '@/store/appConfig.state';
 
 export default defineComponent({
   components: {
     Tick,
-    Input
+    Input,
+    Switch
   },
   setup() {
     const mailInput = ref(null);
-    const tickStatus = ref(false);
+    const copyStatus = ref(false);
+    const inputStatus = ref(false);
+    const narrowSwitchStatus = ref(false);
+    const autoHideSwitchStatus = ref(false);
+    const textTipsSwitchStatus = ref(false);
     const appInfo = process.versions;
     const currentYear = new Date().getFullYear();
     const version = remote.app.getVersion();
     const getPath = remote.app.getPath;
     const exePath = getPath('exe');
     const appDataPath = getPath('appData');
-    const configOptiosn = reactive({
-      syncDelay: 100
-    });
+    const issueLink = 'https://github.com/heiyehk/electron-vue3-inote/issues';
+    const githubLink = 'https://github.com/heiyehk/electron-vue3-inote';
 
     const copyEmail = () => {
-      if (tickStatus.value) return;
-      tickStatus.value = true;
+      if (copyStatus.value) return;
+      copyStatus.value = true;
       ((mailInput.value as unknown) as HTMLInputElement).select();
       document.execCommand('copy');
     };
@@ -103,16 +155,33 @@ export default defineComponent({
       remote.shell.showItemInFolder(appDataPath);
     };
 
+    const changeDelay = () => {
+      inputStatus.value = true;
+      localStorage.setItem('appConfig', JSON.stringify(exeConfig));
+    };
+
+    const openExternal = (link: string) => {
+      shell.openExternal(link);
+    };
+
     return {
+      copyStatus,
+      inputStatus,
+      narrowSwitchStatus,
+      autoHideSwitchStatus,
+      textTipsSwitchStatus,
       version,
       copyEmail,
       mailInput,
-      tickStatus,
       appInfo,
       currentYear,
       openLogFolder,
       openAppDataFolder,
-      configOptiosn
+      exeConfig,
+      changeDelay,
+      issueLink,
+      githubLink,
+      openExternal
     };
   }
 });
@@ -133,6 +202,7 @@ export default defineComponent({
     &-title {
       font-size: 15px;
       margin-bottom: 15px;
+      font-weight: bold;
     }
     &:last-child {
       border-bottom: none;

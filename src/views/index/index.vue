@@ -390,6 +390,14 @@ export default defineComponent({
         transition: all 0.4s;
       }
     }
+    .black-content {
+      .update-time {
+        color: @gray-color;
+      }
+      .empty-content::before {
+        color: @gray-color;
+      }
+    }
     @keyframes removeFadeOut {
       0% {
         opacity: 1;

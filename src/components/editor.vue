@@ -2,6 +2,7 @@
   <div
     ref="editor"
     class="editor-layout module-editor empty-content"
+    :class="className"
     contenteditable
     v-html="modelValue"
     spellcheck="false"
@@ -22,10 +23,12 @@
 import { defineComponent, ref, onMounted, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
+import { exeConfig } from '@/store/appConfig.state';
 
 export default defineComponent({
   props: {
-    modelValue: String
+    modelValue: String,
+    className: String
   },
   emits: ['update:modelValue', 'on-input'],
   setup(props, { emit }) {
@@ -34,7 +37,6 @@ export default defineComponent({
     const editorContent = ref('');
 
     watch(props, () => {
-      console.log(props.modelValue);
       editorContent.value = props.modelValue as string;
     });
 
@@ -50,12 +52,12 @@ export default defineComponent({
     const changeEditorContent = debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
       emit('on-input', editorHtml);
-    });
+      // TODO 打开编辑窗口时，切换延迟后无更新
+    }, exeConfig.syncDelay);
 
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
       document.execCommand('insertText', false, pasteText);
-      console.log(editor.value);
     };
 
     return {
@@ -105,5 +107,9 @@ export default defineComponent({
   height: @iconSize;
   background-color: transparent;
   border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.black-content::before {
+  color: @gray-color;
 }
 </style>
