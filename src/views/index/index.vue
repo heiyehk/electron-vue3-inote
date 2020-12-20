@@ -28,7 +28,7 @@
         </ul>
       </template>
       <template v-else-if="emptyBlockState === 2">
-        <div class="index-empty-container flex-center">
+        <div class="index-empty-container flex-center" @dblclick="openNewWindow">
           <div class="index-empty-content">
             <div class="index-empty-content-text" style="margin-top: 0;margin-bottom: 40px;">双击此处，或</div>
             <div class="index-empty-content-img">
@@ -215,6 +215,12 @@ export default defineComponent({
       });
     };
 
+    const editorWinOptions = browserWindowOption('editor');
+    // 打开新窗口
+    const openNewWindow = () => {
+      createBrowserWindow(editorWinOptions, '/editor', false);
+    };
+
     return {
       fadein,
       viewNotesList,
@@ -222,7 +228,8 @@ export default defineComponent({
       getTime,
       getAll,
       emptyBlockState,
-      openEditorWindow
+      openEditorWindow,
+      openNewWindow
     };
   }
 });

@@ -32,11 +32,11 @@ export const throttle: ThrottleEvent = function(fn, delay = 500) {
 };
 
 // 创建窗口
-export const createBrowserWindow = (bwopt = {}, url = '/', devTools?: boolean): BrowserWindow | null => {
+export const createBrowserWindow = (bwopt = {}, url = '/', devTools = true): BrowserWindow | null => {
   let childrenWindow: BrowserWindow | null;
   childrenWindow = new remote.BrowserWindow(bwopt);
 
-  if (process.env.NODE_ENV === 'development' || devTools) {
+  if (process.env.NODE_ENV === 'development' && devTools) {
     childrenWindow.webContents.openDevTools();
   }
   childrenWindow.loadURL(`${winURL}/#${url}`);

@@ -23,7 +23,7 @@
 import { defineComponent, ref, onMounted, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
-import { exeConfig } from '@/store/appConfig.state';
+import { exeConfig } from '@/store/exeConfig.state';
 
 export default defineComponent({
   props: {

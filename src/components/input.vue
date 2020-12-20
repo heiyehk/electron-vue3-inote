@@ -1,7 +1,7 @@
 <template>
   <div class="hy-input flex">
     <div class="hy-input-box flex1">
-      <input maxlength="4" :readonly="readonly" v-model="inputValue" />
+      <input :maxlength="maxlength" :readonly="readonly" v-model="inputValue" @input="changeInput" />
     </div>
     <div class="hy-number-control flex" v-if="control">
       <div
@@ -27,10 +27,7 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   props: {
-    modelValue: {
-      type: Number,
-      default: 1000
-    },
+    modelValue: [String, Number],
     min: Number,
     max: Number,
     control: {
@@ -40,12 +37,22 @@ export default defineComponent({
     readonly: {
       type: [Boolean, String],
       default: false
-    }
+    },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    maxlength: String
   },
-  emits: ['update:modelValue', 'on-change'],
+  emits: ['update:modelValue', 'on-change', 'on-input'],
   setup(props, { emit }) {
-    let inputValue = ref('1000');
-    inputValue.value = String(props.modelValue);
+    let inputValue = ref();
+
+    if (props.type === 'number') {
+      inputValue.value = String(props.modelValue);
+    } else {
+      inputValue.value = props.modelValue || '';
+    }
 
     const calculateDelay = (type: 'add' | 'sub') => {
       const numberInput = Number(inputValue.value);
@@ -66,9 +73,14 @@ export default defineComponent({
       emit('on-change', afterNumber);
     };
 
+    const changeInput = () => {
+      emit('on-input', inputValue.value);
+    };
+
     return {
       inputValue,
-      calculateDelay
+      calculateDelay,
+      changeInput
     };
   }
 });
