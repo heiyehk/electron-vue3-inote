@@ -43,6 +43,7 @@ export const createBrowserWindow = (bwopt = {}, url = '/', devTools = true): Bro
   childrenWindow.on('closed', () => {
     childrenWindow = null;
   });
+  childrenWindow.webContents.openDevTools();
   return childrenWindow;
 };
 

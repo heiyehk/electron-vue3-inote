@@ -50,20 +50,20 @@ export default defineComponent({
     const uid = ref('');
     const currentBgClassName = ref('');
     const editContent = ref('');
-    const currentWindow = remote.getCurrentWindow();
-    let currentWindowSize = currentWindow.getSize();
+    // const currentWindow = remote.getCurrentWindow();
+    // let currentWindowSize = currentWindow.getSize();
 
-    currentWindow.on('resized', () => {
-      currentWindowSize = currentWindow.getSize();
-    });
+    // currentWindow.on('resized', () => {
+    //   currentWindowSize = currentWindow.getSize();
+    // });
 
-    currentWindow.on('blur', () => {
-      currentWindow.setSize(250, 48);
-    });
+    // currentWindow.on('blur', () => {
+    //   currentWindow.setSize(250, 48);
+    // });
 
-    currentWindow.on('focus', () => {
-      currentWindow.setSize(currentWindowSize[0], currentWindowSize[1]);
-    });
+    // currentWindow.on('focus', () => {
+    //   currentWindow.setSize(currentWindowSize[0], currentWindowSize[1]);
+    // });
 
     onBeforeMount(() => {
       initEditorContent();
@@ -161,7 +161,7 @@ export default defineComponent({
             ipcRenderer.send('updateNoteItem_className', {
               uid: uid.value,
               className: currentBgClassName.value
-            } as UpdateNote);
+            } as QueryDB<DBNotes>);
           });
       }
       showOptionsStatus.value = false;
@@ -189,7 +189,7 @@ export default defineComponent({
           ipcRenderer.send('updateNoteItem_content', {
             uid: uid.value,
             content
-          } as UpdateNote);
+          } as QueryDB<DBNotes>);
         });
     };
 

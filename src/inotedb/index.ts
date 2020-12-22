@@ -2,8 +2,6 @@ import Datastore from 'nedb';
 import path from 'path';
 import { remote } from 'electron';
 
-type BackPromise<CB> = Promise<CB | null>;
-
 /**
  * @see https://www.npmjs.com/package/nedb
  */
@@ -56,38 +54,32 @@ class INoteDB<G = any> {
    * 如果使用本地存储，索引也将保存在数据文件中，当第二次加载数据库时，索引也将自动被添加。
    * 如果加载一个已经有索引的数据库，删除索引将不起任何作用。
    */
-  initEnsureIndex(fieldName = 'uid'): void {
+  initEnsureIndex(fieldName = 'uid') {
     this._db.ensureIndex({ fieldName, unique: true }, (error: Error | null) => {
       if (error) console.error(error);
     });
   }
 
-  insert<T extends G>(doc: T): BackPromise<T> {
+  insert<T extends G>(doc: T) {
     return new Promise((resolve: (value: T) => void) => {
       this._db.insert(doc, (error: Error | null, document: T) => {
         if (!error) resolve(document);
       });
-    }).catch(err => {
-      console.error(err.message);
-      return null;
     });
   }
 
   /**
    * db.find(query)
-   * @param {T} query： object类型，查询条件，可以使用空对象{}。
+   * @param {Query<T>} query： object类型，查询条件，可以使用空对象{}。
    * 支持使用比较运算符($lt, $lte, $gt, $gte, $in, $nin, $ne)
    * 逻辑运算符($or, $and, $not, $where)
    * 正则表达式进行查询。
    */
-  find<T extends G>(query: T): BackPromise<T[]> {
-    return new Promise((resolve: (value: T[]) => void) => {
-      this._db.find(query, (error: Error | null, document: T[]) => {
-        if (!error) resolve(document);
+  find(query: QueryDB<DBNotes>) {
+    return new Promise((resolve: (value: DBNotes[]) => void) => {
+      this._db.find(query, (error: Error | null, document: DBNotes[]) => {
+        if (!error) resolve(document as DBNotes[]);
       });
-    }).catch(err => {
-      console.error(err.message);
-      return null;
     });
   }
 
@@ -95,24 +87,21 @@ class INoteDB<G = any> {
    * db.findOne(query)
    * @param query
    */
-  findOne(query: Record<string, any>) {
+  findOne(query: QueryDB<DBNotes>) {
     return new Promise((resolve: (value: DBNotes) => void) => {
       this._db.findOne(query, (error: Error | null, document) => {
         if (!error) resolve(document as DBNotes);
       });
-    }).catch(err => {
-      console.error(err.message);
-      return null;
     });
   }
 
   /**
    * db.remove(query, options)
-   * @param {T} query
+   * @param {Record<keyof DBNotes, any>} query
    * @param {Nedb.RemoveOptions} options
    * @return {BackPromise<number>}
    */
-  remove<T extends G>(query: T, options?: Nedb.RemoveOptions) {
+  remove(query: QueryDB<DBNotes>, options?: Nedb.RemoveOptions) {
     return new Promise((resolve: (value: number) => void) => {
       if (options) {
         this._db.remove(query, options, (error: Error | null, n: number) => {
@@ -123,13 +112,10 @@ class INoteDB<G = any> {
           if (!error) resolve(n);
         });
       }
-    }).catch(err => {
-      console.error(err.message);
-      return null;
     });
   }
 
-  update<T extends G>(query: T, updateQuery: T, options: Nedb.UpdateOptions = {}): BackPromise<T> {
+  update<T extends G>(query: T, updateQuery: T, options: Nedb.UpdateOptions = {}) {
     return new Promise((resolve: (value: T) => void) => {
       this._db.update(
         query,
@@ -139,9 +125,6 @@ class INoteDB<G = any> {
           if (!error) resolve(affectedDocuments);
         }
       );
-    }).catch(err => {
-      console.error(err.message);
-      return null;
     });
   }
 }

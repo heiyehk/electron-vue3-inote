@@ -32,7 +32,7 @@
           <div class="index-empty-content">
             <div class="index-empty-content-text" style="margin-top: 0;margin-bottom: 40px;">双击此处，或</div>
             <div class="index-empty-content-img">
-              <img src="../../assets/empty-content.svg" />
+              <img src="../assets/empty-content.svg" />
             </div>
             <div class="index-empty-content-text">点击上方“+”按钮创建</div>
             <div class="index-empty-content-text" style="margin-top: 4px;">新的便笺内容</div>
@@ -41,19 +41,38 @@
       </template>
     </section>
   </main>
+  <MessageBox v-model="deleteMessageShow" @on-confirm="onConfirm">
+    <p class="text">是否删除此便笺</p>
+    <div style="margin-top: 10px;">
+      <label for="checkbox" class="flex-items">
+        <input id="checkbox" type="checkbox" v-model="deleteTipChecked" />
+        <span style="margin-left: 6px;font-size: 15px;">不在询问</span>
+      </label>
+    </div>
+  </MessageBox>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
+import { defineComponent, onBeforeMount, Ref, ref } from 'vue';
 import { remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
+
+import CreateRightClick from '@/components/rightClick';
+import MessageBox from '@/components/messageBox.vue';
+
 import { browserWindowOption } from '@/config';
 import inotedb from '@/inotedb';
-import CreateRightClick from '@/components/rightClick';
 import { createBrowserWindow } from '@/utils';
+import { exeConfig } from '@/store/exeConfig.state';
 
 export default defineComponent({
+  components: {
+    MessageBox
+  },
   setup() {
+    const deleteMessageShow = ref(false);
+    const deleteCurrentUid = ref('');
+    let deleteTipChecked: Ref<boolean> | null = ref(false);
     // TODO
     // 进来的时候判断是否已经打开，使用窗口句柄判断
     // ipcMain
@@ -139,26 +158,21 @@ export default defineComponent({
           className: 'error-bg',
           iconName: ['iconfont', 'icon-delete'],
           handler: () => {
-            /**
-             * deleteActiveItem_{uid}
-             * 此处通信便笺编辑
-             * 场景：如果打开窗口就进行关闭
-             */
-            ipcRenderer.send(`deleteActiveItem_${uid}`);
-            removeDbItem(uid);
-            inotedb.remove({
-              uid
-            });
+            deleteCurrentUid.value = uid;
+            if (exeConfig.switchStatus.deleteTip) {
+              deleteMessageShow.value = true;
+            } else {
+              onConfirm();
+            }
           }
         }
       ]);
     };
 
-    const removeDbItem = (uid: string) => {
+    const removeNoteItem = (uid: string) => {
       const rntIndex = viewNotesList.value.findIndex(x => x.uid === uid);
       if (rntIndex === -1) return;
       viewNotesList.value[rntIndex].remove = true;
-      console.log(viewNotesList.value.length);
       setTimeout(() => {
         viewNotesList.value.splice(rntIndex, 1);
         if (!viewNotesList.value.length) {
@@ -181,7 +195,7 @@ export default defineComponent({
        * updateNoteItem_className
        * 更新背景样式
        */
-      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: UpdateNote) => {
+      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: QueryDB<DBNotes>) => {
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
         if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].className = updateItem.className as string;
@@ -191,7 +205,7 @@ export default defineComponent({
        * updateNoteItem_content
        * 更新content内容
        */
-      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: UpdateNote) => {
+      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: QueryDB<DBNotes>) => {
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
         if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].content = updateItem.content as string;
@@ -202,7 +216,7 @@ export default defineComponent({
        * 获取便笺编辑关闭后如果是空就进行删除
        */
       remote.ipcMain.on('removeEmptyNoteItem', async (event, uid: string) => {
-        removeDbItem(uid);
+        removeNoteItem(uid);
       });
 
       /**
@@ -221,6 +235,28 @@ export default defineComponent({
       createBrowserWindow(editorWinOptions, '/editor', false);
     };
 
+    const onConfirm = () => {
+      if (deleteTipChecked?.value) {
+        exeConfig.switchStatus.deleteTip = false;
+        deleteTipChecked = null;
+      }
+      /**
+       * deleteActiveItem_{uid}
+       * 此处通信便笺编辑
+       * 场景：如果打开窗口就进行关闭
+       */
+      ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
+      removeNoteItem(deleteCurrentUid.value);
+      console.log(deleteCurrentUid.value);
+      inotedb
+        .remove({
+          uid: deleteCurrentUid.value
+        })
+        .finally(() => {
+          deleteCurrentUid.value = '';
+        });
+    };
+
     return {
       fadein,
       viewNotesList,
@@ -229,7 +265,11 @@ export default defineComponent({
       getAll,
       emptyBlockState,
       openEditorWindow,
-      openNewWindow
+      openNewWindow,
+      deleteMessageShow,
+      onConfirm,
+      exeConfig,
+      deleteTipChecked
     };
   }
 });

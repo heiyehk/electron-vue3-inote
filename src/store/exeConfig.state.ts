@@ -3,7 +3,7 @@ import { reactive, watch } from 'vue';
 const exeConfigLocal = localStorage.getItem('exeConfig');
 
 export let exeConfig = reactive({
-  syncDelay: 100,
+  syncDelay: 1000,
   serverAddress: '',
   serverToken: '',
   switchStatus: {
@@ -41,6 +41,5 @@ if (exeConfigLocal) {
 }
 
 watch(exeConfig, e => {
-  console.log('设置改动=>', e);
   localStorage.setItem('exeConfig', JSON.stringify(e));
 });

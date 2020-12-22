@@ -29,9 +29,7 @@ export default defineComponent({
       routeName.value = useRoute().name;
     });
 
-    const keepAlive = ref(true);
     return {
-      keepAlive,
       routeName
     };
   }

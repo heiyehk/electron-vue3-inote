@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import main from '../views/main/index.vue';
+import main from '../views/main.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/',
         name: 'index',
-        component: () => import('../views/index/index.vue'),
+        component: () => import('../views/index.vue'),
         meta: {
           title: 'I便笺'
         }
@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/editor',
         name: 'editor',
-        component: () => import('../views/editor/index.vue'),
+        component: () => import('../views/editor.vue'),
         meta: {
           title: ''
         }
@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/setting',
         name: 'setting',
-        component: () => import('../views/setting/index.vue'),
+        component: () => import('../views/setting.vue'),
         meta: {
           title: '设置'
         }

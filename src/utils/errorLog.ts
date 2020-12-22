@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import fs from 'fs-extra';
 import os from 'os';
 import { remote } from 'electron';
+import path from 'path';
 
 function getShortStack(stack?: string): string {
   const splitStack = stack?.split('\n    ');
@@ -22,6 +23,8 @@ function getShortStack(stack?: string): string {
   // 转换string
   return newStack.join('\n    ');
 }
+
+export const errorLogPath = path.join(remote.app.getPath('exe'), '../inoteError.log');
 
 export default function(error: unknown, vm: ComponentPublicInstance | null, info: string): void {
   const { message, stack } = error as Error;
@@ -56,7 +59,7 @@ export default function(error: unknown, vm: ComponentPublicInstance | null, info
   };
 
   if (process.env.NODE_ENV === 'production') {
-    fs.writeFileSync('./inoteError.log', JSON.stringify(errorLog) + '\n', { flag: 'a' });
+    fs.writeFileSync(errorLogPath, JSON.stringify(errorLog) + '\n', { flag: 'a' });
   } else {
     console.log(errorInfo.errorStack);
   }

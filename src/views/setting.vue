@@ -111,7 +111,7 @@
             <a class="link-style link-margin" @click="openLogFolder">打开错误日志</a>
           </div>
           <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
-            检测到软件使用过程中出现异常，为了更好的使用，建议将错误日志发送至上面邮箱
+            如果遇到问题或者bug，为了更好的使用，建议联系上面邮箱
           </div>
         </div>
         <div class="block-line flex-items">
@@ -147,13 +147,14 @@
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
 import { remote, shell } from 'electron';
-import path from 'path';
+import fs from 'fs-extra';
 
 import Tick from '@/components/tick.vue';
 import Input from '@/components/input.vue';
 import Switch from '@/components/switch.vue';
 
 import { exeConfig } from '@/store/exeConfig.state';
+import { errorLogPath } from '@/utils/errorLog';
 
 export default defineComponent({
   components: {
@@ -186,9 +187,7 @@ export default defineComponent({
     const appInfo = process.versions;
     const currentYear = new Date().getFullYear();
     const version = remote.app.getVersion();
-    const getPath = remote.app.getPath;
-    const exePath = getPath('exe');
-    const appDataPath = getPath('appData');
+    const appDataPath = remote.app.getPath('appData');
     const issueLink = 'https://github.com/heiyehk/electron-vue3-inote/issues';
     const githubLink = 'https://github.com/heiyehk/electron-vue3-inote';
 
@@ -200,7 +199,12 @@ export default defineComponent({
     };
 
     const openLogFolder = () => {
-      remote.shell.showItemInFolder(path.join(exePath, '../inoteError.log'));
+      if (fs.existsSync(errorLogPath)) {
+        remote.shell.showItemInFolder(errorLogPath);
+      } else {
+        // TODO 没有错误日志就弹窗提示
+        alert('1');
+      }
     };
 
     const openAppDataFolder = () => {

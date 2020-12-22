@@ -16,11 +16,16 @@ export default defineComponent({
     duration: {
       type: Number,
       default: 2000
+    },
+    hide: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     onBeforeUpdate(() => {
+      if (!props.hide) return;
       // 防止emit更新数据的时候继续刷新
       if (props.modelValue) {
         setTimeout(() => {

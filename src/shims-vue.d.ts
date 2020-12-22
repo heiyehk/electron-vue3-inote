@@ -33,11 +33,6 @@ interface ListDbNotes extends DBNotes {
   remove?: boolean;
 }
 
-/**
- * ipc通信传输更新内容
- */
-interface UpdateNote {
-  uid: string;
-  content?: string;
-  className?: string;
-}
+type QueryDB<T> = {
+  [K in keyof T]?: T[K];
+};
