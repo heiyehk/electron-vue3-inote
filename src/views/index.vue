@@ -1,9 +1,9 @@
 <template>
   <main class="page-index">
     <div class="search-box">
-      <div class="search flex-items">
+      <div class="search flex-items" @click="aa">
         <div class="search-input flex1">
-          <input type="text" placeholder="搜索..." />
+          <input v-model="searchWord" type="text" placeholder="搜索..." @input="searchDb" />
         </div>
         <button class="search-button">
           <i class="iconfont icon-search"></i>
@@ -73,9 +73,6 @@ export default defineComponent({
     const deleteMessageShow = ref(false);
     const deleteCurrentUid = ref('');
     let deleteTipChecked: Ref<boolean> | null = ref(false);
-    // TODO
-    // 进来的时候判断是否已经打开，使用窗口句柄判断
-    // ipcMain
     inotedb.refreshDB();
     const fadein = ref(false);
     let viewNotesList = ref([] as ListDbNotes[]);
@@ -148,14 +145,20 @@ export default defineComponent({
           once: true,
           iconName: ['iconfont', 'icon-newopen'],
           handler: () => {
-            // TODO 判断是否打开，否则就聚焦显示
-            openEditorWindow(uid);
+            let countFlag = false;
+            ipcRenderer.send(`${uid}_toOpen`);
+            ipcRenderer.on(`get_${uid}_toOpen`, () => {
+              countFlag = true;
+              return;
+            });
+            setTimeout(() => {
+              if (!countFlag) openEditorWindow(uid);
+            }, 100);
           }
         },
         {
           text: '删除笔记',
           once: true,
-          className: 'error-bg',
           iconName: ['iconfont', 'icon-delete'],
           handler: () => {
             deleteCurrentUid.value = uid;
@@ -227,12 +230,49 @@ export default defineComponent({
         remote.getCurrentWindow().show();
         event.sender.send('getWhetherToOpen');
       });
+
+      // 失去焦点之后删除右键
+      remote.getCurrentWindow().on('blur', () => {
+        rightClick.remove();
+      });
     };
 
     const editorWinOptions = browserWindowOption('editor');
     // 打开新窗口
     const openNewWindow = () => {
       createBrowserWindow(editorWinOptions, '/editor', false);
+    };
+
+    const toRegExp = (str: string) => {
+      if (!str) return new RegExp('');
+      const reg = '?!.\\|{}[]+-$^&*()';
+      let regexp = '';
+      for (const char of str) {
+        if (reg.includes(char)) {
+          if (char === '\\') {
+            regexp += '\\/';
+            continue;
+          }
+          regexp += `\\${char}`;
+        } else {
+          regexp += char;
+        }
+      }
+      return new RegExp(regexp);
+    };
+
+    const searchWord = ref('');
+    const searchDb = () => {
+      inotedb._db.find(
+        {
+          content: {
+            $regex: toRegExp(searchWord.value)
+          }
+        },
+        (err: Error | null, doc: any) => {
+          console.log(doc);
+        }
+      );
     };
 
     const onConfirm = () => {
@@ -247,7 +287,6 @@ export default defineComponent({
        */
       ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
       removeNoteItem(deleteCurrentUid.value);
-      console.log(deleteCurrentUid.value);
       inotedb
         .remove({
           uid: deleteCurrentUid.value
@@ -269,7 +308,9 @@ export default defineComponent({
       deleteMessageShow,
       onConfirm,
       exeConfig,
-      deleteTipChecked
+      deleteTipChecked,
+      searchWord,
+      searchDb
     };
   }
 });
@@ -322,21 +363,6 @@ export default defineComponent({
   }
 }
 
-// @keyframes fadein {
-//   0% {
-//     position: relative;
-//     top: 60px;
-//   }
-//   100% {
-//     position: relative;
-//     top: 0;
-//   }
-// }
-
-// .fadein {
-//   animation: fadein 0.6s;
-// }
-
 // 减去搜索和外边距高度
 .content-container {
   height: calc(100% - 58px);
@@ -362,10 +388,12 @@ export default defineComponent({
         opacity: 1;
         min-height: 30px;
         padding: 24px 14px 14px;
+        // background-color: @background-sub-color;
       }
     }
     .empty-item {
       animation: fadeintop 0.6s forwards;
+      // background-color: @background-sub-color;
       transition: all 0.4s;
     }
     li {
@@ -408,7 +436,6 @@ export default defineComponent({
           word-break: break-all;
         }
       }
-      // hover时候的遮罩
       &::before {
         content: '';
         position: absolute;
@@ -470,11 +497,6 @@ export default defineComponent({
       animation: removeFadeOut 0.4s forwards;
     }
   }
-}
-
-/deep/ .error-bg {
-  background-color: red;
-  color: @white-color;
 }
 
 .index-empty-container {

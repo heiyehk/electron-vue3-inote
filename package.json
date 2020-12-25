@@ -14,17 +14,13 @@
     "@types/nedb": "^1.8.11",
     "core-js": "^3.7.0",
     "dayjs": "^1.9.7",
-    "electron-updater": "^4.3.5",
     "fs-extra": "^9.0.1",
     "nedb": "^1.8.0",
     "style-resources-loader": "^1.4.1",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue": "3.0.4",
     "vue-class-component": "^8.0.0-0",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
-    "vue-loader-v16": "^16.0.0-beta.5.4",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.8.2",
@@ -33,7 +29,6 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",

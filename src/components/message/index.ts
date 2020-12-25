@@ -1,35 +1,17 @@
-import { createApp, h, App, VNode, RendererElement, RendererNode, reactive, Ref } from 'vue';
-
-type RenderVNode = VNode<
-  RendererNode,
-  RendererElement,
-  {
-    [key: string]: any;
-  }
->;
+import { createApp, h, App } from 'vue';
+import './index.css';
 
 type MessageType = 'success' | 'info' | 'error' | 'warning';
 
-interface MessageState {
-  show: boolean;
-  text: string;
-  type: MessageType;
-}
-
-const messageState = reactive({
-  show: false,
-  text: '',
-  type: 'info'
-} as MessageState);
-
 let messageApp: App<Element> | null = null;
 let messageEl: HTMLDivElement | null = null;
+let timeouter: NodeJS.Timeout | null;
 
 const render = (text: string, type: MessageType) => {
   return h(
     'div',
     {
-      class: ['hy-message', `hy-message-${type}`, 'flex-items']
+      class: ['hy-message-content', 'flex-items', type ? `hy-message-${type}` : '']
     },
     [
       h('i', {
@@ -38,7 +20,7 @@ const render = (text: string, type: MessageType) => {
       h(
         'span',
         {
-          class: 'hy-message'
+          class: 'hy-message-text'
         },
         text
       )
@@ -46,22 +28,34 @@ const render = (text: string, type: MessageType) => {
   );
 };
 
-const useMessage = (text: string, type: MessageType): void => {
-  if (!messageApp) {
-    messageApp = createApp({
-      setup() {
-        return () => {
-          return render(text, type);
-        };
-      }
-    });
+const useMessage = (text: string, type: MessageType = 'info', duration = 2800): void => {
+  messageApp = null;
+  messageApp = createApp({
+    setup() {
+      return () => {
+        return render(text, type);
+      };
+    }
+  });
+  if (timeouter) {
+    clearTimeout(timeouter as NodeJS.Timeout);
+    timeouter = null;
   }
   if (!messageEl) {
     messageEl = document.createElement('div');
-    messageEl.id = 'hyMessage';
     document.body.appendChild(messageEl);
-    messageApp.mount('#hyMessage');
+    messageEl.classList.add('hy-message');
+    messageApp.mount('.hy-message');
   }
+  timeouter = setTimeout(() => {
+    (messageEl as HTMLDivElement).style.cssText = 'top: 20px;opacity: 0;';
+    setTimeout(() => {
+      messageEl?.remove();
+      messageEl = null;
+      clearTimeout(timeouter as NodeJS.Timeout);
+      timeouter = null;
+    }, 200);
+  }, duration);
 };
 
 export default useMessage;

@@ -30,19 +30,21 @@
           <span>删除确认</span>
           <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.deleteTip" />
         </div>
-        <div class="block-line">
+        <div class="block-line disabled-line">
           <div class="flex-items">
+            <div class="undeveloped">(未开发)</div>
             <span>自动缩小</span>
-            <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoNarrow" />
+            <Switch disabled styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoNarrow" />
           </div>
           <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
             空闲时自动最小化
           </div>
         </div>
-        <div class="block-line">
+        <div class="block-line disabled-line">
           <div class="flex-items">
+            <div class="undeveloped">(未开发)</div>
             <span>靠边隐藏</span>
-            <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoHide" />
+            <Switch disabled styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoHide" />
           </div>
           <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
             靠近屏幕边缘的时候自动隐藏
@@ -146,7 +148,7 @@
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
-import { remote, shell } from 'electron';
+import { remote } from 'electron';
 import fs from 'fs-extra';
 
 import Tick from '@/components/tick.vue';
@@ -155,6 +157,7 @@ import Switch from '@/components/switch.vue';
 
 import { exeConfig } from '@/store/exeConfig.state';
 import { errorLogPath } from '@/utils/errorLog';
+import useMessage from '@/components/message';
 
 export default defineComponent({
   components: {
@@ -202,8 +205,7 @@ export default defineComponent({
       if (fs.existsSync(errorLogPath)) {
         remote.shell.showItemInFolder(errorLogPath);
       } else {
-        // TODO 没有错误日志就弹窗提示
-        alert('1');
+        useMessage('ヾ(≧▽≦*)o暂时没有bug', 'success');
       }
     };
 
@@ -211,12 +213,8 @@ export default defineComponent({
       remote.shell.showItemInFolder(appDataPath);
     };
 
-    const changeInput = (text: string) => {
-      console.log(text);
-    };
-
     const openExternal = (link: string) => {
-      shell.openExternal(link);
+      remote.shell.openExternal(link);
     };
 
     return {
@@ -230,7 +228,6 @@ export default defineComponent({
       openLogFolder,
       openAppDataFolder,
       exeConfig,
-      changeInput,
       issueLink,
       githubLink,
       openExternal
@@ -274,6 +271,17 @@ export default defineComponent({
     &:last-child {
       margin-bottom: 0 !important;
       transition: all 0.4s;
+    }
+    .undeveloped {
+      display: none;
+    }
+  }
+
+  .disabled-line {
+    color: @text-sub-color;
+    .undeveloped {
+      display: block;
+      margin-right: 20px;
     }
   }
 

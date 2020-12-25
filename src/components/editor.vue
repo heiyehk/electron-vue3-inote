@@ -4,10 +4,10 @@
     class="editor-layout module-editor empty-content"
     :class="className"
     contenteditable
-    v-html="modelValue"
+    v-html="editorContent"
     spellcheck="false"
     placeholder="记笔记..."
-    @paste.prevent="pasteHa"
+    @paste.prevent="paste"
     @input="changeEditorContent"
   ></div>
   <section class="bottom-editor-tools">
@@ -17,32 +17,44 @@
       </button>
     </template>
   </section>
+  <div ref="test"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue';
+import { defineComponent, onMounted, ref, Ref, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
 import { exeConfig } from '@/store/exeConfig.state';
 
 export default defineComponent({
   props: {
-    modelValue: String,
+    content: String,
     className: String
   },
-  emits: ['update:modelValue', 'on-input'],
+  emits: ['on-input'],
   setup(props, { emit }) {
-    const editor = ref();
+    let editor: Ref<HTMLDivElement | null> = ref(null);
     const bottomIcons = editorIcons;
-    const editorContent = ref('');
+    const editorContent: Ref<string | undefined> = ref('');
 
-    watch(props, () => {
-      editorContent.value = props.modelValue as string;
+    watch(props, nv => {
+      if (!editorContent.value) {
+        editorContent.value = nv.content;
+      }
     });
 
     onMounted(() => {
-      editor.value.focus();
+      focus();
     });
+
+    const focus = () => {
+      const range = document.createRange();
+      range.selectNodeContents(editor.value as HTMLDivElement);
+      range.collapse(false);
+      const selecton = window.getSelection() as Selection;
+      selecton.removeAllRanges();
+      selecton.addRange(range);
+    };
 
     const editorIconHandle = (e: Event, name: string) => {
       e.preventDefault();
@@ -52,11 +64,11 @@ export default defineComponent({
     const changeEditorContent = debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
       emit('on-input', editorHtml);
-      // TODO 打开编辑窗口时，切换延迟后无更新
     }, exeConfig.syncDelay);
 
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
+      console.log(pasteText);
       document.execCommand('insertText', false, pasteText);
     };
 

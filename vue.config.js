@@ -19,7 +19,7 @@ module.exports = {
       nodeIntegration: true,
       builderOptions: {
         productName: 'I便笺',
-        appId: 'test.com',
+        appId: 'com.inote.heiyehk',
         copyright: 'heiyehk',
         compression: 'store', // "store" | "normal"| "maximum" 打包压缩情况(store 相对较快)，store 39749kb, maximum 39186kb
         // directories: {
@@ -28,9 +28,6 @@ module.exports = {
         win: {
           // icon: 'xxx/icon.ico',
           target: ['nsis', 'zip']
-        },
-        mac: {
-          target: ['dmg', 'zip']
         },
         nsis: {
           oneClick: false, // 一键安装

@@ -65,7 +65,7 @@ class CreateRightClick {
               // vue3.x中简化了render，直接onclick即可，onClick也可以
               onclick: () => {
                 // 如果只是一次，那么点击之后直接关闭
-                if (item.once) this.removeRightClickBox();
+                if (item.once) this.remove();
                 return item.handler();
               }
             },
@@ -114,9 +114,11 @@ class CreateRightClick {
     this.rightClickElBox.style.cssText = cssText;
   }
 
-  removeRightClickBox(): void {
-    this.rightClickElBox?.remove();
-    this.rightClickElBox = null;
+  remove(): void {
+    if (this.rightClickElBox) {
+      this.rightClickElBox.remove();
+      this.rightClickElBox = null;
+    }
   }
 
   removeRightClickHandler(): void {
@@ -124,7 +126,7 @@ class CreateRightClick {
       if (this.rightClickElBox) {
         const currentEl = e.target as Node;
         if (!currentEl || !this.rightClickElBox.contains(currentEl)) {
-          this.removeRightClickBox();
+          this.remove();
         }
       }
     });
@@ -136,7 +138,7 @@ class CreateRightClick {
    * @param menu
    */
   useRightClick = (event: MouseEvent, menu: MenuOptions[] = []): void => {
-    this.removeRightClickBox();
+    this.remove();
     if (!this.rightClickElBox || !this.rightClickEl) {
       const createRender = this.render(menu);
       this.rightClickEl = createApp({

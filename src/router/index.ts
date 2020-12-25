@@ -41,6 +41,4 @@ const router = createRouter({
   routes
 });
 
-// TODO 自动推导meta类型
-
 export default router;

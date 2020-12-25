@@ -21,7 +21,7 @@
   </div>
   <main class="page-editor" :class="currentBgClassName">
     <section class="editor-container">
-      <Editor v-model="editContent" :className="currentBgClassName" @on-input="changeEditContent" />
+      <Editor :content="editContent" :className="currentBgClassName" @on-input="changeEditContent" />
     </section>
   </main>
 </template>
@@ -50,24 +50,10 @@ export default defineComponent({
     const uid = ref('');
     const currentBgClassName = ref('');
     const editContent = ref('');
-    // const currentWindow = remote.getCurrentWindow();
-    // let currentWindowSize = currentWindow.getSize();
-
-    // currentWindow.on('resized', () => {
-    //   currentWindowSize = currentWindow.getSize();
-    // });
-
-    // currentWindow.on('blur', () => {
-    //   currentWindow.setSize(250, 48);
-    // });
-
-    // currentWindow.on('focus', () => {
-    //   currentWindow.setSize(currentWindowSize[0], currentWindowSize[1]);
-    // });
 
     onBeforeMount(() => {
       initEditorContent();
-      afterDeleteIpc();
+      afterIpc();
     });
 
     const initEditorContent = () => {
@@ -216,9 +202,13 @@ export default defineComponent({
      * 此处通信便笺列表，如果接收到删除的消息就退出
      * 场景：如果打开窗口就进行关闭
      */
-    const afterDeleteIpc = () => {
+    const afterIpc = () => {
       remote.ipcMain.once(`deleteActiveItem_${uid.value}`, () => {
         transitCloseWindow();
+      });
+      remote.ipcMain.on(`${uid.value}_toOpen`, e => {
+        remote.getCurrentWindow().show();
+        e.sender.send(`get_${uid.value}_toOpen`);
       });
     };
 

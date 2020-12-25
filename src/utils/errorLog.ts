@@ -4,18 +4,19 @@ import fs from 'fs-extra';
 import os from 'os';
 import { remote } from 'electron';
 import path from 'path';
+import useMessage from '@/components/message';
 
 function getShortStack(stack?: string): string {
   const splitStack = stack?.split('\n    ');
   if (!splitStack) return '';
   const newStack: string[] = [];
   for (const line of splitStack) {
-    // 过滤非程序错误
+    // 其他信息
     if (line.includes('bundler')) continue;
 
-    // 程序错误，剔除不必要的信息，只保留错误文件信息
+    // 只保留错误文件信息
     if (line.includes('?!.')) {
-      newStack.push(line.replace(/\.\/node_modules\/.+\?!/, ''));
+      newStack.push(line.replace(/webpack-internal:\/\/\/\.\/node_modules\/.+\?!/, ''));
     } else {
       newStack.push(line);
     }
@@ -57,6 +58,8 @@ export default function(error: unknown, vm: ComponentPublicInstance | null, info
     browser: browserInfo,
     screen: { width, height }
   };
+
+  useMessage('程序出现异常', 'error');
 
   if (process.env.NODE_ENV === 'production') {
     fs.writeFileSync(errorLogPath, JSON.stringify(errorLog) + '\n', { flag: 'a' });

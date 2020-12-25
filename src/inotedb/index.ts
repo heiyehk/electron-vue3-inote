@@ -41,25 +41,6 @@ class INoteDB<G = any> {
     this._db = this.backDatastore;
   }
 
-  /**
-   *
-   * @param fieldName fieldName(必须): 索引字段，使用“.”给嵌套的字段加索引。
-   * @param unique(可选，默认false): 字段唯一性约束。
-   * 注意：唯一性约束会增加为两个文档中没有定义的字段添加索引的错误。
-   * @param sparse(可选，默认false): 不能为没有定义的字段加索引。
-   * 如果接受给多个文档中没有定义的字段添加索引，给需要该配置参数与unique一起使用。
-   * @param expireAfterSeconds(可选，秒数): TTL索引，设置自动过期时间。
-   * @param 删除索引： db.removeIndex(fieldName, cb)
-   * 注意：_id字段会自动加索引和唯一性约束，不必再为它使用ensureIndex。
-   * 如果使用本地存储，索引也将保存在数据文件中，当第二次加载数据库时，索引也将自动被添加。
-   * 如果加载一个已经有索引的数据库，删除索引将不起任何作用。
-   */
-  initEnsureIndex(fieldName = 'uid') {
-    this._db.ensureIndex({ fieldName, unique: true }, (error: Error | null) => {
-      if (error) console.error(error);
-    });
-  }
-
   insert<T extends G>(doc: T) {
     return new Promise((resolve: (value: T) => void) => {
       this._db.insert(doc, (error: Error | null, document: T) => {

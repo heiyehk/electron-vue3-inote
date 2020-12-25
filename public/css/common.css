@@ -1,3 +1,4 @@
+/* 空元素显示的内容 */
 .empty-content:empty::before {
   /* content: attr(placeholder); */
   content: '记笔记...';
@@ -6,11 +7,13 @@
   line-height: 21px;
 }
 
+/* 隐藏滚动条 */
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
+/* 设置ol显示格式 */
 .module-editor ol {
   counter-reset:sectioncounter;
 }
@@ -53,6 +56,7 @@
   list-style: disc inside;
 }
 
+/* 常用flex布局 */
 .flex {
   display: flex;
 }
@@ -115,6 +119,7 @@ body,
   background-color: #fff;
 }
 
+/* 软件阴影 */
 .app {
   box-shadow: 0 0 4px rgb(185, 185, 185);
 }
@@ -147,6 +152,7 @@ body {
   }
 }
 
+/* 进入和退出动效 */
 .app-show {
   animation: fadein 0.4s forwards;
   transform: scale(1) !important;
@@ -157,6 +163,7 @@ body {
   transform: scale(0.9);
 }
 
+/* 颜色 */
 .yellow-content {
   transition: background-color 0.4s;
   background-color: #fff7d1 !important;

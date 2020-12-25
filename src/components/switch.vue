@@ -4,7 +4,7 @@
   <!-- role辅助工具 aria-checked辅助信息 -->
   <div
     class="hy-switch flex-items"
-    :class="checkedStatus ? 'active' : ''"
+    :class="[checkedStatus ? 'active' : '', disabled ? 'hy-switch-disabled' : '']"
     role="switc"
     :aria-checked="checkedStatus"
     :style="styled"
@@ -26,13 +26,15 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
-    styled: String
+    styled: String,
+    disabled: Boolean
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const checkedStatus = ref(props.modelValue);
 
     const checkStatus = () => {
+      if (props.disabled) return;
       checkedStatus.value = !checkedStatus.value;
       emit('update:modelValue', checkedStatus.value);
     };
@@ -109,6 +111,13 @@ export default defineComponent({
   }
   .hy-switch-checked-text {
     color: @success-color;
+  }
+}
+
+.hy-switch-disabled .hy-switch-core {
+  cursor: no-drop;
+  &:active .hy-switch-action {
+    width: 16px !important;
   }
 }
 </style>

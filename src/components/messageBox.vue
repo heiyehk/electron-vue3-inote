@@ -106,11 +106,7 @@ export default defineComponent({
         background-color: @background-sub-color;
       }
     }
-    &-confirm {
-      // color: @success-color;
-    }
     &-cancel {
-      // color: @error-color;
       color: @text-sub-color;
     }
   }

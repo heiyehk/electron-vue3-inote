@@ -74,6 +74,7 @@ export default defineComponent({
     };
 
     const changeInput = () => {
+      emit('update:modelValue', inputValue.value);
       emit('on-input', inputValue.value);
     };
 

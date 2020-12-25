@@ -6,13 +6,6 @@ declare module '*.vue' {
   export default component;
 }
 
-declare global {
-  interface Window {
-    electron: BrowserWindow;
-    log: any;
-  }
-}
-
 /**
  * 储存数据库的
  */
