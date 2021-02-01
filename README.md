@@ -6,6 +6,25 @@
 <img src="https://img.shields.io/badge/nedb-%5E1.8.0-orange"/>
 </center>
 
+## 启动
+```
+yarn electron:serve
+```
+
+## 打包
+```
+yarn electron:build
+```
+
+## 教程
+【electron+vue3+ts实战便笺exe】一、搭建框架配置
+https://juejin.cn/post/6909723449246089224
+
+【electron+vue3+ts实战便笺exe】二、electron+vue3开发内容
+https://juejin.cn/post/6909725365107687431
+
+
+
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/83e3a65a44524252af6adf0135270216~tplv-k3u1fbpfcp-watermark.image)
 
 ```
@@ -55,20 +74,3 @@ electron-notes
   - App.vue
   - background.ts入口文件
   - main.ts vue入口文件
-
-## 启动
-```
-yarn electron:serve
-```
-
-## 打包
-```
-yarn electron:build
-```
-
-## 教程
-【electron+vue3+ts实战便笺exe】一、搭建框架配置
-https://juejin.cn/post/6909723449246089224
-
-【electron+vue3+ts实战便笺exe】二、electron+vue3开发内容
-https://juejin.cn/post/6909725365107687431

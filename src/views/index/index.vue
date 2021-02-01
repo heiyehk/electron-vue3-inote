@@ -1,17 +1,7 @@
 <template>
   <main class="page-index">
-    <div class="search-box">
-      <div class="search flex-items" @click="aa">
-        <div class="search-input flex1">
-          <input v-model="searchWord" type="text" placeholder="搜索..." @input="searchDb" />
-        </div>
-        <button class="search-button">
-          <i class="iconfont icon-search"></i>
-        </button>
-      </div>
-    </div>
+    <Search @search="searchHandle" />
     <section class="content-container" :class="fadein ? 'fadein' : ''">
-      <!-- <button @click="getAll">getAllDBNotes</button> -->
       <template v-if="emptyBlockState === 1">
         <ul class="edit-list">
           <template v-for="item in viewNotesList" :key="item.uid">
@@ -32,7 +22,7 @@
           <div class="index-empty-content">
             <div class="index-empty-content-text" style="margin-top: 0;margin-bottom: 40px;">双击此处，或</div>
             <div class="index-empty-content-img">
-              <img src="../assets/empty-content.svg" />
+              <img src="../../assets/empty-content.svg" />
             </div>
             <div class="index-empty-content-text">点击上方“+”按钮创建</div>
             <div class="index-empty-content-text" style="margin-top: 4px;">新的便笺内容</div>
@@ -59,6 +49,7 @@ import dayjs from 'dayjs';
 
 import CreateRightClick from '@/components/rightClick';
 import MessageBox from '@/components/messageBox.vue';
+import Search from './components/search.vue';
 
 import { browserWindowOption } from '@/config';
 import inotedb from '@/inotedb';
@@ -67,7 +58,8 @@ import { exeConfig } from '@/store/exeConfig.state';
 
 export default defineComponent({
   components: {
-    MessageBox
+    MessageBox,
+    Search
   },
   setup() {
     const deleteMessageShow = ref(false);
@@ -135,7 +127,15 @@ export default defineComponent({
 
     const bwsWinOption = browserWindowOption('editor');
     const openEditorWindow = (uid: string) => {
-      createBrowserWindow(bwsWinOption, `/editor?uid=${uid}`);
+      let countFlag = false;
+      ipcRenderer.send(`${uid}_toOpen`);
+      ipcRenderer.on(`get_${uid}_toOpen`, () => {
+        countFlag = true;
+        return;
+      });
+      setTimeout(() => {
+        if (!countFlag) createBrowserWindow(bwsWinOption, `/editor?uid=${uid}`);
+      }, 100);
     };
 
     const contextMenu = (event: MouseEvent, uid: string) => {
@@ -145,15 +145,7 @@ export default defineComponent({
           once: true,
           iconName: ['iconfont', 'icon-newopen'],
           handler: () => {
-            let countFlag = false;
-            ipcRenderer.send(`${uid}_toOpen`);
-            ipcRenderer.on(`get_${uid}_toOpen`, () => {
-              countFlag = true;
-              return;
-            });
-            setTimeout(() => {
-              if (!countFlag) openEditorWindow(uid);
-            }, 100);
+            openEditorWindow(uid);
           }
         },
         {
@@ -243,38 +235,6 @@ export default defineComponent({
       createBrowserWindow(editorWinOptions, '/editor', false);
     };
 
-    const toRegExp = (str: string) => {
-      if (!str) return new RegExp('');
-      const reg = '?!.\\|{}[]+-$^&*()';
-      let regexp = '';
-      for (const char of str) {
-        if (reg.includes(char)) {
-          if (char === '\\') {
-            regexp += '\\/';
-            continue;
-          }
-          regexp += `\\${char}`;
-        } else {
-          regexp += char;
-        }
-      }
-      return new RegExp(regexp);
-    };
-
-    const searchWord = ref('');
-    const searchDb = () => {
-      inotedb._db.find(
-        {
-          content: {
-            $regex: toRegExp(searchWord.value)
-          }
-        },
-        (err: Error | null, doc: any) => {
-          console.log(doc);
-        }
-      );
-    };
-
     const onConfirm = () => {
       if (deleteTipChecked?.value) {
         exeConfig.switchStatus.deleteTip = false;
@@ -296,6 +256,12 @@ export default defineComponent({
         });
     };
 
+    const searchHandle = (data: DBNotes[]) => {
+      if (data.length) {
+        viewNotesList.value = data;
+      }
+    };
+
     return {
       fadein,
       viewNotesList,
@@ -309,8 +275,7 @@ export default defineComponent({
       onConfirm,
       exeConfig,
       deleteTipChecked,
-      searchWord,
-      searchDb
+      searchHandle
     };
   }
 });
@@ -320,47 +285,6 @@ export default defineComponent({
 .page-index {
   height: calc(100% - @iconSize);
   background-color: @white-color;
-}
-
-.search-box {
-  padding: 0 12px;
-  padding-top: 10px;
-  box-sizing: border-box;
-}
-.search {
-  background-color: @background-sub-color;
-  height: 34px;
-  opacity: 0.9;
-  .search-input {
-    input {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: none;
-      background-color: transparent;
-      font-size: 14px;
-      padding: 0 18px;
-    }
-  }
-  .search-button {
-    display: block;
-    border: none;
-    width: 34px;
-    height: 100%;
-    padding: 0;
-    .iconfont {
-      font-size: 20px;
-    }
-    &:hover {
-      background-color: #e0e0e0;
-    }
-  }
-  &:hover {
-    opacity: 1;
-  }
-  &:active {
-    opacity: 1;
-  }
 }
 
 // 减去搜索和外边距高度
