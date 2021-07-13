@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const rm = require('rimraf');
 const path = require('path');
-const pluginOptions = require('../../vue.config').pluginOptions;
+const pluginOptions = require('../vue.config').pluginOptions;
 
 let directories = pluginOptions.electronBuilder.builderOptions.directories;
 let buildPath = '';
