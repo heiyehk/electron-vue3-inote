@@ -28,10 +28,11 @@ import { exeConfig } from '@/store/exeConfig.state';
 
 export default defineComponent({
   props: {
+    value: String,
     content: String,
     className: String
   },
-  emits: ['on-input'],
+  emits: ['on-input', 'update:value'],
   setup(props, { emit }) {
     let editor: Ref<HTMLDivElement | null> = ref(null);
     const bottomIcons = editorIcons;
@@ -68,7 +69,6 @@ export default defineComponent({
 
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
-      console.log(pasteText);
       document.execCommand('insertText', false, pasteText);
     };
 

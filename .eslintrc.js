@@ -6,8 +6,6 @@ module.exports = {
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
-    'plugin:prettier/recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
     '@vue/typescript/recommended',
     '@vue/prettier',
     '@vue/prettier/@typescript-eslint'
@@ -18,6 +16,7 @@ module.exports = {
   rules: {
     quotes: [1, 'single'],
     semi: 1,
+    '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'no-irregular-whitespace': 2,
@@ -37,6 +36,7 @@ module.exports = {
     'spaced-comment': 1,
     'no-var': 2,
     'no-multi-spaces': 2,
-    'comma-spacing': 1
+    'comma-spacing': 1,
+    '@typescript-eslint/ban-types': 0
   }
 };

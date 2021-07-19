@@ -1,6 +1,6 @@
 {
   "name": "i-notes",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "private": true,
   "author": "heiyehk",
   "description": "I便笺个人开发者heiyehk独立开发，在Windows中更方便的记录文字。",
@@ -12,10 +12,15 @@
   },
   "dependencies": {
     "@types/nedb": "^1.8.11",
+    "@types/sequelize": "^4.28.10",
+    "@types/sqlite3": "^3.1.7",
     "core-js": "^3.15.2",
     "dayjs": "^1.10.6",
     "fs-extra": "^10.0.0",
     "nedb": "^1.8.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.6.5",
+    "sqlite3": "^5.0.2",
     "style-resources-loader": "^1.4.1",
     "vue": "3.1.4",
     "vue-class-component": "^8.0.0-0",

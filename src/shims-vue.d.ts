@@ -14,7 +14,7 @@ interface DBNotes {
   content: string;
   readonly createdAt: Date;
   readonly uid: string;
-  readonly updatedAt: Date;
+  updatedAt: Date;
   readonly _id: string;
 }
 

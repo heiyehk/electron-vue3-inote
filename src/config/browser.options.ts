@@ -34,7 +34,9 @@ const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructor
     transparent: true,
     webPreferences: {
       enableRemoteModule: true,
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false
     }
   };
   if (!type) {

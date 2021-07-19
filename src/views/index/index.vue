@@ -52,7 +52,7 @@ import MessageBox from '@/components/messageBox.vue';
 import Search from './components/search.vue';
 
 import { browserWindowOption } from '@/config';
-import inotedb from '@/inotedb';
+import { INote } from '@/service';
 import { createBrowserWindow } from '@/utils';
 import { exeConfig } from '@/store/exeConfig.state';
 
@@ -65,7 +65,6 @@ export default defineComponent({
     const deleteMessageShow = ref(false);
     const deleteCurrentUid = ref('');
     let deleteTipChecked: Ref<boolean> | null = ref(false);
-    inotedb.refreshDB();
     const fadein = ref(false);
     let viewNotesList = ref([] as ListDbNotes[]);
     const rightClick = new CreateRightClick();
@@ -85,32 +84,22 @@ export default defineComponent({
     const nowTimeStamp = dayjs().valueOf();
 
     onBeforeMount(() => {
-      // inotedb.remove({}, { multi: true });
       getAllDBNotes();
       electronIpcEditor();
     });
 
     const getAllDBNotes = async () => {
-      inotedb._db
-        ?.find({})
-        .sort({ updatedAt: -1 })
-        .exec((e, d) => {
-          viewNotesList.value = d as DBNotes[];
-          if (d.length) {
-            emptyBlockState.value = 1;
-          } else {
-            emptyBlockState.value = 2;
-          }
-        });
-    };
+      const inoteAllList = ((await INote.findAll({
+        raw: true,
+        order: [['updatedAt', 'DESC']]
+      })) as unknown) as ListDbNotes[];
+      viewNotesList.value = inoteAllList;
 
-    const getAll = () => {
-      inotedb._db
-        ?.find({})
-        .sort({ updatedAt: -1 })
-        .exec((e, d) => {
-          console.log(d);
-        });
+      if (inoteAllList.length) {
+        emptyBlockState.value = 1;
+      } else {
+        emptyBlockState.value = 2;
+      }
     };
 
     const getTime = (time: Date) => {
@@ -204,6 +193,7 @@ export default defineComponent({
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
         if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].content = updateItem.content as string;
+        viewNotesList.value[cntIndex].updatedAt = updateItem.updatedAt!;
       });
 
       /**
@@ -247,18 +237,20 @@ export default defineComponent({
        */
       ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
       removeNoteItem(deleteCurrentUid.value);
-      inotedb
-        .remove({
+      INote.destroy({
+        where: {
           uid: deleteCurrentUid.value
-        })
-        .finally(() => {
-          deleteCurrentUid.value = '';
-        });
+        }
+      }).finally(() => {
+        deleteCurrentUid.value = '';
+      });
     };
 
     const searchHandle = (data: DBNotes[]) => {
       if (data.length) {
         viewNotesList.value = data;
+      } else {
+        getAllDBNotes();
       }
     };
 
@@ -267,7 +259,6 @@ export default defineComponent({
       viewNotesList,
       contextMenu,
       getTime,
-      getAll,
       emptyBlockState,
       openEditorWindow,
       openNewWindow,

@@ -23,10 +23,10 @@ export default defineComponent({
     Header
   },
   setup() {
-    const routeName = ref(useRoute().name);
+    const routeName = ref(useRoute().name as string);
 
     onBeforeUpdate(() => {
-      routeName.value = useRoute().name;
+      routeName.value = useRoute().name as string;
     });
 
     return {

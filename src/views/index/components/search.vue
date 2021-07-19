@@ -13,40 +13,28 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import inotedb from '@/inotedb';
+import { INote } from '@/service';
+import { Op } from 'sequelize';
 
 export default defineComponent({
+  emits: ['search'],
   setup(props, { emit }) {
-    const toRegExp = (str: string) => {
-      if (!str) return new RegExp('');
-      const reg = '?!.\\|{}[]+-$^&*()';
-      let regexp = '';
-      for (const char of str) {
-        if (reg.includes(char)) {
-          if (char === '\\') {
-            regexp += '\\/';
-            continue;
-          }
-          regexp += `\\${char}`;
-        } else {
-          regexp += char;
-        }
-      }
-      return new RegExp(regexp);
-    };
-
     const searchWord = ref('');
-    const searchDb = () => {
-      inotedb._db.find(
-        {
+    const searchDb = async () => {
+      if (searchWord.value === '') {
+        emit('search', []);
+        return;
+      }
+      const data = await INote.findAll({
+        raw: true,
+        order: [['updatedAt', 'DESC']],
+        where: {
           content: {
-            $regex: toRegExp(searchWord.value)
+            [Op.like]: '%' + searchWord.value + '%'
           }
-        },
-        (err: Error | null, doc: DBNotes[]) => {
-          emit('search', doc);
         }
-      );
+      });
+      emit('search', data);
     };
     return {
       searchWord,

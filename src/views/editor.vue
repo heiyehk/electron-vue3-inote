@@ -36,7 +36,7 @@ import Editor from '@/components/editor.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
-import inotedb from '@/inotedb';
+import { INote } from '@/service';
 
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 
@@ -56,7 +56,7 @@ export default defineComponent({
       afterIpc();
     });
 
-    const initEditorContent = () => {
+    const initEditorContent = async () => {
       const routeUid = useRoute().query.uid as string;
       if (routeUid) {
         uid.value = routeUid;
@@ -69,26 +69,34 @@ export default defineComponent({
             uid: uuidString
           }
         });
-        inotedb
-          .insert({
+        INote.create(
+          {
             uid: uid.value,
             content: '',
             className: ''
-          })
-          .then(res => {
-            /**
-             * createNewNote
-             * 持续监听创建便笺
-             */
-            ipcRenderer.send('createNewNote', res);
-          });
+          },
+          {
+            raw: true
+          }
+        );
+        /**
+         * createNewNote
+         * 持续监听创建便笺
+         */
+        ipcRenderer.send('createNewNote', {
+          uid: uid.value,
+          content: '',
+          className: ''
+        });
       }
     };
 
     const getCurUidItem = async (uid: string) => {
-      const info = (await inotedb.findOne({
-        uid
-      })) as DBNotes;
+      const info = await INote.findOne({
+        where: {
+          uid
+        }
+      });
       if (!info) return;
       currentBgClassName.value = info.className;
       editContent.value = info.content;
@@ -128,27 +136,27 @@ export default defineComponent({
     const changeBgClassName = (className: string) => {
       if (currentBgClassName.value !== className) {
         currentBgClassName.value = className;
-        inotedb
-          .update(
-            {
+        INote.update(
+          {
+            uid: uid.value,
+            content: editContent.value,
+            className
+          },
+          {
+            where: {
               uid: uid.value
-            },
-            {
-              uid: uid.value,
-              content: editContent.value,
-              className
             }
-          )
-          .then(() => {
-            /**
-             * updateNoteItem_className
-             * 更新便笺内容
-             */
-            ipcRenderer.send('updateNoteItem_className', {
-              uid: uid.value,
-              className: currentBgClassName.value
-            } as QueryDB<DBNotes>);
-          });
+          }
+        ).then(() => {
+          /**
+           * updateNoteItem_className
+           * 更新便笺内容
+           */
+          ipcRenderer.send('updateNoteItem_className', {
+            uid: uid.value,
+            className: currentBgClassName.value
+          } as QueryDB<DBNotes>);
+        });
       }
       showOptionsStatus.value = false;
     };
@@ -156,44 +164,43 @@ export default defineComponent({
     const changeEditContent = (content: string) => {
       editContent.value = content;
       if (!uid.value) return false;
-      inotedb
-        .update(
-          {
+      INote.update(
+        {
+          uid: uid.value,
+          content,
+          className: currentBgClassName.value
+        },
+        {
+          where: {
             uid: uid.value
-          },
-          {
-            uid: uid.value,
-            content,
-            className: currentBgClassName.value
           }
-        )
-        .then(() => {
-          /**
-           * updateNoteItem_content
-           * 更新便笺内容
-           */
-          ipcRenderer.send('updateNoteItem_content', {
-            uid: uid.value,
-            content
-          } as QueryDB<DBNotes>);
-        });
+        }
+      );
+      /**
+       * updateNoteItem_content
+       * 更新便笺内容
+       */
+      ipcRenderer.send('updateNoteItem_content', {
+        uid: uid.value,
+        content,
+        updatedAt: new Date()
+      } as QueryDB<DBNotes>);
     };
 
     const closeWindow = () => {
       if (!editContent.value) {
         // 如果是空就直接从数据库删除
-        console.log('removeEmptyNoteItem ==>', uid.value);
-        inotedb
-          .remove({
+        INote.destroy({
+          where: {
             uid: uid.value
-          })
-          .then(() => {
-            /**
-             * removeEmptyNoteItem
-             * 在关闭的时候如果没有内容就通知列表进行删除操作
-             */
-            ipcRenderer.send('removeEmptyNoteItem', uid.value);
-          });
+          }
+        }).then(() => {
+          /**
+           * removeEmptyNoteItem
+           * 在关闭的时候如果没有内容就通知列表进行删除操作
+           */
+          ipcRenderer.send('removeEmptyNoteItem', uid.value);
+        });
       }
     };
 

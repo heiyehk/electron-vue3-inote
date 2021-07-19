@@ -8,6 +8,7 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib';
 
 import { browserWindowOption, winURL, shortcutsKeys } from './config';
+import { sequelizeInit } from './service/modles/initSequelize';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -33,6 +34,7 @@ function createWindow() {
     win.loadURL(winURL);
   }
   // win.webContents.openDevTools();
+  sequelizeInit();
 
   win.on('closed', () => {
     win = null;

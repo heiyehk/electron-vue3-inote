@@ -1,9 +1,9 @@
 # electron+vue3+ts
 <center>
-<img src="https://img.shields.io/badge/vue-3.0.4-green"/>
-<img src="https://img.shields.io/badge/electron-%5E11.1.0-brightgreen"/>
+<img src="https://img.shields.io/badge/vue-3.1.4-green"/>
+<img src="https://img.shields.io/badge/electron-%5E13.1.6-brightgreen"/>
 <img src="https://img.shields.io/badge/typescript-~3.9.3-yellowgreen"/>
-<img src="https://img.shields.io/badge/nedb-%5E1.8.0-orange"/>
+<img src="https://img.shields.io/badge/sqlite3-%5E5.0.2-orange"/>
 </center>
 
 ## 启动
