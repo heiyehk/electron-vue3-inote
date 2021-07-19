@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/sqlite3-%5E5.0.2-orange"/>
 </center>
 
-![image](https://user-images.githubusercontent.com/33891067/126118414-f05d979b-1486-4806-870a-664e5eb9ad8c.png)
+![image](https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png)
 
 ## 启动
 ```
@@ -25,8 +25,7 @@ https://juejin.cn/post/6909723449246089224
 【electron+vue3+ts实战便笺exe】二、electron+vue3开发内容
 https://juejin.cn/post/6909725365107687431
 
-
-![image](https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png)
+![123](https://user-images.githubusercontent.com/33891067/126119851-b59a0acb-07b4-4126-9698-961ee0f706a7.gif)
 
 ```
 electron-notes
