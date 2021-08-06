@@ -63,7 +63,7 @@ export default defineComponent({
   }
   &-core {
     border-radius: 10px;
-    background-color: @gray-color;
+    background-color: @gray-color !important;
     width: 40px;
     height: 100%;
     cursor: pointer;
@@ -95,7 +95,7 @@ export default defineComponent({
 
 .active {
   .hy-switch-core {
-    background-color: @success-color;
+    background-color: @success-color !important;
     transition: background-color 0.4s;
     &:active {
       .hy-switch-action {
@@ -110,7 +110,7 @@ export default defineComponent({
     transform: translateX(@switchSize);
   }
   .hy-switch-checked-text {
-    color: @success-color;
+    color: @success-color !important;
   }
 }
 

@@ -2,6 +2,16 @@
 const path = require('path');
 
 module.exports = {
+  pages: {
+    index: {
+      entry: 'src/main.ts',
+      template: 'public/index.html',
+      filename: 'index.html',
+      title: 'I便笺',
+      chunks: ['chunk-vendors', 'chunk-common', 'index'],
+      platform: process.platform
+    }
+  },
   productionSourceMap: false,
   configureWebpack: config => {
     if (process.env.NODE_ENV !== 'development') {
@@ -40,7 +50,7 @@ module.exports = {
           // installerHeaderIcon: './build/icons/aaa.ico', // 安装时头部图标
           createDesktopShortcut: true, // 创建桌面图标
           createStartMenuShortcut: true, // 创建开始菜单图标
-          shortcutName: 'i便笺' // 图标名称
+          shortcutName: 'I便笺' // 图标名称
         }
       }
     },

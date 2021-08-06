@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-'use strict';
-
 import { app, protocol, BrowserWindow, globalShortcut } from 'electron';
 import {
   createProtocol
@@ -63,6 +60,7 @@ app.on('ready', async () => {
   // }
   // 快捷键禁用
   for (const key of shortcutsKeys) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     globalShortcut.register(key, () => {});
   }
   createWindow();

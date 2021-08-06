@@ -15,7 +15,7 @@
 
 /* 设置ol显示格式 */
 .module-editor ol {
-  counter-reset:sectioncounter;
+  counter-reset: sectioncounter;
 }
 
 .module-editor ol li {
@@ -25,7 +25,7 @@
 
 .module-editor ol li::before {
   content: counter(sectioncounter) '.';
-  counter-increment:sectioncounter;
+  counter-increment: sectioncounter;
   margin-right: 10px;
 }
 

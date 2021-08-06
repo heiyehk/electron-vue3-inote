@@ -1,0 +1,53 @@
+body {
+  padding: 0 !important;
+}
+
+.search {
+  box-shadow: 0 0 4px #ddd;
+}
+
+.header .drag-header {
+  margin-top: 0 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body,
+  .header,
+  body .bg-white,
+  body .page-index,
+  body .page-setting,
+  body .page-editor,
+  body .bottom-editor-tools,
+  body .options-container .options-content, /* 遮罩列表 */
+  #rightClick {
+    background-color: #333 !important;
+    color: white !important;
+    transition: background-color 0.4s;
+  }
+  body .options-container .options-content * {
+    color: white !important;
+  }
+  /* 头部 */
+  .header a {
+    color: white !important;
+  }
+  /* 编辑遮罩 */
+  body .options-container .options-cover {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  /* 右键列表 */
+  .right-click-menu-list li:hover {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+  body .about-app-description,
+  body .disabled-line {
+    color: #828282;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #fff !important;
+    color: black !important;
+  }
+}

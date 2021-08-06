@@ -51,7 +51,7 @@ export default defineComponent({
   box-sizing: border-box;
 }
 .search {
-  background-color: @background-sub-color;
+  // background-color: @background-sub-color;
   height: 34px;
   opacity: 0.9;
   .search-input {
@@ -68,9 +68,10 @@ export default defineComponent({
   .search-button {
     display: block;
     border: none;
-    width: 34px;
+    width: 36px;
     height: 100%;
     padding: 0;
+    background-color: transparent;
     .iconfont {
       font-size: 20px;
     }

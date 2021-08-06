@@ -15,7 +15,7 @@
     </template>
     <!-- 标题拖动 -->
     <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
-      <transition name="header-fadein">
+      <transition name="header-fadein" v-if="platformWindows">
         <span :key="title">{{ title }}</span>
       </transition>
     </div>
@@ -49,7 +49,7 @@
         </div>
       </template>
       <!-- 关闭 -->
-      <button class="icon flex-center close-window" @click="closeWindow" title="关闭">
+      <button v-if="platformWindows" class="icon flex-center close-window" @click="closeWindow" title="关闭">
         <i class="iconfont flex-center icon-close"></i>
       </button>
     </div>
@@ -95,10 +95,11 @@ export default defineComponent({
       return currentRouteName.value === 'index' ? 'padding-left: 40px;' : '';
     });
 
-    const title = ref(useRoute().meta.title);
+    const title = ref(useRoute().meta.title as string);
 
     onBeforeRouteUpdate((to, from, next) => {
-      title.value = to.meta.title;
+      title.value = to.meta.title as string;
+      document.title = title.value;
       currentRouteName.value = to.name;
       next();
     });
@@ -121,7 +122,8 @@ export default defineComponent({
       closeWindow,
       computedPaddingLeft,
       isAlwaysOnTop,
-      title
+      title,
+      platformWindows: process.platform === 'win32'
     };
   }
 });

@@ -92,6 +92,7 @@ export default defineComponent({
   border: 1px solid @border-color;
   height: 24px;
   border-radius: 4px;
+  overflow: hidden;
   &-box {
     input {
       border-radius: 4px;
@@ -102,6 +103,7 @@ export default defineComponent({
       box-sizing: border-box;
       display: block;
       cursor: auto;
+      background-color: transparent;
     }
   }
   .hy-number-control {

@@ -27,7 +27,7 @@ const editorWindowOptions = {
  * @param type 单独给编辑窗口的配置
  */
 const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructorOptions => {
-  const commonOptions = {
+  const commonOptions: Electron.BrowserWindowConstructorOptions = {
     minHeight: 48,
     frame: false,
     hasShadow: true,
@@ -39,6 +39,11 @@ const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructor
       webSecurity: false
     }
   };
+  if (process.platform === 'darwin') {
+    commonOptions.frame = true;
+    commonOptions.transparent = false;
+    commonOptions.backgroundColor = '#ffffff';
+  }
   if (!type) {
     return {
       width: devWid || 350,

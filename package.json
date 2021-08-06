@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "private": true,
   "author": "heiyehk",
-  "description": "I便笺个人开发者heiyehk独立开发，在Windows中更方便的记录文字。",
+  "description": "I便笺漂亮的过度效果，允许开启多个窗口方便在桌面端更方便的记录文字",
   "main": "background.js",
   "scripts": {
     "lint": "vue-cli-service lint",
