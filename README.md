@@ -1,12 +1,16 @@
 # electron+vue3+ts
-<center>
+<div align="center">
 <img src="https://img.shields.io/badge/vue-3.1.4-green"/>
 <img src="https://img.shields.io/badge/electron-%5E13.1.6-brightgreen"/>
 <img src="https://img.shields.io/badge/typescript-~3.9.3-yellowgreen"/>
 <img src="https://img.shields.io/badge/sqlite3-%5E5.0.2-orange"/>
-</center>
+</div>
 
-![image](https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png)
+### Windows10
+<img width="50%" src="https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png" />
+
+### Mac
+<img width="50%" src="https://user-images.githubusercontent.com/33891067/128463221-9d0ebff0-f706-44e2-8007-964e63d43424.png" />
 
 ## 启动
 ```
