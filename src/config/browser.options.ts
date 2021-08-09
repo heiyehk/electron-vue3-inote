@@ -1,15 +1,3 @@
-/**
- * 软件数据和配置
- * C:\Users\{用户名}\AppData\Roaming
- * 共享
- * C:\ProgramData\Intel\ShaderCache\i-notes{xx}
- * 快捷方式
- * C:\Users\{用户名}\AppData\Roaming\Microsoft\Windows\Recent
- * 电脑自动创建缓存
- * C:\Windows\Prefetch\I-NOTES.EXE{xx}
- */
-
-/** */
 const globalEnv = process.env.NODE_ENV;
 
 const devWid = globalEnv === 'development' ? 950 : 0;
@@ -39,6 +27,9 @@ const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructor
       webSecurity: false
     }
   };
+  /**
+   * mac兼容
+   */
   if (process.platform === 'darwin') {
     commonOptions.frame = true;
     commonOptions.transparent = false;

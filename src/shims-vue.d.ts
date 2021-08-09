@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 declare module '*.vue' {
   // eslint-disable-next-line prettier/prettier
   import type { DefineComponent } from 'vue';

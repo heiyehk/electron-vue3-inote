@@ -8,8 +8,7 @@ module.exports = {
       template: 'public/index.html',
       filename: 'index.html',
       title: 'I便笺',
-      chunks: ['chunk-vendors', 'chunk-common', 'index'],
-      platform: process.platform
+      chunks: ['chunk-vendors', 'chunk-common', 'index']
     }
   },
   productionSourceMap: false,

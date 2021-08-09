@@ -123,6 +123,7 @@ export default defineComponent({
       computedPaddingLeft,
       isAlwaysOnTop,
       title,
+      // 只在windows上显示
       platformWindows: process.platform === 'win32'
     };
   }
