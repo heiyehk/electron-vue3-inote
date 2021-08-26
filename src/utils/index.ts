@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import { winURL } from '@/config';
 import { BrowserWindow, remote } from 'electron';
 

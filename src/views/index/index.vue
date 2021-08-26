@@ -47,9 +47,9 @@ import { defineComponent, onBeforeMount, Ref, ref } from 'vue';
 import { remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
 
-import CreateRightClick from '@/components/rightClick';
-import MessageBox from '@/components/messageBox.vue';
-import Search from './components/search.vue';
+import CreateRightClick from '@/components/RightClick';
+import MessageBox from '@/components/MessageBox.vue';
+import Search from './components/Search.vue';
 
 import { browserWindowOption } from '@/config';
 import { INote } from '@/service';
@@ -345,7 +345,7 @@ export default defineComponent({
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 5;
-        ::v-deep * {
+        :deep(*) {
           font-size: 14px;
           line-height: 1.8;
           word-break: break-all;

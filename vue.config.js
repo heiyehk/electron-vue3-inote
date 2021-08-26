@@ -13,6 +13,9 @@ module.exports = {
   },
   productionSourceMap: false,
   configureWebpack: config => {
+    config.externals = {
+      sqlite3: 'commonjs sqlite3'
+    };
     if (process.env.NODE_ENV !== 'development') {
       config.optimization.minimizer[0].options.terserOptions.warnings = false;
       config.optimization.minimizer[0].options.terserOptions.compress = {

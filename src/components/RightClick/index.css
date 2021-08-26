@@ -1,0 +1,41 @@
+#rightClick {
+  position: fixed;
+  background-color: #fff;
+  box-shadow: 0 0 6px #ccc;
+  border-radius: 2px;
+  max-width: 200px;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.right-click-menu-list li {
+  list-style: none;
+  font-size: 14px;
+  padding: 0 10px;
+  height: 36px;
+  line-height: 36px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.right-click-menu-list li:hover {
+  background-color: #e5e5e5;
+}
+
+.right-click-menu-list li:active {
+  background-color: #ccc;
+}
+
+.right-click-menu-list li i {
+  font-size: 18px;
+}
+
+.right-click-menu-list li .right-click-menu-text {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 0 4px;
+}

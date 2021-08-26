@@ -14,11 +14,12 @@ module.exports = {
     ecmaVersion: 2020
   },
   rules: {
-    quotes: [1, 'single'],
-    semi: 1,
+    '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    quotes: [1, 'single'],
+    semi: 1,
     'no-irregular-whitespace': 2,
     'no-case-declarations': 0,
     'no-undef': 0,
@@ -36,7 +37,6 @@ module.exports = {
     'spaced-comment': 1,
     'no-var': 2,
     'no-multi-spaces': 2,
-    'comma-spacing': 1,
-    '@typescript-eslint/ban-types': 0
+    'comma-spacing': 1
   }
 };

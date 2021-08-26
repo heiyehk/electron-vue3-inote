@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import os from 'os';
 import { remote } from 'electron';
 import path from 'path';
-import useMessage from '@/components/message';
+import useMessage from '@/components/Message';
 
 function getShortStack(stack?: string): string {
   const splitStack = stack?.split('\n    ');

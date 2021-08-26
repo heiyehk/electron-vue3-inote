@@ -31,8 +31,8 @@ import { defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
 
-import Header from '@/components/header.vue';
-import Editor from '@/components/editor.vue';
+import Header from '@/components/Header.vue';
+import Editor from '@/components/Editor.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';

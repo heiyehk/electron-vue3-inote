@@ -10,7 +10,7 @@
               :max="1000"
               :min="100"
               maxlength="4"
-              readonly="readonly"
+              :readonly="true"
               :control="true"
               type="number"
               style="width: 86px;margin-left: 10px;"
@@ -151,13 +151,13 @@ import { defineComponent, Ref, ref } from 'vue';
 import { remote } from 'electron';
 import fs from 'fs-extra';
 
-import Tick from '@/components/tick.vue';
-import Input from '@/components/input.vue';
-import Switch from '@/components/switch.vue';
+import Tick from '@/components/Tick.vue';
+import Input from '@/components/Input.vue';
+import Switch from '@/components/Switch.vue';
 
 import { exeConfig } from '@/store/exeConfig.state';
 import { errorLogPath } from '@/utils/errorLog';
-import useMessage from '@/components/message';
+import useMessage from '@/components/Message';
 
 export default defineComponent({
   components: {

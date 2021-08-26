@@ -3,17 +3,23 @@
   "version": "0.2.2",
   "private": true,
   "author": "heiyehk",
-  "description": "I便笺漂亮的过度效果，允许开启多个窗口方便在桌面端更方便的记录文字",
+  "description": "I便笺拥有漂亮的过度效果，允许开启多个窗口方便在桌面端更方便的记录文字",
   "main": "background.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heiyehk/electron-vue3-inote"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/heiyehk/electron-vue3-inote/issues",
+    "email": "heiyehk@foxmail.com"
+  },
   "scripts": {
     "lint": "vue-cli-service lint",
     "build": "node script/deleteBuild && vue-cli-service electron:build",
     "serve": "vue-cli-service electron:serve"
   },
   "dependencies": {
-    "@types/nedb": "^1.8.11",
-    "@types/sequelize": "^4.28.10",
-    "@types/sqlite3": "^3.1.7",
     "core-js": "^3.15.2",
     "dayjs": "^1.10.6",
     "fs-extra": "^10.0.0",
@@ -28,6 +34,9 @@
     "vue-router": "^4.0.10"
   },
   "devDependencies": {
+    "@types/nedb": "^1.8.12",
+    "@types/sequelize": "^4.28.10",
+    "@types/sqlite3": "^3.1.7",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
     "@vue/cli-plugin-babel": "~4.5.0",

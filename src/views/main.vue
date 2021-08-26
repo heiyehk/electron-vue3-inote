@@ -16,7 +16,7 @@
 <script lang="ts">
 import { defineComponent, ref, onBeforeUpdate } from 'vue';
 import { useRoute } from 'vue-router';
-import Header from '@/components/header.vue';
+import Header from '@/components/Header.vue';
 
 export default defineComponent({
   components: {
