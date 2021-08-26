@@ -5,7 +5,7 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib';
 
 import { browserWindowOption, winURL, shortcutsKeys } from './config';
-import { sequelizeInit } from './service/modles/initSequelize';
+import { sequelizeInit } from './service/initSequelize';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 

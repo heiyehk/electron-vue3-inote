@@ -4,6 +4,7 @@ body {
 
 .search {
   box-shadow: 0 0 4px #ddd;
+  background-color: transparent !important;
 }
 
 .header .drag-header {

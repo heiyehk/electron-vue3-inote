@@ -50,9 +50,9 @@ const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructor
 };
 
 /**
- * 开发环境: http://localhost:8080
+ * 开发环境: http://localhost:55225
  * 正式环境: file://${__dirname}/index.html
  */
-const winURL = globalEnv === 'development' ? 'http://localhost:8080' : `file://${__dirname}/index.html`;
+const winURL = globalEnv === 'development' ? 'http://localhost:55225' : `file://${__dirname}/index.html`;
 
 export { browserWindowOption, winURL };

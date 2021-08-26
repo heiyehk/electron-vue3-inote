@@ -57,5 +57,8 @@ module.exports = {
       preProcessor: 'less',
       patterns: [path.resolve(__dirname, 'src/less/index.less')] // 引入全局样式变量
     }
+  },
+  devServer: {
+    port: 55225
   }
 };

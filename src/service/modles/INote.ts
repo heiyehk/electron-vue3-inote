@@ -1,4 +1,4 @@
-import { sequelize } from './initSequelize';
+import { sequelize } from '../initSequelize';
 import { STRING } from 'sequelize';
 import { INoteModel } from '@/types/inote';
 
