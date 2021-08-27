@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, Ref, watch } from 'vue';
+import { defineComponent, nextTick, onMounted, ref, Ref, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
 import { exeConfig } from '@/store/exeConfig.state';
@@ -37,12 +37,28 @@ export default defineComponent({
     let editor: Ref<HTMLDivElement | null> = ref(null);
     const bottomIcons = editorIcons;
     const editorContent: Ref<string | undefined> = ref('');
+    const firstIn = ref(true);
 
-    watch(props, nv => {
-      if (!editorContent.value) {
-        editorContent.value = nv.content;
+    watch(
+      () => props.content,
+      newContent => {
+        if (!editorContent.value) {
+          editorContent.value = newContent;
+        }
+        if (firstIn.value) {
+          firstHandle();
+        }
       }
-    });
+    );
+
+    const firstHandle = () => {
+      nextTick(() => {
+        focus();
+        console.dir(editor.value);
+        editor.value?.scrollTo(0, editor.value.scrollHeight);
+        firstIn.value = false;
+      });
+    };
 
     onMounted(() => {
       focus();

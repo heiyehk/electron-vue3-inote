@@ -3,7 +3,7 @@ import { reactive, watch } from 'vue';
 const exeConfigLocal = localStorage.getItem('exeConfig');
 
 export let exeConfig = reactive({
-  syncDelay: 1000,
+  syncDelay: 100,
   serverAddress: '',
   serverToken: '',
   switchStatus: {

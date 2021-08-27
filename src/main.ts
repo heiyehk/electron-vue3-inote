@@ -6,6 +6,6 @@ import { sequelizeInit } from './service/initSequelize';
 
 sequelizeInit();
 
-const app = createApp(App);
-app.config.errorHandler = outputErrorLog;
-app.use(router).mount('#app');
+const apps = createApp(App);
+apps.config.errorHandler = outputErrorLog;
+apps.use(router).mount('#app');
