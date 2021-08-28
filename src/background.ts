@@ -27,7 +27,7 @@ function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win = new BrowserWindow(browserWindowOption());
     // 默认打开webpack启动的serve
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/editor');
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     const argv = process.argv[1];
@@ -44,7 +44,7 @@ function createWindow() {
       win.loadURL(winURL);
     }
   }
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
   // sequelizeInit();
 
   win.on('closed', () => {
@@ -73,7 +73,7 @@ app.on('ready', async () => {
   createWindow();
 });
 
-// 待开发的内容
+// TODO 待开发的内容
 // app.setUserTasks(userTasks);
 
 if (isDevelopment) {

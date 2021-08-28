@@ -1,4 +1,5 @@
 <template>
+  <!-- 编辑 -->
   <div
     ref="editor"
     class="editor-layout module-editor empty-content"
@@ -10,27 +11,31 @@
     @paste.prevent="paste"
     @input="changeEditorContent"
   ></div>
-  <section class="bottom-editor-tools">
+  <!-- 功能 -->
+  <section class="bottom-editor-tools" :class="windowBlur ? 'window-blur-hide' : ''">
     <template v-for="item in bottomIcons" :key="item.name">
       <button class="icon" :title="item.title" @click="editorIconHandle($event, item.name)">
         <i class="iconfont" :class="item.icon"></i>
       </button>
     </template>
   </section>
-  <div ref="test"></div>
 </template>
 
 <script lang="ts">
 import { defineComponent, nextTick, onMounted, ref, Ref, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
-import { exeConfig } from '@/store/exeConfig.state';
+import { notesState } from '@/store/notes.state';
 
 export default defineComponent({
   props: {
     value: String,
     content: String,
-    className: String
+    className: String,
+    windowBlur: {
+      type: Boolean,
+      default: true
+    }
   },
   emits: ['on-input', 'update:value'],
   setup(props, { emit }) {
@@ -45,12 +50,14 @@ export default defineComponent({
         if (!editorContent.value) {
           editorContent.value = newContent;
         }
+        // 判断是否第一次进入
         if (firstIn.value) {
           firstHandle();
         }
       }
     );
 
+    // 第一次进入事件
     const firstHandle = () => {
       nextTick(() => {
         focus();
@@ -81,7 +88,7 @@ export default defineComponent({
     const changeEditorContent = debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
       emit('on-input', editorHtml);
-    }, exeConfig.syncDelay);
+    }, notesState.syncDelay);
 
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
@@ -135,9 +142,14 @@ export default defineComponent({
   height: @iconSize;
   background-color: transparent;
   border-top: 1px solid rgba(0, 0, 0, 0.03);
+  transition: bottom 0.4s;
 }
 
 .black-content::before {
   color: @gray-color;
+}
+.window-blur-hide {
+  bottom: -41px;
+  transition: bottom 0.4s;
 }
 </style>

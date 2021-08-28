@@ -1,7 +1,11 @@
 <template>
   <Header
     title=""
-    :class="['header-editor', !showOptionsStatus ? 'header-show-style' : 'header-hide-style', currentBgClassName]"
+    :class="[
+      'header-editor',
+      !showOptionsStatus && !currentWindowBlurState ? 'header-show-style' : 'header-hide-style',
+      currentBgClassName
+    ]"
     @option-click="clickOption"
     @on-close="closeWindow"
   />
@@ -19,9 +23,14 @@
       </p>
     </div>
   </div>
-  <main class="page-editor" :class="currentBgClassName">
+  <main class="page-editor" :class="[currentBgClassName, currentWindowBlurState ? 'window-blur-status' : '']">
     <section class="editor-container">
-      <Editor :content="editContent" :className="currentBgClassName" @on-input="changeEditContent" />
+      <Editor
+        :windowBlur="currentWindowBlurState"
+        :content="editContent"
+        :className="currentBgClassName"
+        @on-input="changeEditContent"
+      />
     </section>
   </main>
 </template>
@@ -39,6 +48,7 @@ import { uuid } from '@/utils';
 import { INote } from '@/service';
 
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
+import { notesState } from '@/store/notes.state';
 
 export default defineComponent({
   components: {
@@ -46,10 +56,17 @@ export default defineComponent({
     Editor
   },
   setup() {
-    let showOptionsStatus = ref(false);
+    const showOptionsStatus = ref(false);
     const uid = ref('');
     const currentBgClassName = ref('');
     const editContent = ref('');
+    const currentWindow = remote.getCurrentWindow();
+    /**
+     * 焦点状态
+     * - `false`: 否 - 获得焦点
+     * - `true`: 是 - 失去焦点
+     */
+    const currentWindowBlurState = ref(false);
 
     onBeforeMount(() => {
       initEditorContent();
@@ -108,12 +125,12 @@ export default defineComponent({
 
     let childrenWindow: BrowserWindow | null;
     const openIndex = () => {
-      let countFlag = false;
+      let indexShowStatus = false;
 
       // 判断列表窗口是否存在
       ipcRenderer.send('whetherToOpen');
       ipcRenderer.on('getWhetherToOpen', () => {
-        countFlag = true;
+        indexShowStatus = true;
         return;
       });
       showOptionsStatus.value = false;
@@ -124,7 +141,7 @@ export default defineComponent({
 
       setTimeout(() => {
         // 如果窗口不在
-        if (!countFlag) {
+        if (!indexShowStatus) {
           childrenWindow = createBrowserWindow(browserWindowOption(), '/');
         }
       }, 100);
@@ -205,10 +222,32 @@ export default defineComponent({
         transitCloseWindow();
       });
       remote.ipcMain.on(`${uid.value}_toOpen`, e => {
-        remote.getCurrentWindow().show();
+        currentWindow.show();
         e.sender.send(`get_${uid.value}_toOpen`);
       });
     };
+
+    if (notesState.switchStatus.autoNarrow) {
+      currentWindow.on('blur', () => {
+        currentWindowBlurState.value = true;
+      });
+
+      currentWindow.on('focus', () => {
+        currentWindowBlurState.value = false;
+      });
+
+      // TODO
+      // 提示: 可拖拽区域并不纳入document区域，所以会无法获得焦点
+      // document.addEventListener('mouseover', () => {
+      //   currentWindowBlurState.value = false;
+      // });
+
+      // document.addEventListener('mouseout', () => {
+      //   setTimeout(() => {
+      //     currentWindowBlurState.value = true;
+      //   }, 2000);
+      // });
+    }
 
     return {
       clickOption,
@@ -219,7 +258,8 @@ export default defineComponent({
       currentBgClassName,
       editContent,
       changeEditContent,
-      closeWindow
+      closeWindow,
+      currentWindowBlurState
     };
   }
 });
@@ -232,6 +272,7 @@ export default defineComponent({
   padding-top: @iconSize;
   padding-bottom: @iconSize;
   box-sizing: border-box;
+  transition: padding 0.4s;
   .editor-container {
     width: 100%;
     height: 100%;
@@ -343,5 +384,11 @@ export default defineComponent({
     opacity: 1;
     transition: all 0.4s;
   }
+}
+
+.window-blur-status {
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: padding 0.4s;
 }
 </style>

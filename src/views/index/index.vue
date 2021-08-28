@@ -54,7 +54,7 @@ import Search from './components/Search.vue';
 import { browserWindowOption } from '@/config';
 import { INote } from '@/service';
 import { createBrowserWindow } from '@/utils';
-import { exeConfig } from '@/store/exeConfig.state';
+import { notesState } from '@/store/notes.state';
 
 export default defineComponent({
   components: {
@@ -143,7 +143,7 @@ export default defineComponent({
           iconName: ['iconfont', 'icon-delete'],
           handler: () => {
             deleteCurrentUid.value = uid;
-            if (exeConfig.switchStatus.deleteTip) {
+            if (notesState.switchStatus.deleteTip) {
               deleteMessageShow.value = true;
             } else {
               onConfirm();
@@ -227,7 +227,7 @@ export default defineComponent({
 
     const onConfirm = () => {
       if (deleteTipChecked?.value) {
-        exeConfig.switchStatus.deleteTip = false;
+        notesState.switchStatus.deleteTip = false;
         deleteTipChecked = null;
       }
       /**
@@ -264,7 +264,7 @@ export default defineComponent({
       openNewWindow,
       deleteMessageShow,
       onConfirm,
-      exeConfig,
+      notesState,
       deleteTipChecked,
       searchHandle
     };

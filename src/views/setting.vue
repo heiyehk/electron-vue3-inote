@@ -14,60 +14,64 @@
               :control="true"
               type="number"
               style="width: 86px;margin-left: 10px;"
-              v-model="exeConfig.syncDelay"
+              v-model="notesState.syncDelay"
             />
             <Tick v-model="inputStatus" :duration="1000" />
           </div>
-          <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             设置编辑和列表同步显示的速度，数字越大，同步速度越快，但影响性能，不影响使用数据。在同步过程中有明显差异，建议使用最大数1000效果会更佳。
           </div>
         </div>
         <div class="block-line flex-items">
           <span>开启提示</span>
-          <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.textTip" />
+          <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.textTip" />
         </div>
         <div class="block-line flex-items">
           <span>删除确认</span>
-          <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.deleteTip" />
+          <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.deleteTip" />
         </div>
-        <div class="block-line disabled-line">
+        <div class="block-line">
           <div class="flex-items">
-            <div class="undeveloped">(未开发)</div>
+            <!-- <div class="undeveloped">(未开发)</div> -->
             <span>自动缩小</span>
-            <Switch disabled styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoNarrow" />
+            <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.autoNarrow" />
           </div>
-          <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
-            空闲时自动最小化
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
+            失去焦点时只展示文字部分
           </div>
         </div>
-        <div class="block-line disabled-line">
+        <!-- <div class="block-line disabled-line">
           <div class="flex-items">
             <div class="undeveloped">(未开发)</div>
             <span>靠边隐藏</span>
-            <Switch disabled styled="margin-left: 10px;" v-model="exeConfig.switchStatus.autoHide" />
+            <Switch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.autoHide" />
           </div>
-          <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             靠近屏幕边缘的时候自动隐藏
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="block">
       <p class="block-title">同步设置</p>
       <div class="block-content">
-        <div class="block-line flex-items" :style="exeConfig.switchStatus.openSync ? '' : 'margin-bottom: 0'">
+        <div
+          class="block-line disabled-line flex-items"
+          :style="notesState.switchStatus.openSync ? '' : 'margin-bottom: 0'"
+        >
+          <div class="undeveloped">(未开发)</div>
           <span>开启同步</span>
-          <Switch styled="margin-left: 10px;" v-model="exeConfig.switchStatus.openSync" />
+          <Switch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.openSync" />
         </div>
-        <div class="setting-sync-server" :class="exeConfig.switchStatus.openSync ? '' : 'hide-sync'">
-          <div v-if="exeConfig.switchStatus.openSync">
+        <div class="setting-sync-server" :class="notesState.switchStatus.openSync ? '' : 'hide-sync'">
+          <div v-if="notesState.switchStatus.openSync">
             <div class="block-line" style="margin-bottom: 4px;">同步服务地址</div>
             <div class="block-line" style="margin-bottom: 5px;">
-              <Input v-model="exeConfig.serverAddress" />
+              <Input v-model="notesState.serverAddress" />
             </div>
             <div class="block-line" style="margin-bottom: 4px;">同步服务TOKEN</div>
             <div class="block-line">
-              <Input v-model="exeConfig.serverToken" />
+              <Input v-model="notesState.serverToken" />
             </div>
             <div class="block-line">
               <a class="link-style">点击测试连接</a>
@@ -103,7 +107,7 @@
             <a class="link-style link-margin" href="javascript:void(0)" @click="copyEmail">复制</a>
             <Tick v-model="copyStatus" :duration="1000" />
           </div>
-          <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             如果你有更好的建议或者动画效果，请联系我
           </div>
         </div>
@@ -112,7 +116,7 @@
             <span>反馈bug</span>
             <a class="link-style link-margin" @click="openLogFolder">打开错误日志</a>
           </div>
-          <div class="gray-text" v-tip="exeConfig.switchStatus.textTip">
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             如果遇到问题或者bug，为了更好的使用，建议联系上面邮箱
           </div>
         </div>
@@ -155,7 +159,7 @@ import Tick from '@/components/Tick.vue';
 import Input from '@/components/Input.vue';
 import Switch from '@/components/Switch.vue';
 
-import { exeConfig } from '@/store/exeConfig.state';
+import { notesState } from '@/store/notes.state';
 import { errorLogPath } from '@/utils/errorLog';
 import useMessage from '@/components/Message';
 
@@ -227,7 +231,7 @@ export default defineComponent({
       currentYear,
       openLogFolder,
       openAppDataFolder,
-      exeConfig,
+      notesState,
       issueLink,
       githubLink,
       openExternal

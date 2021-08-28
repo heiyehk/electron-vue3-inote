@@ -1,8 +1,8 @@
 import { reactive, watch } from 'vue';
 
-const exeConfigLocal = localStorage.getItem('exeConfig');
+const notesStateLocal = localStorage.getItem('notesState');
 
-export let exeConfig = reactive({
+export let notesState = reactive({
   syncDelay: 100,
   serverAddress: '',
   serverToken: '',
@@ -34,12 +34,12 @@ export let exeConfig = reactive({
   }
 });
 
-if (exeConfigLocal) {
-  exeConfig = reactive(JSON.parse(exeConfigLocal));
+if (notesStateLocal) {
+  notesState = reactive(JSON.parse(notesStateLocal));
 } else {
-  localStorage.setItem('exeConfig', JSON.stringify(exeConfig));
+  localStorage.setItem('notesState', JSON.stringify(notesState));
 }
 
-watch(exeConfig, e => {
-  localStorage.setItem('exeConfig', JSON.stringify(e));
+watch(notesState, e => {
+  localStorage.setItem('notesState', JSON.stringify(e));
 });
