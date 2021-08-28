@@ -56,8 +56,10 @@ export default defineComponent({
       afterIpc();
     });
 
+    // 初始化编辑内容
     const initEditorContent = async () => {
       const routeUid = useRoute().query.uid as string;
+      // 判断是编辑还是新增
       if (routeUid) {
         uid.value = routeUid;
         getCurUidItem(routeUid);
@@ -79,10 +81,7 @@ export default defineComponent({
             raw: true
           }
         );
-        /**
-         * createNewNote
-         * 持续监听创建便笺
-         */
+        // 监听创建便笺
         ipcRenderer.send('createNewNote', {
           uid: uid.value,
           content: '',
@@ -91,6 +90,7 @@ export default defineComponent({
       }
     };
 
+    // 从数据库获取编辑的内容
     const getCurUidItem = async (uid: string) => {
       const info = await INote.findOne({
         where: {
@@ -110,10 +110,7 @@ export default defineComponent({
     const openIndex = () => {
       let countFlag = false;
 
-      /**
-       * whetherToOpen
-       * 判断列表窗口是否存在
-       */
+      // 判断列表窗口是否存在
       ipcRenderer.send('whetherToOpen');
       ipcRenderer.on('getWhetherToOpen', () => {
         countFlag = true;
@@ -176,10 +173,7 @@ export default defineComponent({
           }
         }
       );
-      /**
-       * updateNoteItem_content
-       * 更新便笺内容
-       */
+      // 更新便笺内容
       ipcRenderer.send('updateNoteItem_content', {
         uid: uid.value,
         content,
@@ -195,18 +189,15 @@ export default defineComponent({
             uid: uid.value
           }
         }).then(() => {
-          /**
-           * removeEmptyNoteItem
-           * 在关闭的时候如果没有内容就通知列表进行删除操作
-           */
+          // 在关闭的时候如果没有内容就通知列表进行删除操作
           ipcRenderer.send('removeEmptyNoteItem', uid.value);
         });
       }
     };
 
     /**
-     * deleteActiveItem_{uid}
      * 此处通信便笺列表，如果接收到删除的消息就退出
+     *
      * 场景：如果打开窗口就进行关闭
      */
     const afterIpc = () => {

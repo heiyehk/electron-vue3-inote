@@ -29,38 +29,34 @@ https://juejin.cn/post/6909723449246089224
 【electron+vue3+ts实战便笺exe】二、electron+vue3开发内容
 https://juejin.cn/post/6909725365107687431
 
-![123](https://user-images.githubusercontent.com/33891067/126119851-b59a0acb-07b4-4126-9698-961ee0f706a7.gif)
+![gif](https://user-images.githubusercontent.com/33891067/126119851-b59a0acb-07b4-4126-9698-961ee0f706a7.gif)
 
 ```
-electron-notes
+electron-vue3-inote
+├── babel.config.js
+├── package.json
 ├── public
 │   ├── css
+│   ├── favicon.ico
+│   ├── font
 │   └── index.html
+├── script # 打包删除脚本
+│   └── deleteBuild.js
 ├── src
-│   ├── assets
-│   ├── components
-│   ├── config
-│   ├── service # 存放db服务
-│   ├── less
-│   ├── router
-│   ├── script # js脚本
-│   ├── store
-│   ├── utils
-│   ├── views
 │   ├── App.vue
+│   ├── assets
 │   ├── background.ts
+│   ├── components
+│   ├── config # electron和软件的一些配置项
+│   ├── less
 │   ├── main.ts
-│   └── shims-vue.d.ts
-├── .browserslistrc
-├── .eslintrc.js
-├── .prettierrc.js
-├── babel.config.js
-├── inoteError.log
-├── LICENSE
-├── package-lock.json
-├── package.json
-├── README.md
+│   ├── router # 路由
+│   ├── service # 存放sqlite3 db服务
+│   ├── shims-vue.d.ts
+│   ├── store
+│   ├── types
+│   ├── utils
+│   └── views
 ├── tsconfig.json
-├── vue.config.js
-└── yarn.lock
+└── vue.config.js
 ```

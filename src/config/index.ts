@@ -1,6 +1,4 @@
-import classNames from './classNames.options';
-import editorIcons from './editorIcons.options';
-import { browserWindowOption, winURL } from './browser.options';
-import shortcutsKeys from './shortcuts.keys';
+import { editorIcons, classNames } from './noteConfig';
+import { browserWindowOption, winURL, disabledKeys, userTasks } from './electronConfig';
 
-export { classNames, editorIcons, browserWindowOption, winURL, shortcutsKeys };
+export { classNames, editorIcons, browserWindowOption, winURL, disabledKeys, userTasks };

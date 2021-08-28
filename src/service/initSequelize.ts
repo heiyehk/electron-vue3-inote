@@ -1,10 +1,12 @@
 import { Sequelize } from 'sequelize';
 import sqlite3 from 'sqlite3';
+import { join, dirname } from 'path';
+import { remote } from 'electron';
 
 export const sequelize = new Sequelize({
   database: 'reading',
   dialect: 'sqlite',
-  storage: '@/../resources/db/note.db',
+  storage: join(dirname(remote.app.getPath('exe')), '/resources/db/note.db'),
   dialectModule: sqlite3,
   logging: false,
   pool: {
