@@ -31,7 +31,7 @@ module.exports = {
       nodeIntegration: true,
       builderOptions: {
         productName: 'I便笺',
-        appId: 'com.inote.heiyehk',
+        appId: 'com.inotes.heiyehk',
         copyright: 'heiyehk',
         compression: 'store', // "store" | "normal"| "maximum" 打包压缩情况(store 相对较快)，store 39749kb, maximum 39186kb
         // directories: {

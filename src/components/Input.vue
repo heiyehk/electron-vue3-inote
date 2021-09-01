@@ -1,20 +1,26 @@
 <template>
   <div class="hy-input flex">
     <div class="hy-input-box flex1">
-      <input :maxlength="maxlength" :readonly="readonly" v-model="inputValue" @input="changeInput" />
+      <input
+        :maxlength="maxlength"
+        :disabled="disabled"
+        :readonly="readonly"
+        v-model="inputValue"
+        @input="changeInput"
+      />
     </div>
     <div class="hy-number-control flex" v-if="control">
       <div
         class="hy-number-control-add hy-number-button"
-        :class="modelValue === max ? 'disabled' : ''"
-        @click="calculateDelay('add')"
+        :class="modelValue === max || disabled ? 'disabled' : ''"
+        @click="disabled ? '' : calculateDelay('add')"
       >
         <i class="iconfont icon-arrow-up"></i>
       </div>
       <div
         class="hy-number-control-sub hy-number-button"
-        :class="modelValue === min ? 'disabled' : ''"
-        @click="calculateDelay('sub')"
+        :class="modelValue === min || disabled ? 'disabled' : ''"
+        @click="disabled ? '' : calculateDelay('sub')"
       >
         <i class="iconfont icon-arrow-down"></i>
       </div>
@@ -38,6 +44,7 @@ export default defineComponent({
       type: Boolean,
       default: false
     },
+    disabled: Boolean,
     type: {
       type: String,
       default: 'text'

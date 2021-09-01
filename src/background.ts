@@ -27,7 +27,7 @@ function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win = new BrowserWindow(browserWindowOption());
     // 默认打开webpack启动的serve
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/editor');
+    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     const argv = process.argv[1];

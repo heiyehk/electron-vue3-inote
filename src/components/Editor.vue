@@ -12,7 +12,7 @@
     @input="changeEditorContent"
   ></div>
   <!-- 功能 -->
-  <section class="bottom-editor-tools" :class="windowBlur ? 'window-blur-hide' : ''">
+  <section class="bottom-editor-tools" :class="bottomClass">
     <template v-for="item in bottomIcons" :key="item.name">
       <button class="icon" :title="item.title" @click="editorIconHandle($event, item.name)">
         <i class="iconfont" :class="item.icon"></i>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, ref, Ref, watch } from 'vue';
+import { computed, defineComponent, nextTick, onMounted, ref, Ref, watch } from 'vue';
 import { debounce } from '@/utils';
 import { editorIcons } from '@/config';
 import { notesState } from '@/store/notes.state';
@@ -33,6 +33,10 @@ export default defineComponent({
     content: String,
     className: String,
     windowBlur: {
+      type: Boolean,
+      default: true
+    },
+    windowLock: {
       type: Boolean,
       default: true
     }
@@ -56,12 +60,24 @@ export default defineComponent({
         }
       }
     );
+    const bottomClass = computed(() => {
+      const classArr = [];
+      if (props.windowBlur) {
+        classArr.push('window-blur-hide');
+      } else {
+        if (props.windowLock) {
+          // 当锁上的时候，编辑器任然处于失去焦点的情况
+          // 需要解锁才能正常
+          classArr.push('window-blur-hide');
+        }
+      }
+      return classArr;
+    });
 
     // 第一次进入事件
     const firstHandle = () => {
       nextTick(() => {
         focus();
-        console.dir(editor.value);
         editor.value?.scrollTo(0, editor.value.scrollHeight);
         firstIn.value = false;
       });
@@ -88,11 +104,40 @@ export default defineComponent({
     const changeEditorContent = debounce((e: InputEvent) => {
       const editorHtml = (e.target as Element).innerHTML;
       emit('on-input', editorHtml);
-    }, notesState.syncDelay);
+    }, notesState.value.syncDelay);
 
     const paste = (e: ClipboardEvent) => {
       const pasteText = e.clipboardData?.getData('text/plain');
-      document.execCommand('insertText', false, pasteText);
+      const setText = (text?: string) => {
+        document.execCommand('insertText', false, text);
+      };
+      const interceptPoint = 100000;
+      // 做超长文本处理
+      // TODO
+      const len = pasteText!.length;
+      if (!len) return;
+      if (len < interceptPoint) {
+        setText(pasteText);
+      } else {
+        const count = Math.ceil(len / interceptPoint);
+        let control = 0;
+        let interval: any = setInterval(() => {
+          let text = '';
+          if (control === 0) {
+            text = pasteText!.substring(0, (control + 1) * interceptPoint);
+          } else if (control !== 0 && control !== count) {
+            text = pasteText!.substring(control * interceptPoint, (control + 1) * interceptPoint);
+          }
+          setText(text);
+          if (control >= count) {
+            text = '';
+            clearInterval(interval);
+            interval = null;
+            editor.value?.scrollTo(0, editor.value.scrollHeight);
+          }
+          control++;
+        }, 100);
+      }
     };
 
     return {
@@ -101,7 +146,8 @@ export default defineComponent({
       bottomIcons,
       changeEditorContent,
       paste,
-      editorContent
+      editorContent,
+      bottomClass
     };
   }
 });

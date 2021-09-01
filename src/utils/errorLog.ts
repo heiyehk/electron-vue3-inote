@@ -25,7 +25,7 @@ function getShortStack(stack?: string): string {
   return newStack.join('\n    ');
 }
 
-export const errorLogPath = path.join(remote.app.getPath('exe'), '../inoteError.log');
+export const errorLogPath = path.join(remote.app.getPath('exe'), '../inotesError.log');
 
 export default function(error: unknown, vm: ComponentPublicInstance | null, info: string): void {
   const { message, stack } = error as Error;

@@ -1,6 +1,6 @@
 {
   "name": "i-notes",
-  "version": "0.2.4",
+  "version": "0.3.1",
   "private": true,
   "author": "heiyehk",
   "description": "I便笺拥有漂亮的过度效果，允许开启多个窗口方便在桌面端更方便的记录文字",
@@ -15,15 +15,16 @@
     "email": "heiyehk@foxmail.com"
   },
   "scripts": {
-    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service electron:serve",
     "build": "node script/deleteBuild && vue-cli-service electron:build",
-    "serve": "vue-cli-service electron:serve"
+    "lint": "vue-cli-service lint",
+    "commit": "cz"
   },
   "dependencies": {
     "core-js": "^3.15.2",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.10.6",
     "fs-extra": "^10.0.0",
-    "nedb": "^1.8.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
@@ -34,7 +35,7 @@
     "vue-router": "^4.0.10"
   },
   "devDependencies": {
-    "@types/nedb": "^1.8.12",
+    "@types/crypto-js": "^4.0.2",
     "@types/sequelize": "^4.28.10",
     "@types/sqlite3": "^3.1.7",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
@@ -47,6 +48,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
+    "cz-conventional-changelog": "3.3.0",
     "electron": "13.1.6",
     "electron-builder": "^22.9.1",
     "eslint": "^6.7.2",
@@ -60,6 +62,16 @@
     "rimraf": "^3.0.2",
     "typescript": "~3.9.3",
     "vue-cli-plugin-style-resources-loader": "~0.1.4"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

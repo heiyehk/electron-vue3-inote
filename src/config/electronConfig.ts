@@ -1,5 +1,6 @@
 import { Task } from 'electron';
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
 /**
  * task事件
  */
@@ -33,14 +34,12 @@ export const disabledKeys = () => {
 
   const shortcuts = ['Ctrl+N', 'SHIFT+F10', 'Ctrl+SHIFT+I'];
 
-  const exportKeys = process.env.NODE_ENV === 'development' ? shortcuts : [...devShortcuts, ...shortcuts];
+  const exportKeys = isDevelopment ? shortcuts : [...devShortcuts, ...shortcuts];
   return exportKeys;
 };
 
-const globalEnv = process.env.NODE_ENV;
-
-const devWid = globalEnv === 'development' ? 950 : 0;
-const devHei = globalEnv === 'development' ? 600 : 0;
+const devWid = isDevelopment ? 950 : 0;
+const devHei = isDevelopment ? 600 : 0;
 
 // 底部icon: 40*40
 const editorWindowOptions = {
@@ -78,7 +77,7 @@ export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowCons
       height: devHei || 600,
       minWidth: 320,
       ...commonOptions,
-      resizable: false
+      resizable: isDevelopment ? true : false
     };
   }
   return {
@@ -92,4 +91,4 @@ export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowCons
  *
  * 正式环境: file://${__dirname}/index.html
  */
-export const winURL = globalEnv === 'development' ? 'http://localhost:55225' : `file://${__dirname}/index.html`;
+export const winURL = isDevelopment ? 'http://localhost:55225' : `file://${__dirname}/index.html`;

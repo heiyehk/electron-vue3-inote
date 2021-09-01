@@ -12,7 +12,7 @@
               @contextmenu.prevent="contextMenu($event, item.uid)"
             >
               <span class="update-time">{{ getTime(item.updatedAt) }}</span>
-              <div class="edit-content module-editor empty-content" v-html="item.content"></div>
+              <div class="edit-content module-editor empty-content" v-html="item.interception"></div>
             </li>
           </template>
         </ul>
@@ -52,9 +52,10 @@ import MessageBox from '@/components/MessageBox.vue';
 import Search from './components/Search.vue';
 
 import { browserWindowOption } from '@/config';
-import { INote } from '@/service';
+import { Notes } from '@/service';
 import { createBrowserWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
+import { DBNotesType, DBNotesListType } from '@/types/notes';
 
 export default defineComponent({
   components: {
@@ -66,7 +67,7 @@ export default defineComponent({
     const deleteCurrentUid = ref('');
     let deleteTipChecked: Ref<boolean> | null = ref(false);
     const fadein = ref(false);
-    let viewNotesList = ref([] as ListDbNotes[]);
+    let viewNotesList = ref<DBNotesListType[]>([]);
     const rightClick = new CreateRightClick();
     const year = dayjs().year();
 
@@ -89,13 +90,15 @@ export default defineComponent({
     });
 
     const getAllDBNotes = async () => {
-      const inoteAllList = ((await INote.findAll({
+      const notesAllList = await Notes.findAll({
         raw: true,
-        order: [['updatedAt', 'DESC']]
-      })) as unknown) as ListDbNotes[];
-      viewNotesList.value = inoteAllList;
+        order: [['updatedAt', 'DESC']],
+        attributes: ['uid', 'className', 'interception', 'updatedAt']
+      });
+      console.log(notesAllList);
+      viewNotesList.value = (notesAllList as unknown) as DBNotesListType[];
 
-      if (inoteAllList.length) {
+      if (notesAllList.length) {
         emptyBlockState.value = 1;
       } else {
         emptyBlockState.value = 2;
@@ -143,7 +146,7 @@ export default defineComponent({
           iconName: ['iconfont', 'icon-delete'],
           handler: () => {
             deleteCurrentUid.value = uid;
-            if (notesState.switchStatus.deleteTip) {
+            if (notesState.value.switchStatus.deleteTip) {
               deleteMessageShow.value = true;
             } else {
               onConfirm();
@@ -170,7 +173,7 @@ export default defineComponent({
        * createNewNote
        * 持续监听创建便笺
        */
-      remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotes) => {
+      remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotesType) => {
         viewNotesList.value.unshift(noteItem);
         emptyBlockState.value = 1;
       });
@@ -179,7 +182,7 @@ export default defineComponent({
        * updateNoteItem_className
        * 更新背景样式
        */
-      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: QueryDB<DBNotes>) => {
+      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: DBNotesType) => {
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
         if (cntIndex === -1) return;
         viewNotesList.value[cntIndex].className = updateItem.className as string;
@@ -189,10 +192,10 @@ export default defineComponent({
        * updateNoteItem_content
        * 更新content内容
        */
-      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: QueryDB<DBNotes>) => {
+      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: DBNotesType) => {
         const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
         if (cntIndex === -1) return;
-        viewNotesList.value[cntIndex].content = updateItem.content as string;
+        viewNotesList.value[cntIndex].interception = updateItem.interception as string;
         viewNotesList.value[cntIndex].updatedAt = updateItem.updatedAt!;
       });
 
@@ -227,7 +230,7 @@ export default defineComponent({
 
     const onConfirm = () => {
       if (deleteTipChecked?.value) {
-        notesState.switchStatus.deleteTip = false;
+        notesState.value.switchStatus.deleteTip = false;
         deleteTipChecked = null;
       }
       /**
@@ -237,7 +240,7 @@ export default defineComponent({
        */
       ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
       removeNoteItem(deleteCurrentUid.value);
-      INote.destroy({
+      Notes.destroy({
         where: {
           uid: deleteCurrentUid.value
         }
@@ -246,7 +249,7 @@ export default defineComponent({
       });
     };
 
-    const searchHandle = (data: DBNotes[]) => {
+    const searchHandle = (data: DBNotesType[]) => {
       if (data.length) {
         viewNotesList.value = data;
       } else {

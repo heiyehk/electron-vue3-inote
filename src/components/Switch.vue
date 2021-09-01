@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   props: {
@@ -26,14 +26,21 @@ export default defineComponent({
     styled: String,
     disabled: Boolean
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const checkedStatus = ref(props.modelValue);
+    watch(
+      () => props.modelValue,
+      nv => {
+        checkedStatus.value = nv;
+      }
+    );
 
     const checkStatus = () => {
       if (props.disabled) return;
       checkedStatus.value = !checkedStatus.value;
       emit('update:modelValue', checkedStatus.value);
+      emit('change', checkedStatus.value);
     };
 
     return {

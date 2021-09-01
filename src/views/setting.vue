@@ -3,12 +3,13 @@
     <div class="block">
       <p class="block-title">通用设置</p>
       <div class="block-content">
-        <div class="block-line">
+        <div class="block-line disabled-line">
           <div class="flex-items">
             <span>编辑和列表同步速度</span>
             <Input
               :max="1000"
               :min="100"
+              disabled
               maxlength="4"
               :readonly="true"
               :control="true"
@@ -32,12 +33,28 @@
         </div>
         <div class="block-line">
           <div class="flex-items">
-            <!-- <div class="undeveloped">(未开发)</div> -->
-            <span>自动缩小</span>
-            <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.autoNarrow" />
+            <span>自动沉浸</span>
+            <Switch
+              @change="changeAutoNarrow"
+              styled="margin-left: 10px;"
+              v-model="notesState.switchStatus.autoNarrow"
+            />
           </div>
           <div class="gray-text" v-tip="notesState.switchStatus.textTip">
-            失去焦点时只展示文字部分
+            失去焦点时自动隐藏头部和底部
+          </div>
+        </div>
+        <div class="block-line">
+          <div class="flex-items">
+            <span>纯净模式</span>
+            <Switch
+              styled="margin-left: 10px;"
+              :disabled="!notesState.switchStatus.autoNarrow"
+              v-model="notesState.switchStatus.autoNarrowPure"
+            />
+          </div>
+          <div class="gray-text" v-tip="notesState.switchStatus.textTip">
+            在沉浸下需要按<span class="block-important">ESC</span>退出当前纯净模式
           </div>
         </div>
         <!-- <div class="block-line disabled-line">
@@ -221,6 +238,12 @@ export default defineComponent({
       remote.shell.openExternal(link);
     };
 
+    const changeAutoNarrow = (data: boolean) => {
+      if (!data) {
+        notesState.value.switchStatus.autoNarrowPure = false;
+      }
+    };
+
     return {
       copyStatus,
       inputStatus,
@@ -234,7 +257,8 @@ export default defineComponent({
       notesState,
       issueLink,
       githubLink,
-      openExternal
+      openExternal,
+      changeAutoNarrow
     };
   }
 });
@@ -327,5 +351,14 @@ export default defineComponent({
   height: 0;
   opacity: 0;
   transition: all 0.4s;
+}
+
+.block-important {
+  background-color: @gray-color;
+  color: @text-color;
+  display: inline-block;
+  line-height: 1;
+  padding: 1px 2px;
+  margin: 0 2px;
 }
 </style>

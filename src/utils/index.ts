@@ -1,5 +1,6 @@
 import { winURL } from '@/config';
 import { BrowserWindow, remote } from 'electron';
+import { enc, AES, mode, pad } from 'crypto-js';
 
 type FunctionalControl = (this: any, fn: any, delay?: number) => (...args: any) => void;
 type DebounceEvent = FunctionalControl;
@@ -57,4 +58,35 @@ export const uuid = (): string => {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   };
   return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4();
+};
+
+export const symbolKey = Symbol('key');
+export const symbolIv = Symbol('iv');
+export const symbolEncrypt = Symbol('encrypt');
+export const symbolDecode = Symbol('decode');
+export const algorithm = {
+  [symbolKey]: enc.Utf8.parse('1234123412ABCDEF'), // 十六位十六进制数作为密钥
+  [symbolIv]: enc.Utf8.parse('ABCDEF1234123412'), // 十六位十六进制数作为密钥偏移量
+  // 加密
+  [symbolEncrypt]: (word: string) => {
+    const srcs = enc.Utf8.parse(word);
+    const encrypted = AES.encrypt(srcs, algorithm[symbolKey], {
+      iv: algorithm[symbolIv],
+      mode: mode.CBC,
+      padding: pad.Pkcs7
+    });
+    return encrypted.ciphertext.toString().toUpperCase();
+  },
+  // 解密
+  [symbolDecode]: (word: string) => {
+    const encryptedHexStr = enc.Hex.parse(word);
+    const srcs = enc.Base64.stringify(encryptedHexStr);
+    const decrypt = AES.decrypt(srcs, algorithm[symbolKey], {
+      iv: algorithm[symbolIv],
+      mode: mode.CBC,
+      padding: pad.Pkcs7
+    });
+    const decryptedStr = decrypt.toString(enc.Utf8);
+    return decryptedStr.toString();
+  }
 };

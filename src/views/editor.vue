@@ -1,14 +1,5 @@
 <template>
-  <Header
-    title=""
-    :class="[
-      'header-editor',
-      !showOptionsStatus && !currentWindowBlurState ? 'header-show-style' : 'header-hide-style',
-      currentBgClassName
-    ]"
-    @option-click="clickOption"
-    @on-close="closeWindow"
-  />
+  <Header class="header-editor" :class="headerClass" @option-click="clickOption" @on-close="closeWindow" />
   <div class="options-container" :class="showOptionsStatus ? 'options-show' : ''">
     <div class="options-cover" @click="showOptionsStatus = false"></div>
     <div class="options-content">
@@ -23,10 +14,11 @@
       </p>
     </div>
   </div>
-  <main class="page-editor" :class="[currentBgClassName, currentWindowBlurState ? 'window-blur-status' : '']">
+  <main class="page-editor" :class="pageClass">
     <section class="editor-container">
       <Editor
         :windowBlur="currentWindowBlurState"
+        :windowLock="lockState"
         :content="editContent"
         :className="currentBgClassName"
         @on-input="changeEditContent"
@@ -36,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, ref } from 'vue';
+import { computed, defineComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -45,7 +37,7 @@ import Editor from '@/components/Editor.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
-import { INote } from '@/service';
+import { Notes } from '@/service';
 
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
@@ -67,6 +59,11 @@ export default defineComponent({
      * - `true`: 是 - 失去焦点
      */
     const currentWindowBlurState = ref(false);
+    /**
+     * - `false`: 否 - 未锁定
+     * - `true`: 是 - 已锁定
+     */
+    const lockState = ref(false);
 
     onBeforeMount(() => {
       initEditorContent();
@@ -88,11 +85,12 @@ export default defineComponent({
             uid: uuidString
           }
         });
-        INote.create(
+        Notes.create(
           {
             uid: uid.value,
             content: '',
-            className: ''
+            className: '',
+            interception: ''
           },
           {
             raw: true
@@ -102,14 +100,15 @@ export default defineComponent({
         ipcRenderer.send('createNewNote', {
           uid: uid.value,
           content: '',
-          className: ''
+          className: '',
+          interception: ''
         });
       }
     };
 
     // 从数据库获取编辑的内容
     const getCurUidItem = async (uid: string) => {
-      const info = await INote.findOne({
+      const info = await Notes.findOne({
         where: {
           uid
         }
@@ -150,11 +149,12 @@ export default defineComponent({
     const changeBgClassName = (className: string) => {
       if (currentBgClassName.value !== className) {
         currentBgClassName.value = className;
-        INote.update(
+        Notes.update(
           {
             uid: uid.value,
             content: editContent.value,
-            className
+            className,
+            interception: editContent.value.substr(0, 500)
           },
           {
             where: {
@@ -169,7 +169,7 @@ export default defineComponent({
           ipcRenderer.send('updateNoteItem_className', {
             uid: uid.value,
             className: currentBgClassName.value
-          } as QueryDB<DBNotes>);
+          });
         });
       }
       showOptionsStatus.value = false;
@@ -178,11 +178,12 @@ export default defineComponent({
     const changeEditContent = (content: string) => {
       editContent.value = content;
       if (!uid.value) return false;
-      INote.update(
+      Notes.update(
         {
           uid: uid.value,
           content,
-          className: currentBgClassName.value
+          className: currentBgClassName.value,
+          interception: editContent.value.substr(0, 500)
         },
         {
           where: {
@@ -194,14 +195,15 @@ export default defineComponent({
       ipcRenderer.send('updateNoteItem_content', {
         uid: uid.value,
         content,
-        updatedAt: new Date()
-      } as QueryDB<DBNotes>);
+        updatedAt: new Date(),
+        interception: editContent.value.substr(0, 500)
+      });
     };
 
     const closeWindow = () => {
       if (!editContent.value) {
         // 如果是空就直接从数据库删除
-        INote.destroy({
+        Notes.destroy({
           where: {
             uid: uid.value
           }
@@ -227,26 +229,55 @@ export default defineComponent({
       });
     };
 
-    if (notesState.switchStatus.autoNarrow) {
+    const headerClass = computed(() => {
+      let classArr = [currentBgClassName.value];
+      // 当编辑器不在显示选项的时候，并且处于显示焦点的情况下
+      if (!showOptionsStatus.value && !currentWindowBlurState.value) {
+        /**
+         * 当未锁上的时候显示头部
+         *
+         * 和下面页面显示逻辑不同的是，这里是进行显示，下面是进行隐藏
+         */
+        if (!lockState.value) {
+          classArr.push('header-show-style');
+        }
+      }
+      return classArr;
+    });
+    const pageClass = computed(() => {
+      let classArr = [currentBgClassName.value];
+      // 当窗口失去焦点的时候
+      if (currentWindowBlurState.value) {
+        // 编辑器处于失去焦点的状态
+        classArr.push('window-blur-hide');
+      } else {
+        if (lockState.value) {
+          // 当锁上的时候，编辑器任然处于失去焦点的情况
+          // 需要解锁才能正常
+          classArr.push('window-blur-hide');
+        }
+      }
+      return classArr;
+    });
+
+    if (notesState.value.switchStatus.autoNarrow) {
       currentWindow.on('blur', () => {
         currentWindowBlurState.value = true;
+        if (notesState.value.switchStatus.autoNarrowPure) {
+          lockState.value = true;
+        } else {
+          lockState.value = false;
+        }
       });
 
       currentWindow.on('focus', () => {
         currentWindowBlurState.value = false;
       });
-
-      // TODO
-      // 提示: 可拖拽区域并不纳入document区域，所以会无法获得焦点
-      // document.addEventListener('mouseover', () => {
-      //   currentWindowBlurState.value = false;
-      // });
-
-      // document.addEventListener('mouseout', () => {
-      //   setTimeout(() => {
-      //     currentWindowBlurState.value = true;
-      //   }, 2000);
-      // });
+      document.addEventListener('keydown', e => {
+        if (e.keyCode === 27) {
+          lockState.value = false;
+        }
+      });
     }
 
     return {
@@ -259,7 +290,10 @@ export default defineComponent({
       editContent,
       changeEditContent,
       closeWindow,
-      currentWindowBlurState
+      currentWindowBlurState,
+      lockState,
+      headerClass,
+      pageClass
     };
   }
 });
@@ -288,9 +322,6 @@ export default defineComponent({
   position: absolute;
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-  transition: all 0.4s;
-}
-.header-hide-style {
   top: -@iconSize;
   transition: all 0.4s;
 }
@@ -386,7 +417,7 @@ export default defineComponent({
   }
 }
 
-.window-blur-status {
+.window-blur-hide {
   padding-top: 0;
   padding-bottom: 0;
   transition: padding 0.4s;

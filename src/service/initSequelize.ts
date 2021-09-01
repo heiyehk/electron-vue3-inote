@@ -3,10 +3,17 @@ import sqlite3 from 'sqlite3';
 import { join, dirname } from 'path';
 import { remote } from 'electron';
 
+let storagePath = '';
+if (process.platform === 'win32') {
+  storagePath = join(dirname(remote.app.getPath('exe')), '/resources/db/notes.db');
+} else {
+  storagePath = join(dirname(remote.app.getPath('userData')), '/resources/db/notes.db');
+}
+
 export const sequelize = new Sequelize({
   database: 'reading',
   dialect: 'sqlite',
-  storage: join(dirname(remote.app.getPath('exe')), '/resources/db/note.db'),
+  storage: storagePath,
   dialectModule: sqlite3,
   logging: false,
   pool: {

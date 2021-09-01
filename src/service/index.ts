@@ -1,4 +1,4 @@
 import { sequelize } from './initSequelize';
-import { INote } from './modles/INote';
+import { Notes } from './modles/Notes';
 
-export { sequelize, INote };
+export { sequelize, Notes };

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { INote } from '@/service';
+import { Notes } from '@/service';
 import { Op } from 'sequelize';
 
 export default defineComponent({
@@ -25,7 +25,7 @@ export default defineComponent({
         emit('search', []);
         return;
       }
-      const data = await INote.findAll({
+      const data = await Notes.findAll({
         raw: true,
         order: [['updatedAt', 'DESC']],
         where: {
