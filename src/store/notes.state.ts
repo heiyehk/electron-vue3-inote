@@ -79,7 +79,7 @@ export const notesState = ref<NotesState>({
 if (notesStateLocal) {
   notesState.value = JSON.parse(notesStateLocal);
 } else {
-  localStorage.setItem('notesState', JSON.stringify(notesState));
+  localStorage.setItem('notesState', JSON.stringify(notesState.value));
 }
 
 watch(notesState.value, e => {

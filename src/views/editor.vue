@@ -28,12 +28,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeMount, ref } from 'vue';
+import { computed, defineComponent, defineAsyncComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
-
-import Header from '@/components/Header.vue';
-import Editor from '@/components/Editor.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
@@ -44,8 +41,8 @@ import { notesState } from '@/store/notes.state';
 
 export default defineComponent({
   components: {
-    Header,
-    Editor
+    Header: defineAsyncComponent(() => import('@/components/Header.vue')),
+    Editor: defineAsyncComponent(() => import('@/components/Editor.vue'))
   },
   setup() {
     const showOptionsStatus = ref(false);
