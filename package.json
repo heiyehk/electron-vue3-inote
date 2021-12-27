@@ -19,7 +19,8 @@
     "build": "node script/deleteBuild && vue-cli-service electron:build",
     "lint": "vue-cli-service lint",
     "log": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "commit": "yarn log && git add . && cz"
+    "commit": "yarn log && git add . && cz",
+    "cz": "cz"
   },
   "dependencies": {
     "core-js": "^3.15.2",
