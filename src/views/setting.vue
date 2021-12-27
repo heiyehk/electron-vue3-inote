@@ -3,7 +3,7 @@
     <div class="block">
       <p class="block-title">通用设置</p>
       <div class="block-content">
-        <div class="block-line disabled-line">
+        <!-- <div class="block-line disabled-line">
           <div class="flex-items">
             <span>编辑和列表同步速度</span>
             <Input
@@ -22,7 +22,7 @@
           <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             设置编辑和列表同步显示的速度，数字越大，同步速度越快，但影响性能，不影响使用数据。在同步过程中有明显差异，建议使用最大数1000效果会更佳。
           </div>
-        </div>
+        </div> -->
         <div class="block-line flex-items">
           <span>开启提示</span>
           <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.textTip" />

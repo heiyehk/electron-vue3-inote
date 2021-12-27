@@ -18,7 +18,8 @@
     "serve": "vue-cli-service electron:serve",
     "build": "node script/deleteBuild && vue-cli-service electron:build",
     "lint": "vue-cli-service lint",
-    "commit": "cz"
+    "log": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "commit": "yarn log && git add . && cz"
   },
   "dependencies": {
     "core-js": "^3.15.2",
@@ -29,10 +30,9 @@
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
     "style-resources-loader": "^1.4.1",
-    "vue": "3.1.4",
-    "vue-class-component": "^8.0.0-0",
+    "vue": "3.2.26",
     "vue-cli-plugin-electron-builder": "^2.1.1",
-    "vue-router": "^4.0.10"
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.0.2",
@@ -45,11 +45,11 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/compiler-sfc": "^3.2.26",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "cz-conventional-changelog": "3.3.0",
-    "electron": "13.1.6",
+    "electron": "11.5.0",
     "electron-builder": "^22.9.1",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.15.0",
@@ -60,7 +60,7 @@
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
-    "typescript": "~3.9.3",
+    "typescript": "4.4.4",
     "vue-cli-plugin-style-resources-loader": "~0.1.4"
   },
   "husky": {

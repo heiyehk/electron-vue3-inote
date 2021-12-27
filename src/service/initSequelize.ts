@@ -1,14 +1,9 @@
 import { Sequelize } from 'sequelize';
 import sqlite3 from 'sqlite3';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { remote } from 'electron';
 
-let storagePath = '';
-if (process.platform === 'win32') {
-  storagePath = join(dirname(remote.app.getPath('exe')), '/resources/db/notes.db');
-} else {
-  storagePath = join(dirname(remote.app.getPath('userData')), '/resources/db/notes.db');
-}
+const storagePath = join(remote.app.getPath('userData'), '/resources/db/notes.db');
 
 export const sequelize = new Sequelize({
   database: 'reading',
