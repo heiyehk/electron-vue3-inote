@@ -55,10 +55,10 @@ export const editorIcons = [
  * - `black-content` 黑色
  */
 export const classNames = [
-  // {
-  //   color: 'white-content',
-  //   title: '白色'
-  // },
+  {
+    color: 'white-content',
+    title: '白色'
+  },
   {
     className: 'yellow-content',
     title: '黄色'

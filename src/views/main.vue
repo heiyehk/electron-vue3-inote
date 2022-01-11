@@ -13,26 +13,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onBeforeUpdate } from 'vue';
+<script setup lang="ts">
+import { ref, onBeforeUpdate } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from '@/components/Header.vue';
 
-export default defineComponent({
-  components: {
-    Header
-  },
-  setup() {
-    const routeName = ref(useRoute().name as string);
+const routeName = ref(useRoute().name as string);
 
-    onBeforeUpdate(() => {
-      routeName.value = useRoute().name as string;
-    });
-
-    return {
-      routeName
-    };
-  }
+onBeforeUpdate(() => {
+  routeName.value = useRoute().name as string;
 });
 </script>
 

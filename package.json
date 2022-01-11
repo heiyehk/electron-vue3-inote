@@ -31,6 +31,7 @@
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
     "style-resources-loader": "^1.4.1",
+    "vditor": "^3.8.10",
     "vue": "3.2.26",
     "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-router": "^4.0.12"
@@ -51,7 +52,7 @@
     "@vue/eslint-config-typescript": "^5.0.2",
     "cz-conventional-changelog": "3.3.0",
     "electron": "11.5.0",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "22.14.5",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.1.4",

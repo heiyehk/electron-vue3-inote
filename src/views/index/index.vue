@@ -42,8 +42,8 @@
   </MessageBox>
 </template>
 
-<script lang="ts">
-import { defineComponent, onBeforeMount, Ref, ref } from 'vue';
+<script setup lang="ts">
+import { onBeforeMount, Ref, ref } from 'vue';
 import { remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
 
@@ -57,222 +57,201 @@ import { createBrowserWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
 import { DBNotesType, DBNotesListType } from '@/types/notes';
 
-export default defineComponent({
-  components: {
-    MessageBox,
-    Search
-  },
-  setup() {
-    const deleteMessageShow = ref(false);
-    const deleteCurrentUid = ref('');
-    let deleteTipChecked: Ref<boolean> | null = ref(false);
-    const fadein = ref(false);
-    let viewNotesList = ref<DBNotesListType[]>([]);
-    const rightClick = new CreateRightClick();
-    const year = dayjs().year();
+type Booleanish = boolean | 'true' | 'false';
 
-    // 控制主页的显示接面
-    let emptyBlockState = ref(0);
+const deleteMessageShow = ref(false);
+const deleteCurrentUid = ref('');
+let deleteTipChecked: Ref<Booleanish | undefined> = ref(false);
+const fadein = ref(false);
+let viewNotesList = ref<DBNotesListType[]>([]);
+const rightClick = new CreateRightClick();
+const year = dayjs().year();
 
-    // 今天0点时间戳
-    const todayZeroTimeStamp = dayjs()
-      .hour(0)
-      .minute(0)
-      .second(0)
-      .valueOf();
+// 控制主页的显示接面
+let emptyBlockState = ref(0);
 
-    // 现在时间戳
-    const nowTimeStamp = dayjs().valueOf();
+// 今天0点时间戳
+const todayZeroTimeStamp = dayjs()
+  .hour(0)
+  .minute(0)
+  .second(0)
+  .valueOf();
 
-    onBeforeMount(() => {
-      getAllDBNotes();
-      electronIpcEditor();
-    });
+// 现在时间戳
+const nowTimeStamp = dayjs().valueOf();
 
-    const getAllDBNotes = async () => {
-      const notesAllList = await Notes.findAll({
-        raw: true,
-        order: [['updatedAt', 'DESC']],
-        attributes: ['uid', 'className', 'interception', 'updatedAt']
-      });
-      console.log(notesAllList);
-      viewNotesList.value = (notesAllList as unknown) as DBNotesListType[];
-
-      if (notesAllList.length) {
-        emptyBlockState.value = 1;
-      } else {
-        emptyBlockState.value = 2;
-      }
-    };
-
-    const getTime = (time: Date) => {
-      const date = dayjs(time);
-      const dateYear = date.year();
-      const dateTimeStamp = date.valueOf();
-      // 如果不在这个年份就需要渲染年份
-      if (year !== dateYear) return date.format('YYYY-MM-DD');
-      // 如果不在今天就渲染年月
-      if (nowTimeStamp - dateTimeStamp > todayZeroTimeStamp) return date.format('MM-DD');
-      // 否则渲染时分
-      return date.format('HH:mm');
-    };
-
-    const bwsWinOption = browserWindowOption('editor');
-    const openEditorWindow = (uid: string) => {
-      let countFlag = false;
-      ipcRenderer.send(`${uid}_toOpen`);
-      ipcRenderer.on(`get_${uid}_toOpen`, () => {
-        countFlag = true;
-        return;
-      });
-      setTimeout(() => {
-        if (!countFlag) createBrowserWindow(bwsWinOption, `/editor?uid=${uid}`);
-      }, 100);
-    };
-
-    const contextMenu = (event: MouseEvent, uid: string) => {
-      rightClick.useRightClick(event, [
-        {
-          text: '打开笔记',
-          once: true,
-          iconName: ['iconfont', 'icon-newopen'],
-          handler: () => {
-            openEditorWindow(uid);
-          }
-        },
-        {
-          text: '删除笔记',
-          once: true,
-          iconName: ['iconfont', 'icon-delete'],
-          handler: () => {
-            deleteCurrentUid.value = uid;
-            if (notesState.value.switchStatus.deleteTip) {
-              deleteMessageShow.value = true;
-            } else {
-              onConfirm();
-            }
-          }
-        }
-      ]);
-    };
-
-    const removeNoteItem = (uid: string) => {
-      const rntIndex = viewNotesList.value.findIndex(x => x.uid === uid);
-      if (rntIndex === -1) return;
-      viewNotesList.value[rntIndex].remove = true;
-      setTimeout(() => {
-        viewNotesList.value.splice(rntIndex, 1);
-        if (!viewNotesList.value.length) {
-          emptyBlockState.value = 2;
-        }
-      }, 400);
-    };
-
-    const electronIpcEditor = (): void => {
-      /**
-       * createNewNote
-       * 持续监听创建便笺
-       */
-      remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotesType) => {
-        viewNotesList.value.unshift(noteItem);
-        emptyBlockState.value = 1;
-      });
-
-      /**
-       * updateNoteItem_className
-       * 更新背景样式
-       */
-      remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: DBNotesType) => {
-        const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
-        if (cntIndex === -1) return;
-        viewNotesList.value[cntIndex].className = updateItem.className as string;
-      });
-
-      /**
-       * updateNoteItem_content
-       * 更新content内容
-       */
-      remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: DBNotesType) => {
-        const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
-        if (cntIndex === -1) return;
-        viewNotesList.value[cntIndex].interception = updateItem.interception as string;
-        viewNotesList.value[cntIndex].updatedAt = updateItem.updatedAt!;
-      });
-
-      /**
-       * removeEmptyNoteItem
-       * 获取便笺编辑关闭后如果是空就进行删除
-       */
-      remote.ipcMain.on('removeEmptyNoteItem', async (event, uid: string) => {
-        removeNoteItem(uid);
-      });
-
-      /**
-       * whetherToOpen
-       * 判断本列表是否打开，聚焦显示
-       */
-      remote.ipcMain.on('whetherToOpen', event => {
-        remote.getCurrentWindow().show();
-        event.sender.send('getWhetherToOpen');
-      });
-
-      // 失去焦点之后删除右键
-      remote.getCurrentWindow().on('blur', () => {
-        rightClick.remove();
-      });
-    };
-
-    const editorWinOptions = browserWindowOption('editor');
-    // 打开新窗口
-    const openNewWindow = () => {
-      createBrowserWindow(editorWinOptions, '/editor', false);
-    };
-
-    const onConfirm = () => {
-      if (deleteTipChecked?.value) {
-        notesState.value.switchStatus.deleteTip = false;
-        deleteTipChecked = null;
-      }
-      /**
-       * deleteActiveItem_{uid}
-       * 此处通信便笺编辑
-       * 场景：如果打开窗口就进行关闭
-       */
-      ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
-      removeNoteItem(deleteCurrentUid.value);
-      Notes.destroy({
-        where: {
-          uid: deleteCurrentUid.value
-        }
-      }).finally(() => {
-        deleteCurrentUid.value = '';
-      });
-    };
-
-    const searchHandle = (data: DBNotesType[]) => {
-      if (data.length) {
-        viewNotesList.value = data;
-      } else {
-        getAllDBNotes();
-      }
-    };
-
-    return {
-      fadein,
-      viewNotesList,
-      contextMenu,
-      getTime,
-      emptyBlockState,
-      openEditorWindow,
-      openNewWindow,
-      deleteMessageShow,
-      onConfirm,
-      notesState,
-      deleteTipChecked,
-      searchHandle
-    };
-  }
+onBeforeMount(() => {
+  getAllDBNotes();
+  electronIpcEditor();
 });
+
+const getAllDBNotes = async () => {
+  const notesAllList = await Notes.findAll({
+    raw: true,
+    order: [['updatedAt', 'DESC']],
+    attributes: ['uid', 'className', 'interception', 'updatedAt']
+  });
+  viewNotesList.value = (notesAllList as unknown) as DBNotesListType[];
+
+  if (notesAllList.length) {
+    emptyBlockState.value = 1;
+  } else {
+    emptyBlockState.value = 2;
+  }
+};
+
+const getTime = (time: Date) => {
+  const date = dayjs(time);
+  const dateYear = date.year();
+  const dateTimeStamp = date.valueOf();
+  // 如果不在这个年份就需要渲染年份
+  if (year !== dateYear) return date.format('YYYY-MM-DD');
+  // 如果不在今天就渲染年月
+  if (nowTimeStamp - dateTimeStamp > todayZeroTimeStamp) return date.format('MM-DD');
+  // 否则渲染时分
+  return date.format('HH:mm');
+};
+
+const bwsWinOption = browserWindowOption('editor');
+const openEditorWindow = (uid: string) => {
+  let countFlag = false;
+  ipcRenderer.send(`${uid}_toOpen`);
+  ipcRenderer.on(`get_${uid}_toOpen`, () => {
+    countFlag = true;
+    return;
+  });
+  setTimeout(() => {
+    if (!countFlag) createBrowserWindow(bwsWinOption, `/editor?uid=${uid}`);
+  }, 100);
+};
+
+const contextMenu = (event: MouseEvent, uid: string) => {
+  rightClick.useRightClick(event, [
+    {
+      text: '打开笔记',
+      once: true,
+      iconName: ['iconfont', 'icon-newopen'],
+      handler: () => {
+        openEditorWindow(uid);
+      }
+    },
+    {
+      text: '删除笔记',
+      once: true,
+      iconName: ['iconfont', 'icon-delete'],
+      handler: () => {
+        deleteCurrentUid.value = uid;
+        if (notesState.value.switchStatus.deleteTip) {
+          deleteMessageShow.value = true;
+        } else {
+          onConfirm();
+        }
+      }
+    }
+  ]);
+};
+
+const removeNoteItem = (uid: string) => {
+  const rntIndex = viewNotesList.value.findIndex(x => x.uid === uid);
+  if (rntIndex === -1) return;
+  viewNotesList.value[rntIndex].remove = true;
+  setTimeout(() => {
+    viewNotesList.value.splice(rntIndex, 1);
+    if (!viewNotesList.value.length) {
+      emptyBlockState.value = 2;
+    }
+  }, 400);
+};
+
+const electronIpcEditor = (): void => {
+  /**
+   * createNewNote
+   * 持续监听创建便笺
+   */
+  remote.ipcMain.on('createNewNote', async (event, noteItem: DBNotesType) => {
+    viewNotesList.value.unshift(noteItem);
+    emptyBlockState.value = 1;
+  });
+
+  /**
+   * updateNoteItem_className
+   * 更新背景样式
+   */
+  remote.ipcMain.on('updateNoteItem_className', async (event, updateItem: DBNotesType) => {
+    const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+    if (cntIndex === -1) return;
+    viewNotesList.value[cntIndex].className = updateItem.className as string;
+  });
+
+  /**
+   * updateNoteItem_content
+   * 更新content内容
+   */
+  remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: DBNotesType) => {
+    const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
+    console.log(cntIndex);
+    if (cntIndex === -1) return;
+    viewNotesList.value[cntIndex].interception = updateItem.interception as string;
+    viewNotesList.value[cntIndex].updatedAt = updateItem.updatedAt!;
+  });
+
+  /**
+   * removeEmptyNoteItem
+   * 获取便笺编辑关闭后如果是空就进行删除
+   */
+  remote.ipcMain.on('removeEmptyNoteItem', async (event, uid: string) => {
+    removeNoteItem(uid);
+  });
+
+  /**
+   * whetherToOpen
+   * 判断本列表是否打开，聚焦显示
+   */
+  remote.ipcMain.on('whetherToOpen', event => {
+    remote.getCurrentWindow().show();
+    event.sender.send('getWhetherToOpen');
+  });
+
+  // 失去焦点之后删除右键
+  remote.getCurrentWindow().on('blur', () => {
+    rightClick.remove();
+  });
+};
+
+const editorWinOptions = browserWindowOption('editor');
+// 打开新窗口
+const openNewWindow = () => {
+  createBrowserWindow(editorWinOptions, '/editor', false);
+};
+
+const onConfirm = () => {
+  if (deleteTipChecked?.value) {
+    notesState.value.switchStatus.deleteTip = false;
+    deleteTipChecked.value = undefined;
+  }
+  /**
+   * deleteActiveItem_{uid}
+   * 此处通信便笺编辑
+   * 场景：如果打开窗口就进行关闭
+   */
+  ipcRenderer.send(`deleteActiveItem_${deleteCurrentUid.value}`);
+  removeNoteItem(deleteCurrentUid.value);
+  Notes.destroy({
+    where: {
+      uid: deleteCurrentUid.value
+    }
+  }).finally(() => {
+    deleteCurrentUid.value = '';
+  });
+};
+
+const searchHandle = (data: DBNotesType[]) => {
+  if (data.length) {
+    viewNotesList.value = data;
+  } else {
+    getAllDBNotes();
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -349,9 +328,17 @@ export default defineComponent({
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 5;
         :deep(*) {
+          margin: 0;
           font-size: 14px;
           line-height: 1.8;
           word-break: break-all;
+        }
+        :deep(pre) {
+          background-color: #f8f8f8;
+          code {
+            border-radius: 5px;
+            padding: 0.5em;
+          }
         }
       }
       &::before {

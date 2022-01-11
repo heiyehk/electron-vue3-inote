@@ -5,7 +5,12 @@
     <div class="options-content">
       <ul class="colors flex-between">
         <template v-for="item in classNames" :key="item.className">
-          <li class="flex1" :title="item.title" :class="item.className" @click="changeBgClassName(item.className)"></li>
+          <li
+            class="flex1"
+            :title="item.title"
+            :class="item.className"
+            @click="changeBgClassName(item.className!)"
+          ></li>
         </template>
       </ul>
       <p class="back-list" @click="openIndex">
@@ -27,10 +32,11 @@
   </main>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, defineAsyncComponent, onBeforeMount, ref } from 'vue';
+<script setup lang="ts">
+import { computed, defineAsyncComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
+import Loading from '@/components/Loading.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
@@ -39,261 +45,241 @@ import { Notes } from '@/service';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
 
-export default defineComponent({
-  components: {
-    Header: defineAsyncComponent(() => import('@/components/Header.vue')),
-    Editor: defineAsyncComponent(() => import('@/components/Editor.vue'))
-  },
-  setup() {
-    const showOptionsStatus = ref(false);
-    const uid = ref('');
-    const currentBgClassName = ref('');
-    const editContent = ref('');
-    const currentWindow = remote.getCurrentWindow();
-    /**
-     * 焦点状态
-     * - `false`: 否 - 获得焦点
-     * - `true`: 是 - 失去焦点
-     */
-    const currentWindowBlurState = ref(false);
-    /**
-     * - `false`: 否 - 未锁定
-     * - `true`: 是 - 已锁定
-     */
-    const lockState = ref(false);
-
-    onBeforeMount(() => {
-      initEditorContent();
-      afterIpc();
-    });
-
-    // 初始化编辑内容
-    const initEditorContent = async () => {
-      const routeUid = useRoute().query.uid as string;
-      // 判断是编辑还是新增
-      if (routeUid) {
-        uid.value = routeUid;
-        getCurUidItem(routeUid);
-      } else {
-        const uuidString = uuid();
-        uid.value = uuidString;
-        useRouter().push({
-          query: {
-            uid: uuidString
-          }
-        });
-        Notes.create(
-          {
-            uid: uid.value,
-            content: '',
-            className: '',
-            interception: ''
-          },
-          {
-            raw: true
-          }
-        );
-        // 监听创建便笺
-        ipcRenderer.send('createNewNote', {
-          uid: uid.value,
-          content: '',
-          className: '',
-          interception: ''
-        });
-      }
-    };
-
-    // 从数据库获取编辑的内容
-    const getCurUidItem = async (uid: string) => {
-      const info = await Notes.findOne({
-        where: {
-          uid
-        }
-      });
-      if (!info) return;
-      currentBgClassName.value = info.className;
-      editContent.value = info.content;
-    };
-
-    const clickOption = () => {
-      showOptionsStatus.value = true;
-    };
-
-    let childrenWindow: BrowserWindow | null;
-    const openIndex = () => {
-      let indexShowStatus = false;
-
-      // 判断列表窗口是否存在
-      ipcRenderer.send('whetherToOpen');
-      ipcRenderer.on('getWhetherToOpen', () => {
-        indexShowStatus = true;
-        return;
-      });
-      showOptionsStatus.value = false;
-
-      if (childrenWindow) {
-        childrenWindow = null;
-      }
-
-      setTimeout(() => {
-        // 如果窗口不在
-        if (!indexShowStatus) {
-          childrenWindow = createBrowserWindow(browserWindowOption(), '/');
-        }
-      }, 100);
-    };
-
-    const changeBgClassName = (className: string) => {
-      if (currentBgClassName.value !== className) {
-        currentBgClassName.value = className;
-        Notes.update(
-          {
-            uid: uid.value,
-            content: editContent.value,
-            className,
-            interception: editContent.value.substr(0, 500)
-          },
-          {
-            where: {
-              uid: uid.value
-            }
-          }
-        ).then(() => {
-          /**
-           * updateNoteItem_className
-           * 更新便笺内容
-           */
-          ipcRenderer.send('updateNoteItem_className', {
-            uid: uid.value,
-            className: currentBgClassName.value
-          });
-        });
-      }
-      showOptionsStatus.value = false;
-    };
-
-    const changeEditContent = (content: string) => {
-      editContent.value = content;
-      if (!uid.value) return false;
-      Notes.update(
-        {
-          uid: uid.value,
-          content,
-          className: currentBgClassName.value,
-          interception: editContent.value.substr(0, 500)
-        },
-        {
-          where: {
-            uid: uid.value
-          }
-        }
-      );
-      // 更新便笺内容
-      ipcRenderer.send('updateNoteItem_content', {
-        uid: uid.value,
-        content,
-        updatedAt: new Date(),
-        interception: editContent.value.substr(0, 500)
-      });
-    };
-
-    const closeWindow = () => {
-      if (!editContent.value) {
-        // 如果是空就直接从数据库删除
-        Notes.destroy({
-          where: {
-            uid: uid.value
-          }
-        }).then(() => {
-          // 在关闭的时候如果没有内容就通知列表进行删除操作
-          ipcRenderer.send('removeEmptyNoteItem', uid.value);
-        });
-      }
-    };
-
-    /**
-     * 此处通信便笺列表，如果接收到删除的消息就退出
-     *
-     * 场景：如果打开窗口就进行关闭
-     */
-    const afterIpc = () => {
-      remote.ipcMain.once(`deleteActiveItem_${uid.value}`, () => {
-        transitCloseWindow();
-      });
-      remote.ipcMain.on(`${uid.value}_toOpen`, e => {
-        currentWindow.show();
-        e.sender.send(`get_${uid.value}_toOpen`);
-      });
-    };
-
-    const headerClass = computed(() => {
-      let classArr = [currentBgClassName.value];
-      // 当编辑器不在显示选项的时候，并且处于显示焦点的情况下
-      if (!showOptionsStatus.value && !currentWindowBlurState.value) {
-        /**
-         * 当未锁上的时候显示头部
-         *
-         * 和下面页面显示逻辑不同的是，这里是进行显示，下面是进行隐藏
-         */
-        if (!lockState.value) {
-          classArr.push('header-show-style');
-        }
-      }
-      return classArr;
-    });
-    const pageClass = computed(() => {
-      let classArr = [currentBgClassName.value];
-      // 当窗口失去焦点的时候
-      if (currentWindowBlurState.value) {
-        // 编辑器处于失去焦点的状态
-        classArr.push('window-blur-hide');
-      } else {
-        if (lockState.value) {
-          // 当锁上的时候，编辑器任然处于失去焦点的情况
-          // 需要解锁才能正常
-          classArr.push('window-blur-hide');
-        }
-      }
-      return classArr;
-    });
-
-    if (notesState.value.switchStatus.autoNarrow) {
-      currentWindow.on('blur', () => {
-        currentWindowBlurState.value = true;
-        if (notesState.value.switchStatus.autoNarrowPure) {
-          lockState.value = true;
-        } else {
-          lockState.value = false;
-        }
-      });
-
-      currentWindow.on('focus', () => {
-        currentWindowBlurState.value = false;
-      });
-      document.addEventListener('keydown', e => {
-        if (e.keyCode === 27) {
-          lockState.value = false;
-        }
-      });
-    }
-
-    return {
-      clickOption,
-      classNames,
-      openIndex,
-      showOptionsStatus,
-      changeBgClassName,
-      currentBgClassName,
-      editContent,
-      changeEditContent,
-      closeWindow,
-      currentWindowBlurState,
-      lockState,
-      headerClass,
-      pageClass
-    };
-  }
+const Header = defineAsyncComponent(() => import('@/components/Header.vue'));
+const Editor = defineAsyncComponent({
+  loader: () => import('@/components/Editor.vue'),
+  loadingComponent: Loading
 });
+
+const showOptionsStatus = ref(false);
+const uid = ref('');
+const currentBgClassName = ref('');
+const editContent = ref('');
+const currentWindow = remote.getCurrentWindow();
+/**
+ * 焦点状态
+ * - `false`: 否 - 获得焦点
+ * - `true`: 是 - 失去焦点
+ */
+const currentWindowBlurState = ref(false);
+/**
+ * - `false`: 否 - 未锁定
+ * - `true`: 是 - 已锁定
+ */
+const lockState = ref(false);
+
+onBeforeMount(() => {
+  initEditorContent();
+  afterIpc();
+});
+
+// 初始化编辑内容
+const initEditorContent = async () => {
+  const routeUid = useRoute().query.uid as string;
+  // 判断是编辑还是新增
+  if (routeUid) {
+    uid.value = routeUid;
+    getCurUidItem(routeUid);
+  } else {
+    const uuidString = uuid();
+    uid.value = uuidString;
+    useRouter().push({
+      query: {
+        uid: uuidString
+      }
+    });
+    Notes.create(
+      {
+        uid: uid.value,
+        content: '',
+        markdown: '',
+        className: '',
+        interception: ''
+      },
+      {
+        raw: true
+      }
+    );
+    // 监听创建便笺
+    ipcRenderer.send('createNewNote', {
+      uid: uid.value,
+      content: '',
+      className: '',
+      interception: ''
+    });
+  }
+};
+
+// 从数据库获取编辑的内容
+const getCurUidItem = async (uid: string) => {
+  const info = await Notes.findOne({
+    where: {
+      uid
+    }
+  });
+  if (!info) return;
+  currentBgClassName.value = info.className;
+  editContent.value = info.markdown;
+};
+
+const clickOption = () => {
+  showOptionsStatus.value = true;
+};
+
+let childrenWindow: BrowserWindow | null;
+const openIndex = () => {
+  let indexShowStatus = false;
+
+  // 判断列表窗口是否存在
+  ipcRenderer.send('whetherToOpen');
+  ipcRenderer.on('getWhetherToOpen', () => {
+    indexShowStatus = true;
+    return;
+  });
+  showOptionsStatus.value = false;
+
+  if (childrenWindow) {
+    childrenWindow = null;
+  }
+
+  setTimeout(() => {
+    // 如果窗口不在
+    if (!indexShowStatus) {
+      childrenWindow = createBrowserWindow(browserWindowOption(), '/');
+    }
+  }, 100);
+};
+
+const changeBgClassName = (className: string) => {
+  if (currentBgClassName.value !== className) {
+    currentBgClassName.value = className;
+    Notes.update(
+      {
+        uid: uid.value,
+        content: editContent.value,
+        className,
+        interception: editContent.value.substr(0, 500)
+      },
+      {
+        where: {
+          uid: uid.value
+        }
+      }
+    ).then(() => {
+      /**
+       * updateNoteItem_className
+       * 更新便笺内容
+       */
+      ipcRenderer.send('updateNoteItem_className', {
+        uid: uid.value,
+        className: currentBgClassName.value
+      });
+    });
+  }
+  showOptionsStatus.value = false;
+};
+
+const changeEditContent = (content: string, markdown: string) => {
+  editContent.value = content;
+  if (!uid.value) return false;
+  const dataJson: Record<string, any> = {
+    uid: uid.value,
+    content,
+    markdown,
+    className: currentBgClassName.value,
+    interception: editContent.value.substring(0, 500)
+  };
+  Notes.update(dataJson, {
+    where: {
+      uid: uid.value
+    }
+  });
+  dataJson.updatedAt = new Date();
+  console.log(dataJson);
+  // 更新便笺内容
+  ipcRenderer.send('updateNoteItem_content', dataJson);
+};
+
+const closeWindow = () => {
+  if (!editContent.value) {
+    // 如果是空就直接从数据库删除
+    Notes.destroy({
+      where: {
+        uid: uid.value
+      }
+    }).then(() => {
+      // 在关闭的时候如果没有内容就通知列表进行删除操作
+      ipcRenderer.send('removeEmptyNoteItem', uid.value);
+    });
+  }
+};
+
+/**
+ * 此处通信便笺列表，如果接收到删除的消息就退出
+ *
+ * 场景：如果打开窗口就进行关闭
+ */
+const afterIpc = () => {
+  remote.ipcMain.once(`deleteActiveItem_${uid.value}`, () => {
+    transitCloseWindow();
+  });
+  remote.ipcMain.on(`${uid.value}_toOpen`, e => {
+    currentWindow.show();
+    e.sender.send(`get_${uid.value}_toOpen`);
+  });
+};
+
+const headerClass = computed(() => {
+  let classArr = [currentBgClassName.value];
+  // 当编辑器不在显示选项的时候，并且处于显示焦点的情况下
+  if (!showOptionsStatus.value && !currentWindowBlurState.value) {
+    /**
+     * 当未锁上的时候显示头部
+     *
+     * 和下面页面显示逻辑不同的是，这里是进行显示，下面是进行隐藏
+     */
+    if (!lockState.value) {
+      classArr.push('header-show-style');
+    }
+  }
+  return classArr;
+});
+
+const pageClass = computed(() => {
+  let classArr = [currentBgClassName.value];
+  // 当窗口失去焦点的时候
+  if (currentWindowBlurState.value) {
+    // 编辑器处于失去焦点的状态
+    classArr.push('window-blur-hide');
+  } else {
+    if (lockState.value) {
+      // 当锁上的时候，编辑器任然处于失去焦点的情况
+      // 需要解锁才能正常
+      classArr.push('window-blur-hide');
+    }
+  }
+  return classArr;
+});
+
+if (notesState.value.switchStatus.autoNarrow) {
+  currentWindow.on('blur', () => {
+    currentWindowBlurState.value = true;
+    if (notesState.value.switchStatus.autoNarrowPure) {
+      lockState.value = true;
+    } else {
+      lockState.value = false;
+    }
+  });
+
+  currentWindow.on('focus', () => {
+    currentWindowBlurState.value = false;
+  });
+  document.addEventListener('keydown', e => {
+    if (e.keyCode === 27) {
+      lockState.value = false;
+    }
+  });
+}
 </script>
 
 <style lang="less" scoped>
@@ -301,7 +287,7 @@ export default defineComponent({
   height: 100%;
   background-color: @white-color;
   padding-top: @iconSize;
-  padding-bottom: @iconSize;
+  // padding-bottom: @iconSize;
   box-sizing: border-box;
   transition: padding 0.4s;
   .editor-container {

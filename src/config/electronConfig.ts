@@ -38,21 +38,20 @@ export const disabledKeys = () => {
   return exportKeys;
 };
 
-const devWid = isDevelopment ? 950 : 0;
-const devHei = isDevelopment ? 600 : 0;
-
-// 底部icon: 40*40
-const editorWindowOptions = {
-  width: devWid || 290,
-  height: devHei || 350,
-  minWidth: 250
-};
-
 /**
  * BrowserWindow的配置项
  * @param type 单独给编辑窗口的配置
  */
 export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowConstructorOptions => {
+  const devWid = isDevelopment ? 950 : 0;
+  const devHei = isDevelopment ? 600 : 0;
+
+  // 底部icon: 40*40
+  const editorWindowOptions = {
+    width: devWid || 290,
+    height: devHei || 350,
+    minWidth: 290
+  };
   const commonOptions: Electron.BrowserWindowConstructorOptions = {
     minHeight: 48,
     frame: false,

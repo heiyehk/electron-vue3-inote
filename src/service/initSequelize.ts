@@ -24,7 +24,7 @@ export const sequelizeInit = (): void => {
   sequelize
     .authenticate()
     .then(() => {
-      console.clear();
+      // console.clear();
       console.log('Connection has been established successfully.');
     })
     .catch(err => {

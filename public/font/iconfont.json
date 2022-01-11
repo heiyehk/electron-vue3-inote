@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "13479730",
+      "name": "code",
+      "font_class": "code",
+      "unicode": "e707",
+      "unicode_decimal": 59143
+    },
+    {
+      "icon_id": "13479755",
+      "name": "headline",
+      "font_class": "headline",
+      "unicode": "e708",
+      "unicode_decimal": 59144
+    },
+    {
       "icon_id": "18531285",
       "name": "link",
       "font_class": "link",
@@ -88,13 +102,6 @@
       "font_class": "thepin-active",
       "unicode": "e715",
       "unicode_decimal": 59157
-    },
-    {
-      "icon_id": "13479020",
-      "name": "bold",
-      "font_class": "bold",
-      "unicode": "e6f5",
-      "unicode_decimal": 59125
     },
     {
       "icon_id": "13479053",

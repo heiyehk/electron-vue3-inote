@@ -203,3 +203,11 @@ body {
 .black-content * {
   color: #fff;
 }
+
+.window-blur-hide .vditor-toolbar {
+  top: 40px !important;
+  transition: top 0.4s;
+}
+.vditor-reset p {
+  margin-bottom: 8px;
+}

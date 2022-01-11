@@ -18,6 +18,7 @@ export const Notes = sequelize.define<NotesModel>(
     },
     className: STRING(32),
     content: STRING(9999999),
+    markdown: STRING(9999999),
     interception: STRING(500)
   },
   {

@@ -7,5 +7,9 @@ import { sequelizeInit } from './service/initSequelize';
 sequelizeInit();
 
 const apps = createApp(App);
-apps.config.errorHandler = outputErrorLog;
+
+if (process.env.NODE_ENV !== 'development') {
+  apps.config.errorHandler = outputErrorLog;
+}
+
 apps.use(router).mount('#app');

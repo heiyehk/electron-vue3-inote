@@ -7,6 +7,7 @@ export interface NotesModelType {
   uid: string;
   className: string;
   content: string;
+  markdown: string;
   interception: string;
 }
 
@@ -18,6 +19,7 @@ export interface DBNotesType {
   className: string;
   content: string;
   interception: string;
+  markdown: string;
   readonly createdAt: Date;
   updatedAt: Date;
 }

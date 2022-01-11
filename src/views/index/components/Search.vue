@@ -2,7 +2,7 @@
   <div class="search-box">
     <div class="search flex-items">
       <div class="search-input flex1">
-        <input v-model="searchWord" type="text" placeholder="搜索..." @input="searchDb" />
+        <input v-model="searchWord" type="text" placeholder="搜索..." />
       </div>
       <button class="search-button" @click="searchDb">
         <i class="iconfont icon-search"></i>
@@ -21,10 +21,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const searchWord = ref('');
     const searchDb = async () => {
-      if (searchWord.value === '') {
-        emit('search', []);
-        return;
-      }
+      if (!searchWord.value) return;
       const data = await Notes.findAll({
         raw: true,
         order: [['updatedAt', 'DESC']],
