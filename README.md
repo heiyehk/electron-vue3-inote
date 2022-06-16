@@ -1,4 +1,8 @@
 # electron+vue3+ts
+> 主要为了学习，如果需要使用请使用[0.2.3](https://github.com/heiyehk/electron-vue3-inote/releases/tag/0.2.3)版本，`0.3.x`的版本暂时有点问题。
+> Mainly for learning, please use version 0.2.3 if you need to use it, the version 0.3.x is temporarily a bit problematic.
+
+
 <div align="center">
 <img src="https://img.shields.io/badge/vue-3.2.6-green"/>
 <img src="https://img.shields.io/badge/electron-%5E11.5.0-brightgreen"/>
