@@ -6,7 +6,7 @@
         <!-- <div class="block-line disabled-line">
           <div class="flex-items">
             <span>编辑和列表同步速度</span>
-            <Input
+            <IInput
               :max="1000"
               :min="100"
               disabled
@@ -17,7 +17,7 @@
               style="width: 86px;margin-left: 10px;"
               v-model="notesState.syncDelay"
             />
-            <Tick v-model="inputStatus" :duration="1000" />
+            <ITick v-model="inputStatus" :duration="1000" />
           </div>
           <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             设置编辑和列表同步显示的速度，数字越大，同步速度越快，但影响性能，不影响使用数据。在同步过程中有明显差异，建议使用最大数1000效果会更佳。
@@ -25,16 +25,16 @@
         </div> -->
         <div class="block-line flex-items">
           <span>开启提示</span>
-          <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.textTip" />
+          <ISwitch styled="margin-left: 10px;" v-model="notesState.switchStatus.textTip" />
         </div>
         <div class="block-line flex-items">
           <span>删除确认</span>
-          <Switch styled="margin-left: 10px;" v-model="notesState.switchStatus.deleteTip" />
+          <ISwitch styled="margin-left: 10px;" v-model="notesState.switchStatus.deleteTip" />
         </div>
         <div class="block-line">
           <div class="flex-items">
             <span>自动沉浸</span>
-            <Switch
+            <ISwitch
               @change="changeAutoNarrow"
               styled="margin-left: 10px;"
               v-model="notesState.switchStatus.autoNarrow"
@@ -47,7 +47,7 @@
         <div class="block-line">
           <div class="flex-items">
             <span>纯净模式</span>
-            <Switch
+            <ISwitch
               styled="margin-left: 10px;"
               :disabled="!notesState.switchStatus.autoNarrow"
               v-model="notesState.switchStatus.autoNarrowPure"
@@ -61,7 +61,7 @@
           <div class="flex-items">
             <div class="undeveloped">(未开发)</div>
             <span>靠边隐藏</span>
-            <Switch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.autoHide" />
+            <ISwitch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.autoHide" />
           </div>
           <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             靠近屏幕边缘的时候自动隐藏
@@ -78,17 +78,17 @@
         >
           <div class="undeveloped">(未开发)</div>
           <span>开启同步</span>
-          <Switch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.openSync" />
+          <ISwitch disabled styled="margin-left: 10px;" v-model="notesState.switchStatus.openSync" />
         </div>
         <div class="setting-sync-server" :class="notesState.switchStatus.openSync ? '' : 'hide-sync'">
           <div v-if="notesState.switchStatus.openSync">
             <div class="block-line" style="margin-bottom: 4px;">同步服务地址</div>
             <div class="block-line" style="margin-bottom: 5px;">
-              <Input v-model="notesState.serverAddress" />
+              <IInput v-model="notesState.serverAddress" />
             </div>
             <div class="block-line" style="margin-bottom: 4px;">同步服务TOKEN</div>
             <div class="block-line">
-              <Input v-model="notesState.serverToken" />
+              <IInput v-model="notesState.serverToken" />
             </div>
             <div class="block-line">
               <a class="link-style">点击测试连接</a>
@@ -122,7 +122,7 @@
             <i class="iconfont icon-mail"></i>
             <span>heiyehk@foxmail.com</span>
             <a class="link-style link-margin" href="javascript:void(0)" @click="copyEmail">复制</a>
-            <Tick v-model="copyStatus" :duration="1000" />
+            <ITick v-model="copyStatus" :duration="1000" />
           </div>
           <div class="gray-text" v-tip="notesState.switchStatus.textTip">
             如果你有更好的建议或者动画效果，请联系我
@@ -172,19 +172,19 @@ import { defineComponent, Ref, ref } from 'vue';
 import { remote } from 'electron';
 import fs from 'fs-extra';
 
-import Tick from '@/components/Tick.vue';
-import Input from '@/components/Input.vue';
-import Switch from '@/components/Switch.vue';
+import ITick from '@/components/ITick.vue';
+import IInput from '@/components/IInput.vue';
+import ISwitch from '@/components/ISwitch.vue';
 
 import { notesState } from '@/store/notes.state';
 import { errorLogPath } from '@/utils/errorLog';
-import useMessage from '@/components/Message';
+import useMessage from '@/components/IMessage';
 
 export default defineComponent({
   components: {
-    Tick,
-    Input,
-    Switch
+    ITick,
+    IInput,
+    ISwitch
   },
   directives: {
     tip(el, { value }) {

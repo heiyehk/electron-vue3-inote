@@ -1,5 +1,5 @@
 <template>
-  <Header class="header-editor" :class="headerClass" @option-click="clickOption" @on-close="closeWindow" />
+  <IHeader class="header-editor" :class="headerClass" @option-click="clickOption" @on-close="closeWindow" />
   <div class="options-container" :class="showOptionsStatus ? 'options-show' : ''">
     <div class="options-cover" @click="showOptionsStatus = false"></div>
     <div class="options-content">
@@ -21,7 +21,7 @@
   </div>
   <main class="page-editor" :class="pageClass">
     <section class="editor-container">
-      <Editor
+      <IEditor
         :windowBlur="currentWindowBlurState"
         :windowLock="lockState"
         :content="editContent"
@@ -36,7 +36,7 @@
 import { computed, defineAsyncComponent, onBeforeMount, ref } from 'vue';
 import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
-import Loading from '@/components/Loading.vue';
+import ILoading from '@/components/ILoading.vue';
 
 import { browserWindowOption, classNames } from '@/config';
 import { uuid } from '@/utils';
@@ -45,10 +45,10 @@ import { Notes } from '@/service';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
 
-const Header = defineAsyncComponent(() => import('@/components/Header.vue'));
-const Editor = defineAsyncComponent({
-  loader: () => import('@/components/Editor.vue'),
-  loadingComponent: Loading
+const IHeader = defineAsyncComponent(() => import('@/components/IHeader.vue'));
+const IEditor = defineAsyncComponent({
+  loader: () => import('@/components/IEditor.vue'),
+  loadingComponent: ILoading
 });
 
 const showOptionsStatus = ref(false);

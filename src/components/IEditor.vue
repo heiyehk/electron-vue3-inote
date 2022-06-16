@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-markdown" :class="className" ref="editorRef"></div>
+  <div class="editor-markdown vditor" :class="className" ref="editorRef"></div>
 </template>
 
 <script setup lang="ts">
@@ -109,6 +109,7 @@ onMounted(() => {
     input: value => {
       emits('on-input', vditor.value?.getHTML(), value);
     },
+    // cdn: './',
     after: () => {
       vditorLoad();
     }
@@ -136,7 +137,7 @@ const vditorLoad = () => {
   height: 40px;
   position: relative;
   top: 0;
-  transition: top 0.4s;
+  transition: top 0.4s, height 0.4s;
   .vditor-toolbar__item {
     width: 40px;
     height: 40px;

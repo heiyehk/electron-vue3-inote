@@ -1,5 +1,5 @@
 <template>
-  <Header v-if="routeName !== 'editor'" />
+  <IHeader v-if="routeName !== 'editor'" />
   <div class="bg-white">
     <router-view v-slot="{ Component }">
       <transition name="main-fade">
@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { ref, onBeforeUpdate } from 'vue';
 import { useRoute } from 'vue-router';
-import Header from '@/components/Header.vue';
+import IHeader from '@/components/IHeader.vue';
 
 const routeName = ref(useRoute().name as string);
 

@@ -7,7 +7,7 @@ type DebounceEvent = FunctionalControl;
 type ThrottleEvent = FunctionalControl;
 
 // 防抖函数
-export const debounce: DebounceEvent = function(fn, delay = 1000) {
+export const debounce: DebounceEvent = function (fn, delay = 1000) {
   let timer: NodeJS.Timeout | null = null;
   return (...args: any) => {
     if (timer) clearTimeout(timer);
@@ -18,7 +18,7 @@ export const debounce: DebounceEvent = function(fn, delay = 1000) {
 };
 
 // 节流函数
-export const throttle: ThrottleEvent = function(fn, delay = 500) {
+export const throttle: ThrottleEvent = function (fn, delay = 500) {
   let flag = true;
   return (...args: any) => {
     if (!flag) return;

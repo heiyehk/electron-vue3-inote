@@ -31,7 +31,7 @@
       </template>
     </section>
   </main>
-  <MessageBox v-model="deleteMessageShow" @on-confirm="onConfirm">
+  <IMessageBox v-model="deleteMessageShow" @on-confirm="onConfirm">
     <p class="text">是否删除此便笺</p>
     <div style="margin-top: 10px;">
       <label for="checkbox" class="flex-items">
@@ -39,7 +39,7 @@
         <span style="margin-left: 6px;font-size: 15px;">不在询问</span>
       </label>
     </div>
-  </MessageBox>
+  </IMessageBox>
 </template>
 
 <script setup lang="ts">
@@ -47,8 +47,8 @@ import { onBeforeMount, Ref, ref } from 'vue';
 import { remote, ipcRenderer } from 'electron';
 import dayjs from 'dayjs';
 
-import CreateRightClick from '@/components/RightClick';
-import MessageBox from '@/components/MessageBox.vue';
+import CreateRightClick from '@/components/IRightClick';
+import IMessageBox from '@/components/IMessageBox.vue';
 import Search from './components/Search.vue';
 
 import { browserWindowOption } from '@/config';
@@ -221,7 +221,7 @@ const electronIpcEditor = (): void => {
 const editorWinOptions = browserWindowOption('editor');
 // 打开新窗口
 const openNewWindow = () => {
-  createBrowserWindow(editorWinOptions, '/editor', false);
+  createBrowserWindow(editorWinOptions, '/editor', true);
 };
 
 const onConfirm = () => {

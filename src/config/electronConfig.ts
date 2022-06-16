@@ -57,8 +57,8 @@ export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowCons
     frame: false,
     hasShadow: true,
     transparent: true,
+    fullscreen: false,
     webPreferences: {
-      enableRemoteModule: true,
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false

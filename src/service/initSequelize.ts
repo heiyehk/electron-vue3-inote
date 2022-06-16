@@ -2,8 +2,9 @@ import { Sequelize } from 'sequelize';
 import sqlite3 from 'sqlite3';
 import { join } from 'path';
 import { remote } from 'electron';
+import { constStoragePath } from '@/config';
 
-const storagePath = join(remote.app.getPath('userData'), '/resources/db/notes.db');
+const storagePath = join(remote.app.getPath('userData'), constStoragePath);
 
 export const sequelize = new Sequelize({
   database: 'reading',

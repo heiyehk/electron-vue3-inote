@@ -197,7 +197,23 @@ body {
 .black-content {
   transition: background-color 0.4s;
   background-color: #696969 !important;
-  color: #fff;
+  /* color: #fff; */
+}
+
+
+/* 针对富文本做特定的样式 */
+.black-content .vditor-copy {
+  color: #24292D !important;
+}
+.black-content .vditor-copy span {
+  color: #24292D !important;
+}
+.black-content .vditor-copy path {
+  color: #24292D !important;
+}
+
+.black-content .vditor-ir__node--expand .vditor-ir__marker--heading {
+  color: #fff !important;
 }
 
 .black-content * {
@@ -206,8 +222,14 @@ body {
 
 .window-blur-hide .vditor-toolbar {
   top: 40px !important;
-  transition: top 0.4s;
+  height: 0 !important;
+  transition: top 0.4s, height 0.4s;
 }
+
 .vditor-reset p {
   margin-bottom: 8px;
+}
+
+.window-blur-hide .vditor-content {
+
 }

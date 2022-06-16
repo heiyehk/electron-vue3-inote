@@ -14,7 +14,7 @@
       </button>
     </template>
     <!-- 标题拖动 -->
-    <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
+    <div class="drag-header flex1 flex-center" @contextmenu.prevent="click" :style="computedPaddingLeft">
       <transition name="header-fadein" v-if="platformWindows">
         <span :key="title">{{ title }}</span>
       </transition>
@@ -57,11 +57,11 @@
 </template>
 
 <script lang="ts">
-import { remote } from 'electron';
 import { computed, defineComponent, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { browserWindowOption } from '@/config';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
+import { remote } from 'electron';
 
 export default defineComponent({
   emits: ['option-click', 'on-close'],
@@ -114,6 +114,10 @@ export default defineComponent({
       transitCloseWindow();
     };
 
+    const click = () => {
+      console.log(123);
+    };
+
     return {
       openNewWindow,
       currentRouteName,
@@ -124,7 +128,8 @@ export default defineComponent({
       isAlwaysOnTop,
       title,
       // 只在windows上显示
-      platformWindows: process.platform === 'win32'
+      platformWindows: process.platform === 'win32',
+      click
     };
   }
 });
