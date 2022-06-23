@@ -11,6 +11,10 @@
 <img src="https://img.shields.io/badge/vditor-%5E3.8.10-blue"/>
 </div>
 
+### 0.4.0
+![image](https://user-images.githubusercontent.com/33891067/175295705-6f3b309d-852e-4ac1-bd20-8eb7211b1851.png)
+
+
 ### Windows10
 <img width="50%" src="https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png" />
 
