@@ -14,7 +14,7 @@
       </button>
     </template>
     <!-- 标题拖动 -->
-    <div class="drag-header flex1 flex-center" @contextmenu.prevent="click" :style="computedPaddingLeft">
+    <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
       <transition name="header-fadein" v-if="platformWindows">
         <span :key="title">{{ title }}</span>
       </transition>
@@ -30,23 +30,21 @@
         </button>
       </template>
       <template v-else-if="currentRouteName === 'editor'">
-        <div class="flex-items">
-          <!-- 固定 -->
-          <div class="thepin" :class="isAlwaysOnTop ? 'thepin-active' : ''">
-            <div class="absolute-box">
-              <button class="icon flex-center" @click="drawingPin" title="置顶">
-                <i class="iconfont flex-center icon-thepin"></i>
-              </button>
-              <button class="icon flex-center" @click="drawingPin" title="取消置顶">
-                <i class="iconfont flex-center icon-thepin-active"></i>
-              </button>
-            </div>
+        <!-- 固定 -->
+        <div class="thepin" :class="isAlwaysOnTop ? 'thepin-active' : ''">
+          <div class="absolute-box">
+            <button class="icon flex-center" @click="drawingPin" title="置顶">
+              <i class="iconfont flex-center icon-thepin"></i>
+            </button>
+            <button class="icon flex-center" @click="drawingPin" title="取消置顶">
+              <i class="iconfont flex-center icon-thepin-active"></i>
+            </button>
           </div>
-          <!-- 更多 -->
-          <button class="icon flex-center" @click="clickOptions" title="选项">
-            <i class="iconfont flex-center icon-more"></i>
-          </button>
         </div>
+        <!-- 更多 -->
+        <button class="icon flex-center" @click="clickOptions" title="选项">
+          <i class="iconfont flex-center icon-more"></i>
+        </button>
       </template>
       <!-- 关闭 -->
       <button v-if="platformWindows" class="icon flex-center close-window" @click="closeWindow" title="关闭">
@@ -57,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { browserWindowOption } from '@/config';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
@@ -114,10 +112,6 @@ export default defineComponent({
       transitCloseWindow();
     };
 
-    const click = () => {
-      console.log(123);
-    };
-
     return {
       openNewWindow,
       currentRouteName,
@@ -128,8 +122,7 @@ export default defineComponent({
       isAlwaysOnTop,
       title,
       // 只在windows上显示
-      platformWindows: process.platform === 'win32',
-      click
+      platformWindows: process.platform === 'win32'
     };
   }
 });

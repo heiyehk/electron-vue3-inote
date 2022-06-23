@@ -1,6 +1,7 @@
 import { Task } from 'electron';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
+
 /**
  * task事件
  */
@@ -49,7 +50,7 @@ export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowCons
   // 底部icon: 40*40
   const editorWindowOptions = {
     width: devWid || 290,
-    height: devHei || 350,
+    height: devHei || 320,
     minWidth: 290
   };
   const commonOptions: Electron.BrowserWindowConstructorOptions = {
@@ -59,6 +60,7 @@ export const browserWindowOption = (type?: 'editor'): Electron.BrowserWindowCons
     transparent: true,
     fullscreen: false,
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false

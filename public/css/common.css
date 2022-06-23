@@ -164,6 +164,11 @@ body {
 }
 
 /* 颜色 */
+.white-content {
+  transition: background-color 0.4s;
+  background-color: #ffffff !important;
+}
+
 .yellow-content {
   transition: background-color 0.4s;
   background-color: #fff7d1 !important;
@@ -229,7 +234,12 @@ body {
 .vditor-reset p {
   margin-bottom: 8px;
 }
-
-.window-blur-hide .vditor-content {
-
+.page-editor:not(.white-content) .vditor-reset blockquote {
+  border-left-color: #ababab !important;
+}
+.page-editor:not(.white-content) .vditor-reset h1, .vditor-reset h2 {
+  border-bottom-color: #ababab !important;
+}
+.page-editor:not(.white-content) .vditor-reset hr {
+  background-color: #d2d2d2 !important;
 }

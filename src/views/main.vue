@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { ref, onBeforeUpdate } from 'vue';
 import { useRoute } from 'vue-router';
-import IHeader from '@/components/IHeader.vue';
+import IHeader from './components/IHeader.vue';
 
 const routeName = ref(useRoute().name as string);
 

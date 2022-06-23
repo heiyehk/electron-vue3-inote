@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/editor',
         name: 'editor',
-        component: () => import('../views/editor.vue'),
+        component: () => import('../views/editor/index.vue'),
         meta: {
           title: ''
         }
@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/setting',
         name: 'setting',
-        component: () => import('../views/setting.vue'),
+        component: () => import('../views/setting/index.vue'),
         meta: {
           title: '设置'
         }

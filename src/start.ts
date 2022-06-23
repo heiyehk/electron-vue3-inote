@@ -1,7 +1,8 @@
 import { app, protocol, BrowserWindow, globalShortcut } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 
-import { browserWindowOption, winURL, disabledKeys } from './config';
+import { browserWindowOption, winURL, disabledKeys, userTasks } from './config';
+import updater from './updater';
 
 const startWindow = () => {
   const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -49,7 +50,6 @@ const startWindow = () => {
       }
     }
     // win.webContents.openDevTools();
-    // sequelizeInit();
 
     win.on('closed', () => {
       win = null;
@@ -73,11 +73,12 @@ const startWindow = () => {
     for (const key of disabledKeys()) {
       globalShortcut.register(key, () => void 0);
     }
+    updater();
     createWindow();
   });
 
   // TODO 待开发的内容
-  // app.setUserTasks(userTasks);
+  app.setUserTasks(userTasks);
 
   if (isDevelopment) {
     if (process.platform === 'win32') {

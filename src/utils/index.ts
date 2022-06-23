@@ -7,7 +7,7 @@ type DebounceEvent = FunctionalControl;
 type ThrottleEvent = FunctionalControl;
 
 // 防抖函数
-export const debounce: DebounceEvent = function (fn, delay = 1000) {
+export const debounce: DebounceEvent = function(fn, delay = 1000) {
   let timer: NodeJS.Timeout | null = null;
   return (...args: any) => {
     if (timer) clearTimeout(timer);
@@ -18,7 +18,7 @@ export const debounce: DebounceEvent = function (fn, delay = 1000) {
 };
 
 // 节流函数
-export const throttle: ThrottleEvent = function (fn, delay = 500) {
+export const throttle: ThrottleEvent = function(fn, delay = 500) {
   let flag = true;
   return (...args: any) => {
     if (!flag) return;
@@ -89,5 +89,47 @@ export const algorithm = {
     });
     const decryptedStr = decrypt.toString(enc.Utf8);
     return decryptedStr.toString();
+  }
+};
+
+export interface TwiceHandle {
+  keydownInterval: NodeJS.Timer | null;
+  intervalCount: number;
+  keydownCount: number;
+  start: (fn: () => void) => void;
+}
+
+/**
+ * 在300毫秒内触发2次事件的callback
+ */
+export const twiceHandle: TwiceHandle = {
+  keydownInterval: null,
+  intervalCount: 0,
+  keydownCount: 0,
+  start(fn) {
+    if (!this.keydownInterval) {
+      this.intervalCount += 1;
+      this.keydownInterval = setInterval(() => {
+        if (this.intervalCount > 5) {
+          clearInterval(this.keydownInterval as NodeJS.Timer);
+          this.keydownInterval = null;
+          this.intervalCount = 0;
+          this.keydownCount = 0;
+        } else {
+          this.intervalCount += 1;
+          if (this.keydownCount >= 2) {
+            clearInterval(this.keydownInterval as NodeJS.Timer);
+            this.keydownInterval = null;
+            this.intervalCount = 0;
+            this.keydownCount = 0;
+            fn();
+          }
+        }
+      }, 50);
+    }
+
+    if (this.keydownCount <= 2) {
+      this.keydownCount += 1;
+    }
   }
 };

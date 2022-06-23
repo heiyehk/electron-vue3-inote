@@ -56,7 +56,7 @@ export const editorIcons = [
  */
 export const classNames = [
   {
-    color: 'white-content',
+    className: 'white-content',
     title: '白色'
   },
   {

@@ -8,6 +8,7 @@
 <img src="https://img.shields.io/badge/electron-%5E11.5.0-brightgreen"/>
 <img src="https://img.shields.io/badge/typescript-~4.4.4-yellowgreen"/>
 <img src="https://img.shields.io/badge/sqlite3-%5E5.0.2-orange"/>
+<img src="https://img.shields.io/badge/vditor-%5E3.8.10-blue"/>
 </div>
 
 ### Windows10

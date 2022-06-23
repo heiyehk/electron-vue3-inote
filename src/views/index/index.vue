@@ -189,7 +189,6 @@ const electronIpcEditor = (): void => {
    */
   remote.ipcMain.on('updateNoteItem_content', async (event, updateItem: DBNotesType) => {
     const cntIndex = viewNotesList.value.findIndex(x => x.uid === updateItem.uid);
-    console.log(cntIndex);
     if (cntIndex === -1) return;
     viewNotesList.value[cntIndex].interception = updateItem.interception as string;
     viewNotesList.value[cntIndex].updatedAt = updateItem.updatedAt!;
