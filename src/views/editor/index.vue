@@ -28,8 +28,6 @@
         :className="currentBgClassName"
         @on-input="changeEditContent"
       />
-      <div aaaaaaaaaaaaaaaaaaaa>{{ iEditorMarkdown }}</div>
-      <div bbbbbbbbbbbbbbbbbbbb>{{ iEditorHtml }}</div>
     </section>
   </main>
 </template>
