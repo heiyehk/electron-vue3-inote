@@ -11,11 +11,15 @@
 <img src="https://img.shields.io/badge/vditor-%5E3.8.10-blue"/>
 </div>
 
-### 0.4.0
-![image](https://user-images.githubusercontent.com/33891067/175295705-6f3b309d-852e-4ac1-bd20-8eb7211b1851.png)
+## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
 
 
-### Windows10
+### Features
+
+* 对编辑器的优化，增加右键功能以及本地图片的缓存，修复了部分bug ([c1c0c0f](https://github.com/heiyehk/electron-vue3-inote/commit/c1c0c0f676a29adce8dc46582f17f550d0c079ce))
+![image](https://user-images.githubusercontent.com/33891067/211135039-eb778337-2249-4442-b050-32cc6ee77814.png)
+
+### Windows
 <img width="50%" src="https://user-images.githubusercontent.com/33891067/126118222-c8c39a33-d5a7-4b72-9f4c-b633a1eb2201.png" />
 
 ### Mac
