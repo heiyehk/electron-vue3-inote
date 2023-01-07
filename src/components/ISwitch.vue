@@ -1,10 +1,10 @@
 <template>
   <div
     class="hy-switch flex-items"
-    :class="[checkedStatus ? 'active' : '', disabled ? 'hy-switch-disabled' : '']"
+    :class="[checkedStatus ? 'active' : '', props.disabled ? 'hy-switch-disabled' : '']"
     role="switc"
     :aria-checked="checkedStatus"
-    :style="styled"
+    :style="props.styled"
   >
     <input v-model="checkedStatus" type="checkbox" true-value="true" false-value="false" />
     <div class="hy-switch-core" @click="checkStatus">
@@ -14,41 +14,34 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
 
-export default defineComponent({
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    styled: String,
-    disabled: Boolean
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
   },
-  emits: ['update:modelValue', 'change'],
-  setup(props, { emit }) {
-    const checkedStatus = ref(props.modelValue);
-    watch(
-      () => props.modelValue,
-      nv => {
-        checkedStatus.value = nv;
-      }
-    );
-
-    const checkStatus = () => {
-      if (props.disabled) return;
-      checkedStatus.value = !checkedStatus.value;
-      emit('update:modelValue', checkedStatus.value);
-      emit('change', checkedStatus.value);
-    };
-
-    return {
-      checkedStatus,
-      checkStatus
-    };
-  }
+  styled: String,
+  disabled: Boolean
 });
+
+const emits = defineEmits(['update:modelValue', 'change']);
+
+const checkedStatus = ref(props.modelValue);
+watch(
+  () => props.modelValue,
+  nv => {
+    checkedStatus.value = nv;
+  }
+);
+
+const checkStatus = () => {
+  if (props.disabled) return;
+  checkedStatus.value = !checkedStatus.value;
+  emits('update:modelValue', checkedStatus.value);
+  emits('change', checkedStatus.value);
+};
 </script>
 
 <style lang="less" scoped>
@@ -58,6 +51,7 @@ export default defineComponent({
 .hy-switch {
   position: relative;
   height: @switchSize;
+
   input {
     position: absolute;
     width: 0;
@@ -65,6 +59,7 @@ export default defineComponent({
     opacity: 0;
     margin: 0;
   }
+
   &-core {
     border-radius: 10px;
     background-color: @gray-color !important;
@@ -72,6 +67,7 @@ export default defineComponent({
     height: 100%;
     cursor: pointer;
     transition: background-color 0.4s;
+
     &:active {
       .hy-switch-action {
         width: @switchSize;
@@ -79,6 +75,7 @@ export default defineComponent({
       }
     }
   }
+
   &-action {
     width: @switchSize - @gap;
     height: @switchSize - @gap;
@@ -90,6 +87,7 @@ export default defineComponent({
     transform: translateX(@gap / 2);
     transition: all 0.4s;
   }
+
   &-checked-text {
     font-size: 12px;
     margin-left: 4px;
@@ -101,6 +99,7 @@ export default defineComponent({
   .hy-switch-core {
     background-color: @success-color !important;
     transition: background-color 0.4s;
+
     &:active {
       .hy-switch-action {
         width: @switchSize;
@@ -109,10 +108,12 @@ export default defineComponent({
       }
     }
   }
+
   .hy-switch-action {
     transition: all 0.4s;
     transform: translateX(@switchSize);
   }
+
   .hy-switch-checked-text {
     color: @success-color !important;
   }
@@ -120,6 +121,7 @@ export default defineComponent({
 
 .hy-switch-disabled .hy-switch-core {
   cursor: no-drop;
+
   &:active .hy-switch-action {
     width: 16px !important;
   }

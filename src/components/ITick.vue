@@ -1,39 +1,36 @@
 <template>
   <transition>
-    <div v-if="modelValue" class="tick"></div>
+    <div v-if="props.modelValue" class="tick"></div>
   </transition>
 </template>
 
-<script lang="ts">
-import { defineComponent, onBeforeUpdate } from 'vue';
+<script setup lang="ts">
+import { onBeforeUpdate } from 'vue';
 
-export default defineComponent({
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    duration: {
-      type: Number,
-      default: 2000
-    },
-    hide: {
-      type: Boolean,
-      default: true
-    }
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
   },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    onBeforeUpdate(() => {
-      if (!props.hide) return;
-      // 防止emit更新数据的时候继续刷新
-      if (props.modelValue) {
-        setTimeout(() => {
-          emit('update:modelValue', false);
-        }, props.duration);
-      }
-    });
-    return {};
+  duration: {
+    type: Number,
+    default: 2000
+  },
+  hide: {
+    type: Boolean,
+    default: true
+  }
+});
+
+const emits = defineEmits(['update:modelValue']);
+
+onBeforeUpdate(() => {
+  if (!props.hide) return;
+  // 防止emit更新数据的时候继续刷新
+  if (props.modelValue) {
+    setTimeout(() => {
+      emits('update:modelValue', false);
+    }, props.duration);
   }
 });
 </script>
@@ -47,6 +44,7 @@ export default defineComponent({
   box-sizing: border-box;
   animation: show 0.4s forwards;
   margin-left: 10px;
+
   &::before {
     content: '';
     display: block;
@@ -58,6 +56,7 @@ export default defineComponent({
     top: 10px;
     left: 1px;
   }
+
   &::after {
     content: '';
     display: block;
@@ -70,11 +69,13 @@ export default defineComponent({
     left: 3px;
   }
 }
+
 @keyframes show {
   form {
     width: 0;
     opacity: 0;
   }
+
   to {
     width: 20px;
     opacity: 1;

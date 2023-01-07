@@ -1,5 +1,5 @@
 <template>
-  <div class="hy-message-box" v-if="modelValue">
+  <div class="hy-message-box" v-if="props.modelValue">
     <div class="hy-message-box-cover"></div>
     <div class="hy-message-box-content flex">
       <div class="hy-message-box-close" @click="onClose">
@@ -16,40 +16,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    }
-  },
-  emits: ['update:modelValue', 'on-confirm', 'on-cancel', 'on-close'],
-  setup(props, { emit }) {
-    const onConfirm = () => {
-      emit('on-confirm');
-      emit('update:modelValue', false);
-    };
-
-    const onCancel = () => {
-      emit('on-cancel');
-      emit('update:modelValue', false);
-    };
-
-    const onClose = () => {
-      emit('on-close');
-      emit('update:modelValue', false);
-    };
-
-    return {
-      onConfirm,
-      onCancel,
-      onClose
-    };
+<script setup lang="ts">
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
   }
 });
+
+const emits = defineEmits(['update:modelValue', 'on-confirm', 'on-cancel', 'on-close']);
+
+const onConfirm = () => {
+  emits('on-confirm');
+  emits('update:modelValue', false);
+};
+
+const onCancel = () => {
+  emits('on-cancel');
+  emits('update:modelValue', false);
+};
+
+const onClose = () => {
+  emits('on-close');
+  emits('update:modelValue', false);
+};
 </script>
 
 <style lang="less" scoped>
@@ -60,11 +50,13 @@ export default defineComponent({
   height: 100%;
   left: 0;
   top: 0;
+
   &-cover {
     width: 100%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.5);
   }
+
   &-content {
     position: absolute;
     width: 260px;
@@ -76,24 +68,31 @@ export default defineComponent({
     flex-direction: column;
     box-shadow: 0 0 10px @shadown-color;
   }
+
   &-close {
     position: absolute;
     right: 10px;
     top: 10px;
+    cursor: pointer;
+
     .iconfont {
       font-size: 20px;
     }
+
     &:hover {
       background-color: @background-sub-color;
     }
   }
+
   &-text {
     font-size: 15px;
     padding: 34px 20px 20px;
   }
+
   &-botton {
     height: 36px;
     border-top: 1px solid @border-color;
+
     button {
       border: none;
       background-color: transparent;
@@ -102,10 +101,12 @@ export default defineComponent({
       height: 100%;
       line-height: 36px;
       cursor: pointer;
+
       &:hover {
         background-color: @background-sub-color;
       }
     }
+
     &-cancel {
       color: @text-sub-color;
     }

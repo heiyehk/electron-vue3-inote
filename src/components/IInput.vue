@@ -2,9 +2,9 @@
   <div class="hy-input flex">
     <div class="hy-input-box flex1">
       <input
-        :maxlength="maxlength"
-        :disabled="disabled"
-        :readonly="readonly"
+        :maxlength="props.maxlength"
+        :disabled="props.disabled"
+        :readonly="props.readonly"
         v-model="inputValue"
         @input="changeInput"
       />
@@ -28,70 +28,62 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 
-export default defineComponent({
-  props: {
-    modelValue: [String, Number],
-    min: Number,
-    max: Number,
-    control: {
-      type: Boolean,
-      default: false
-    },
-    readonly: {
-      type: Boolean,
-      default: false
-    },
-    disabled: Boolean,
-    type: {
-      type: String,
-      default: 'text'
-    },
-    maxlength: String
+const props = defineProps({
+  modelValue: [String, Number],
+  min: Number,
+  max: Number,
+  control: {
+    type: Boolean,
+    default: false
   },
-  emits: ['update:modelValue', 'on-change', 'on-input'],
-  setup(props, { emit }) {
-    let inputValue = ref();
-
-    if (props.type === 'number') {
-      inputValue.value = String(props.modelValue);
-    } else {
-      inputValue.value = props.modelValue || '';
-    }
-
-    const calculateDelay = (type: 'add' | 'sub') => {
-      const numberInput = Number(inputValue.value);
-      if (isNaN(numberInput)) return;
-      let afterNumber = 0;
-      switch (type) {
-        case 'add':
-          if (numberInput === 1000) return;
-          afterNumber = numberInput + 300;
-          break;
-        case 'sub':
-          if (numberInput === 100) return;
-          afterNumber = numberInput - 300;
-          break;
-      }
-      inputValue.value = String(afterNumber);
-      emit('update:modelValue', afterNumber);
-      emit('on-change', afterNumber);
-    };
-
-    const changeInput = () => {
-      emit('update:modelValue', inputValue.value);
-      emit('on-input', inputValue.value);
-    };
-
-    return {
-      inputValue,
-      calculateDelay,
-      changeInput
-    };
-  }
+  readonly: {
+    type: Boolean,
+    default: false
+  },
+  disabled: Boolean,
+  type: {
+    type: String,
+    default: 'text'
+  },
+  maxlength: String
 });
+
+const emits = defineEmits(['update:modelValue', 'on-change', 'on-input']);
+
+let inputValue = ref();
+
+if (props.type === 'number') {
+  inputValue.value = String(props.modelValue);
+} else {
+  inputValue.value = props.modelValue || '';
+}
+
+const calculateDelay = (type: 'add' | 'sub') => {
+  const numberInput = Number(inputValue.value);
+  if (isNaN(numberInput)) return;
+  let afterNumber = 0;
+  switch (type) {
+    case 'add':
+      if (numberInput === 1000) return;
+      afterNumber = numberInput + 300;
+      break;
+    case 'sub':
+      if (numberInput === 100) return;
+      afterNumber = numberInput - 300;
+      break;
+  }
+  inputValue.value = String(afterNumber);
+  emits('update:modelValue', afterNumber);
+  emits('on-change', afterNumber);
+};
+
+const changeInput = () => {
+  emits('update:modelValue', inputValue.value);
+  emits('on-input', inputValue.value);
+};
 </script>
 
 <style lang="less" scoped>
@@ -100,6 +92,7 @@ export default defineComponent({
   height: 24px;
   border-radius: 4px;
   overflow: hidden;
+
   &-box {
     input {
       border-radius: 4px;
@@ -113,17 +106,21 @@ export default defineComponent({
       background-color: transparent;
     }
   }
+
   .hy-number-control {
     flex-direction: column;
     border-left: 1px solid @border-color;
+
     .hy-number-button {
       width: 30px;
       position: relative;
       height: 12px;
       cursor: pointer;
+
       &:hover {
         background-color: @background-color;
       }
+
       &:first-child::before {
         content: '';
         width: 100%;
@@ -134,11 +131,13 @@ export default defineComponent({
         z-index: 1;
       }
     }
+
     .disabled {
       cursor: no-drop;
       background-color: @background-sub-color;
       color: @text-sub-color;
     }
+
     .iconfont {
       display: block;
       position: absolute;

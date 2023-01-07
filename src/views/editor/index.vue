@@ -1,28 +1,16 @@
 <template>
   <IHeader class="header-editor" :class="headerClass" @option-click="clickOption" @on-close="closeWindow" />
   <IDropBar />
-  <div class="options-container" :class="showOptionsStatus ? 'options-show' : ''">
-    <div class="options-cover" @click="showOptionsStatus = false"></div>
-    <div class="options-content">
-      <ul class="colors flex-between">
-        <template v-for="item in classNames" :key="item.className">
-          <li
-            class="flex1"
-            :title="item.title"
-            :class="item.className"
-            @click="changeBgClassName(item.className!)"
-          ></li>
-        </template>
-      </ul>
-      <p class="back-list" @click="openNotesList">
-        <i class="iconfont icon-list"></i>
-        <span>笔记列表</span>
-      </p>
-    </div>
-  </div>
+  <ColorMask
+    :showState="showOptionsStatus"
+    @on-change="changeBgClassName"
+    @on-close="showOptionsStatus = false"
+    @on-open="showOptionsStatus = false"
+  />
   <main class="page-editor" :class="pageClass">
     <section class="editor-container">
       <IEditor
+        :uid="uid"
         v-model="iEditorMarkdown"
         :content="iEditorHtml"
         :className="currentBgClassName"
@@ -38,17 +26,19 @@ import { BrowserWindow, remote, ipcRenderer } from 'electron';
 import { useRoute, useRouter } from 'vue-router';
 import ILoading from '@/components/ILoading.vue';
 
-import { browserWindowOption, classNames } from '@/config';
+import { browserWindowOption } from '@/config';
 import { twiceHandle, uuid } from '@/utils';
 import { Notes } from '@/service';
 
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 import { notesState } from '@/store/notes.state';
-import IDropBar from '../components/IDropBar.vue';
+import IDropBar from '@/components/IDropBar.vue';
+import ColorMask from './components/ColorMask.vue';
 
-const IHeader = defineAsyncComponent(() => import('../components/IHeader.vue'));
+// TODO 储存一份获取文本后的内容，供搜索使用
+const IHeader = defineAsyncComponent(() => import('@/components/IHeader.vue'));
 const IEditor = defineAsyncComponent({
-  loader: () => import('../components/IEditor.vue'),
+  loader: () => import('./components/IEditor.vue'),
   loadingComponent: ILoading
 });
 
@@ -175,6 +165,7 @@ const changeEditContent = (contentHtml: string, markdown: string) => {
 const getInterceptionHTML = async () => {
   const domHtml = new DOMParser().parseFromString(iEditorHtml.value, 'text/html');
   let interceptionHTML = '';
+  // 这里处理主页面的节点数量
   let nodeIndex = 10;
   // 取节点前十个
   domHtml.body.childNodes.forEach((item, index) => {
@@ -281,29 +272,45 @@ const pageClass = computed(() => {
   return classArr;
 });
 
-if (notesState.value.switchStatus.autoNarrow) {
-  currentWindow.on('blur', () => {
-    currentWindowBlurState.value = true;
-    if (notesState.value.switchStatus.autoNarrowPure) {
-      lockState.value = true;
-    } else {
-      lockState.value = false;
-    }
-  });
+const currentBlurHandle = () => {
+  currentWindowBlurState.value = true;
+  if (notesState.value.switchStatus.autoNarrowPure) {
+    lockState.value = true;
+  } else {
+    lockState.value = false;
+  }
+};
 
-  currentWindow.on('focus', () => {
+const currentWindowFocusHandle = () => {
+  currentWindowBlurState.value = false;
+};
+
+const immersionHandle = () => {
+  if (notesState.value.switchStatus.autoNarrow) {
+    currentWindow.on('blur', currentBlurHandle);
+
+    currentWindow.on('focus', currentWindowFocusHandle);
+
+    document.addEventListener('keydown', e => {
+      if (e.keyCode === 27) {
+        lockState.value = false;
+        twiceHandle.start(() => {
+          currentWindow.minimize();
+        });
+      }
+    });
+  } else {
+    // 不在沉浸模式下取消所有功能以及事件
     currentWindowBlurState.value = false;
-  });
+    currentWindow.off('blur', currentBlurHandle);
+    currentWindow.off('focus', currentWindowFocusHandle);
+  }
+};
 
-  document.addEventListener('keydown', e => {
-    if (e.keyCode === 27) {
-      lockState.value = false;
-      twiceHandle.start(() => {
-        currentWindow.minimize();
-      });
-    }
-  });
-}
+immersionHandle();
+
+// 这里需要监听主窗口改变设置内容
+watch(() => notesState.value.switchStatus.autoNarrow, immersionHandle);
 </script>
 
 <style lang="less" scoped>
@@ -341,107 +348,6 @@ if (notesState.value.switchStatus.autoNarrow) {
   top: 0;
   z-index: 3;
   transition: all 0.4s;
-}
-
-.options-container {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  transition: z-index 0.4s;
-
-  .options-cover {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-color: rgba(255, 255, 255, 0.6);
-    opacity: 0;
-    bottom: 0;
-    left: 0;
-    transition: all 0.4s;
-  }
-
-  .options-content {
-    position: absolute;
-    width: 100%;
-    z-index: 2;
-    top: -300px;
-    box-shadow: 0 0 4px @border-color;
-    transition: top 0.4s;
-    background-color: @white-color;
-  }
-
-  .colors {
-    height: 50px;
-    width: 100%;
-
-    li {
-      list-style: none;
-      height: 100%;
-      position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-      }
-
-      &:hover {
-        &::before {
-          background-color: rgba(0, 0, 0, 0.2);
-        }
-      }
-    }
-
-    .black-content:hover {
-      &::before {
-        background-color: rgba(255, 255, 255, 0.2);
-      }
-    }
-  }
-
-  .back-list {
-    width: 100%;
-    height: 50px;
-    font-size: 16px;
-    line-height: 50px;
-    color: #333;
-    display: block;
-    padding: 0 10px;
-
-    .iconfont {
-      margin-right: 10px;
-    }
-
-    &:hover {
-      background-color: @background-sub-color;
-    }
-
-    &:active {
-      background-color: @background-color;
-    }
-  }
-}
-
-.options-show {
-  z-index: 3;
-  transition: z-index 0.4s;
-
-  .options-content {
-    top: 0;
-    transition: top 0.4s;
-  }
-
-  .options-cover {
-    z-index: 1;
-    opacity: 1;
-    transition: all 0.4s;
-  }
 }
 
 .window-blur-hide {

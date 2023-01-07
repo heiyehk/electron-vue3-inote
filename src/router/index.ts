@@ -33,6 +33,14 @@ const routes: Array<RouteRecordRaw> = [
         }
       }
     ]
+  },
+  {
+    path: '/image-preview',
+    name: 'imagePreview',
+    component: () => import('../views/ImagePreview/index.vue'),
+    meta: {
+      title: '图片预览'
+    }
   }
 ];
 

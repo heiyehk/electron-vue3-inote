@@ -231,8 +231,15 @@ body {
   transition: top 0.4s, height 0.4s;
 }
 
+.vditor-toolbar {
+  box-shadow: 0 0 2px #ccc;
+}
+
 .vditor-reset p {
   margin-bottom: 8px;
+}
+.vditor-reset img {
+  cursor: pointer;
 }
 .page-editor:not(.white-content) .vditor-reset blockquote {
   border-left-color: #ababab !important;
@@ -242,4 +249,57 @@ body {
 }
 .page-editor:not(.white-content) .vditor-reset hr {
   background-color: #d2d2d2 !important;
+}
+
+.vditor-img {
+  top: 40px !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+.vditor-img__img img {
+  max-width: 100% !important;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  body,
+  .header,
+  body .bg-white,
+  body .page-index,
+  body .page-setting,
+  body .page-editor,
+  body .bottom-editor-tools,
+  body .options-container .options-content, /* 遮罩列表 */
+  #rightClick {
+    background-color: #333 !important;
+    color: white !important;
+    transition: background-color 0.4s;
+  }
+  body .options-container .options-content * {
+    color: white !important;
+  }
+  /* 头部 */
+  .header a {
+    color: white !important;
+  }
+  /* 编辑遮罩 */
+  body .options-container .options-cover {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+  /* 右键列表 */
+  .right-click-menu-list li:hover {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+  body .about-app-description,
+  body .disabled-line {
+    color: #828282;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    /* background-color: #fff !important; */
+    color: black !important;
+  }
 }

@@ -1,5 +1,6 @@
 import { app, protocol, BrowserWindow, globalShortcut } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+import path from 'path';
 
 import { browserWindowOption, winURL, disabledKeys, userTasks } from './config';
 import updater from './updater';
@@ -13,6 +14,13 @@ const startWindow = () => {
       if (win.isMinimized()) win.restore();
       win.focus();
     }
+  });
+  app.whenReady().then(() => {
+    // 这个需要在app.ready触发之后使用
+    protocol.registerFileProtocol('atom', (request, callback) => {
+      const url = request.url.substring(7);
+      callback(decodeURI(path.normalize(url)));
+    });
   });
 
   // 将计划注册为标准将允许通过文件系统 API访问文件。否则，渲染器将为计划抛出一个安全错误。

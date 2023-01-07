@@ -20,6 +20,7 @@
   overflow: hidden;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .right-click-menu-list li:hover {
@@ -38,4 +39,10 @@
   white-space: nowrap;
   display: inline-block;
   padding: 0 4px;
+}
+
+.right-click-menu-list .disabled-item {
+  color: #ccc;
+  cursor: default;
+  background-color: #fff !important;
 }

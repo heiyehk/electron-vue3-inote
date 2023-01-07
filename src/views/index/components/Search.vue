@@ -2,7 +2,7 @@
   <div class="search-box">
     <div class="search flex-items">
       <div class="search-input flex1">
-        <input v-model="searchWord" type="text" placeholder="搜索..." />
+        <input v-model="searchValue" type="text" spellcheck="false" @keydown.enter="searchDb" placeholder="搜索..." />
       </div>
       <button class="search-button" @click="searchDb">
         <i class="iconfont icon-search"></i>
@@ -11,34 +11,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { Notes } from '@/service';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { Op } from 'sequelize';
+import { Notes } from '@/service';
 
-export default defineComponent({
-  emits: ['search'],
-  setup(props, { emit }) {
-    const searchWord = ref('');
-    const searchDb = async () => {
-      if (!searchWord.value) return;
-      const data = await Notes.findAll({
-        raw: true,
-        order: [['updatedAt', 'DESC']],
-        where: {
-          content: {
-            [Op.like]: '%' + searchWord.value + '%'
-          }
-        }
-      });
-      emit('search', data);
-    };
-    return {
-      searchWord,
-      searchDb
-    };
-  }
-});
+const emits = defineEmits(['onSearch']);
+const searchValue = ref('');
+
+const searchDb = async () => {
+  const data = await Notes.findAll({
+    raw: true,
+    order: [['updatedAt', 'DESC']],
+    where: {
+      content: {
+        [Op.like]: '%' + searchValue.value + '%'
+      }
+    }
+  });
+  emits('onSearch', data, searchValue.value);
+};
 </script>
 
 <style lang="less" scoped>
@@ -47,10 +39,12 @@ export default defineComponent({
   padding-top: 10px;
   box-sizing: border-box;
 }
+
 .search {
   background-color: @background-sub-color;
   height: 34px;
   opacity: 0.9;
+
   .search-input {
     input {
       display: block;
@@ -62,6 +56,7 @@ export default defineComponent({
       padding: 0 18px;
     }
   }
+
   .search-button {
     display: block;
     border: none;
@@ -69,16 +64,20 @@ export default defineComponent({
     height: 100%;
     padding: 0;
     background-color: transparent;
+
     .iconfont {
       font-size: 20px;
     }
+
     &:hover {
       background-color: #e0e0e0;
     }
   }
+
   &:hover {
     opacity: 1;
   }
+
   &:active {
     opacity: 1;
   }

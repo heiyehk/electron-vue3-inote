@@ -1,3 +1,15 @@
+## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
+
+
+
+## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
+
+
+
+## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
+
+
+
 ## [0.3.2](https://github.com/heiyehk/electron-vue3-inote/compare/0.3.1...0.3.2) (2021-11-18)
 
 

@@ -28,7 +28,7 @@ function getShortStack(stack?: string): string {
 
 export const errorLogPath = join(remote.app.getPath('userData'), constErrorLogPath);
 
-export default function (error: unknown, vm: ComponentPublicInstance | null, info: string): void {
+export default function(error: unknown, vm: ComponentPublicInstance | null, info: string): void {
   const { message, stack } = error as Error;
   const { electron, chrome, node, v8 } = process.versions;
   const { outerWidth, outerHeight, innerWidth, innerHeight } = window;

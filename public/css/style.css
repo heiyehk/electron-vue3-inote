@@ -1,5 +1,6 @@
 html {
-  font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+  /* font-family: 'PingFang SC Regular', 'sans-serif', 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif; */
+  font-family: Avenir,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol',sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -172,7 +173,6 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, monospace;
   font-size: 1em;
 }
 

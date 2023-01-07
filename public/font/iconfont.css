@@ -1,8 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2233096 */
-  src: url('iconfont.woff2?t=1641375893459') format('woff2'),
-       url('iconfont.woff?t=1641375893459') format('woff'),
-       url('iconfont.ttf?t=1641375893459') format('truetype');
+  src: url('iconfont.woff2?t=1673061525635') format('woff2'),
+       url('iconfont.woff?t=1673061525635') format('woff'),
+       url('iconfont.ttf?t=1673061525635') format('truetype'),
+       url('iconfont.svg?t=1673061525635#iconfont') format('svg');
 }
 
 .iconfont {
@@ -11,6 +12,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-tupian:before {
+  content: "\e889";
+}
+
+.icon-folderOpen:before {
+  content: "\eabe";
+}
+
+.icon-open:before {
+  content: "\ea6b";
+}
+
+.icon-qingchu:before {
+  content: "\e747";
+}
+
+.icon-narrow:before {
+  content: "\e606";
+}
+
+.icon-amplification:before {
+  content: "\e607";
+}
+
+.icon-copy1:before {
+  content: "\e617";
+}
+
+.icon-copy:before {
+  content: "\e744";
+}
+
+.icon-niantie:before {
+  content: "\e610";
 }
 
 .icon-code:before {
@@ -61,7 +98,7 @@
   content: "\e802";
 }
 
-.icon-inport:before {
+.icon-import:before {
   content: "\e803";
 }
 

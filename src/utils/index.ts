@@ -1,4 +1,4 @@
-import { winURL } from '@/config';
+import { browserWindowOption, winURL } from '@/config';
 import { BrowserWindow, remote } from 'electron';
 import { enc, AES, mode, pad } from 'crypto-js';
 
@@ -31,7 +31,11 @@ export const throttle: ThrottleEvent = function(fn, delay = 500) {
 };
 
 // 创建窗口
-export const createBrowserWindow = (bwopt = {}, url = '/', devTools = true): BrowserWindow | null => {
+export const createBrowserWindow = (
+  bwopt = {} as Electron.BrowserWindowConstructorOptions,
+  url = '/',
+  devTools = false
+): BrowserWindow | null => {
   let childrenWindow: BrowserWindow | null;
   childrenWindow = new remote.BrowserWindow(bwopt);
 
@@ -132,4 +136,33 @@ export const twiceHandle: TwiceHandle = {
       this.keydownCount += 1;
     }
   }
+};
+
+export const openImageAsNewWindow = (img: HTMLImageElement) => {
+  const devicePixelRatio = window.devicePixelRatio;
+  const { availWidth, availHeight } = window.screen;
+  const naturalWidth = img.naturalWidth / devicePixelRatio;
+  const naturalHeight = img.naturalHeight / devicePixelRatio;
+  const winWidth = naturalWidth < 500 ? 500 : naturalWidth;
+  const winHeight = naturalHeight < 300 ? 300 : naturalHeight;
+  const winOptWidth = winWidth > availWidth ? availWidth : winWidth;
+  const winOptHeight = winHeight > availHeight ? availHeight : winHeight;
+
+  console.log({
+    width: winOptWidth,
+    height: winOptHeight,
+    minWidth: winWidth,
+    minHeight: winHeight
+  });
+  createBrowserWindow(
+    {
+      ...browserWindowOption(),
+      width: winOptWidth,
+      height: winOptHeight,
+      minWidth: winWidth,
+      minHeight: winHeight
+    },
+    `/image-preview?src=${img.src}`,
+    false
+  );
 };

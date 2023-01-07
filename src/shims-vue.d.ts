@@ -4,3 +4,6 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+/** 是否是暗黑模式，根据此处去做兼容 */
+declare const isDark: () => boolean;

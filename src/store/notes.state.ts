@@ -1,5 +1,7 @@
 import { ipcRenderer, remote } from 'electron';
 import { ref, watch } from 'vue';
+import { join } from 'path';
+import { constImagesPath } from '@/config';
 interface NotesState {
   [key: string]: any;
   syncDelay: number;
@@ -36,11 +38,11 @@ interface NotesState {
      */
     openSync: boolean;
   };
+  /** 本地图片缓存地址 */
+  imagesCacheUrl: string;
 }
 
-const notesStateLocal = localStorage.getItem('notesState');
-
-export const notesState = ref<NotesState>({
+const defaultNotesState: NotesState = {
   syncDelay: 100,
   serverAddress: '',
   serverToken: '',
@@ -73,29 +75,50 @@ export const notesState = ref<NotesState>({
      * 打开同步
      */
     openSync: false
-  }
-});
+  },
+  imagesCacheUrl: join(remote.app.getPath('userData'), constImagesPath)
+};
 
-if (notesStateLocal) {
-  notesState.value = JSON.parse(notesStateLocal);
-} else {
-  localStorage.setItem('notesState', JSON.stringify(notesState.value));
-}
+export const notesState = ref<NotesState>({} as NotesState);
+
+const getLocalValue = () => {
+  if (localStorage.getItem('notesState')) {
+    notesState.value = { ...notesState.value, ...JSON.parse(localStorage.getItem('notesState')!) };
+  } else {
+    notesState.value = defaultNotesState;
+    localStorage.setItem('notesState', JSON.stringify(defaultNotesState));
+  }
+};
+getLocalValue();
+const initialNotesStateLocal = () => {
+  getLocalValue();
+  ipcRenderer.send('updateStorage');
+};
+
+const watchStateIPC = () => {
+  const localJsonState = JSON.parse(localStorage.getItem('notesState')!) as NotesState;
+  for (const keys of Object.keys(localJsonState)) {
+    if (keys === 'switchStatus') {
+      for (const item of Object.keys(localJsonState[keys])) {
+        if (localJsonState.switchStatus[item] !== notesState.value.switchStatus[item]) {
+          notesState.value.switchStatus[item] = localJsonState.switchStatus[item];
+        }
+      }
+    }
+  }
+};
+
+export const resetStore = () => {
+  localStorage.clear();
+  localStorage.setItem('notesState', JSON.stringify(defaultNotesState));
+  ipcRenderer.send('updateStorage');
+};
+
+watch(() => localStorage.getItem('notesState'), initialNotesStateLocal);
 
 watch(notesState.value, e => {
   localStorage.setItem('notesState', JSON.stringify(e));
   ipcRenderer.send('updateStorage');
 });
 
-remote.ipcMain.on('updateStorage', () => {
-  const aa = JSON.parse(localStorage.getItem('notesState')!) as NotesState;
-  for (const keys of Object.keys(aa)) {
-    if (keys === 'switchStatus') {
-      for (const aaaa of Object.keys(aa[keys])) {
-        if (aa.switchStatus[aaaa] !== notesState.value.switchStatus[aaaa]) {
-          notesState.value.switchStatus[aaaa] = aa.switchStatus[aaaa];
-        }
-      }
-    }
-  }
-});
+remote.ipcMain.on('updateStorage', watchStateIPC);

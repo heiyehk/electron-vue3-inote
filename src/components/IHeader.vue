@@ -7,14 +7,14 @@
         </router-link>
       </button>
     </template>
-    <template v-else>
+    <template v-else-if="currentRouteName !== 'imagePreview'">
       <!-- 打开新窗口 -->
       <button class="icon flex-center" @click="openNewWindow" title="新窗口">
         <i class="iconfont flex-center icon-add"></i>
       </button>
     </template>
     <!-- 标题拖动 -->
-    <div class="drag-header flex1 flex-center" :style="computedPaddingLeft">
+    <div class="drag-header flex1 flex-center" :style="computedPaddingLeft" @mousedown="a">
       <transition name="header-fadein" v-if="platformWindows">
         <span :key="title">{{ title }}</span>
       </transition>
@@ -54,78 +54,67 @@
   </header>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { browserWindowOption } from '@/config';
 import { createBrowserWindow, transitCloseWindow } from '@/utils';
 import { remote } from 'electron';
 
-export default defineComponent({
-  emits: ['option-click', 'on-close'],
-  setup(props, { emit }) {
-    const editorWinOptions = browserWindowOption('editor');
-    // 打开新窗口
-    const openNewWindow = () => {
-      createBrowserWindow(editorWinOptions, '/editor');
-    };
+const emits = defineEmits(['optionClick', 'onClose']);
+const platformWindows = process.platform === 'win32';
 
-    // 获取窗口固定状态
-    let isAlwaysOnTop = ref(false);
-    const currentWindow = remote.getCurrentWindow();
-    isAlwaysOnTop.value = currentWindow.isAlwaysOnTop();
+const editorWinOptions = browserWindowOption('editor');
+// 打开新窗口
+const openNewWindow = () => {
+  createBrowserWindow(editorWinOptions, '/editor', false);
+};
 
-    // 固定前面
-    const drawingPin = () => {
-      if (isAlwaysOnTop.value) {
-        currentWindow.setAlwaysOnTop(false);
-        isAlwaysOnTop.value = false;
-      } else {
-        currentWindow.setAlwaysOnTop(true);
-        isAlwaysOnTop.value = true;
-      }
-    };
+// 获取窗口固定状态
+let isAlwaysOnTop = ref(false);
+const currentWindow = remote.getCurrentWindow();
+isAlwaysOnTop.value = currentWindow.isAlwaysOnTop();
 
-    const currentRouteName = ref(useRoute().name);
-
-    // 获取首页的内边距
-    const computedPaddingLeft = computed(() => {
-      return currentRouteName.value === 'index' ? 'padding-left: 40px;' : '';
-    });
-
-    const title = ref(useRoute().meta.title as string);
-
-    onBeforeRouteUpdate((to, from, next) => {
-      title.value = to.meta.title as string;
-      document.title = title.value;
-      currentRouteName.value = to.name;
-      next();
-    });
-
-    const clickOptions = () => {
-      emit('option-click');
-    };
-
-    // 关闭窗口
-    const closeWindow = () => {
-      emit('on-close');
-      transitCloseWindow();
-    };
-
-    return {
-      openNewWindow,
-      currentRouteName,
-      drawingPin,
-      clickOptions,
-      closeWindow,
-      computedPaddingLeft,
-      isAlwaysOnTop,
-      title,
-      // 只在windows上显示
-      platformWindows: process.platform === 'win32'
-    };
+// 固定前面
+const drawingPin = () => {
+  if (isAlwaysOnTop.value) {
+    currentWindow.setAlwaysOnTop(false);
+    isAlwaysOnTop.value = false;
+  } else {
+    currentWindow.setAlwaysOnTop(true);
+    isAlwaysOnTop.value = true;
   }
+};
+
+const currentRouteName = ref(useRoute().name);
+
+// 获取首页的内边距
+const computedPaddingLeft = computed(() => {
+  return currentRouteName.value === 'index' ? 'padding-left: 40px;' : '';
 });
+
+const title = ref(useRoute().meta.title as string);
+
+onBeforeRouteUpdate((to, from, next) => {
+  title.value = to.meta.title as string;
+  document.title = title.value;
+  currentRouteName.value = to.name;
+  next();
+});
+
+const clickOptions = () => {
+  emits('optionClick');
+};
+
+// 关闭窗口
+const closeWindow = () => {
+  emits('onClose');
+  transitCloseWindow();
+};
+
+const a = () => {
+  console.log(1);
+};
 </script>
 
 <style lang="less" scoped>
@@ -155,6 +144,8 @@ export default defineComponent({
 .header {
   height: @iconSize;
   background-color: @white-color;
+  position: relative;
+  z-index: 99;
   button {
     padding: 0;
     outline: none;

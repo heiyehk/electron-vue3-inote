@@ -9,6 +9,9 @@ const constErrorLogPath = `/resources/inotesError${isDev ? '-dev' : ''}.log`;
 /** db地址 */
 const constStoragePath = `/resources/db/notes${isDev ? '-dev' : ''}.db`;
 
+/** 图片地址 */
+const constImagesPath = '/resources/images/';
+
 export {
   classNames,
   browserWindowOption,
@@ -16,5 +19,6 @@ export {
   disabledKeys,
   userTasks,
   constErrorLogPath,
-  constStoragePath
+  constStoragePath,
+  constImagesPath
 };
