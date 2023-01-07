@@ -1,12 +1,9 @@
 ## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
 
 
+### Features
 
-## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
-
-
-
-## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
+* 对编辑器的优化，增加右键功能以及本地图片的缓存，修复了部分bug ([c1c0c0f](https://github.com/heiyehk/electron-vue3-inote/commit/c1c0c0f676a29adce8dc46582f17f550d0c079ce))
 
 
 
