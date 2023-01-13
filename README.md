@@ -42,6 +42,9 @@ https://juejin.cn/post/6909723449246089224
 【electron+vue3+ts实战便笺exe】二、electron+vue3开发内容
 https://juejin.cn/post/6909725365107687431
 
+【electron+vue3+ts实战便笺exe】终章：markdown编辑器以及右键功能实现
+https://juejin.cn/post/7187704994731130938
+
 ![gif](https://user-images.githubusercontent.com/33891067/126119851-b59a0acb-07b4-4126-9698-961ee0f706a7.gif)
 
 ```
