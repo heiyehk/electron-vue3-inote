@@ -1,3 +1,12 @@
+## [0.5.2](https://github.com/heiyehk/electron-vue3-inote/compare/0.5.1...0.5.2) (2023-01-31)
+
+
+### Features
+
+* **ieditor.vue:** 升级vditor版本，调整属性 ([c3d50d0](https://github.com/heiyehk/electron-vue3-inote/commit/c3d50d0f3411561c95124a50edfad9ed550b228a))
+
+
+
 ## [0.5.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.4.1...0.5.1) (2023-01-07)
 
 
