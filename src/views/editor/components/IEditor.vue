@@ -3,14 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
 import CreateRightClick, { MenuOptions } from '@/components/IRightClick';
-import path, { join } from 'path';
+import { join } from 'path';
 import { remote, shell } from 'electron';
-import { browserWindowOption, constImagesPath } from '@/config';
-import { createBrowserWindow, openImageAsNewWindow, uuid } from '@/utils';
+import { constImagesPath } from '@/config';
+import { openImageAsNewWindow, uuid } from '@/utils';
 import { existsSync, mkdirSync, writeFile } from 'fs-extra';
 import useMessage from '@/components/IMessage';
 import { copyImage, fileToBuffer } from '@/utils/file';
@@ -72,10 +72,6 @@ const vditor = ref<Vditor>();
 const rightClick = new CreateRightClick();
 const currentItemImagePath = join(remote.app.getPath('userData'), constImagesPath);
 const urlRegExp = /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
-/**
- * TODO
- * 超链接问题
- */
 
 const loadVditor = () => {
   vditor.value = new Vditor(editorRef.value as HTMLElement, {
@@ -95,15 +91,18 @@ const loadVditor = () => {
       vditorLoad();
     },
     link: {
-      open: false,
-      intercept: url => {
+      isOpen: false,
+      click: el => {
         // 从浏览器打开链接
-        if (urlRegExp.test(url)) {
-          shell.openExternal(url);
+        if (urlRegExp.test(el.textContent!)) {
+          shell.openExternal(el.textContent!);
         }
       }
     },
-    previewImage: openImageAsNewWindow,
+    image: {
+      isPreview: false,
+      preview: openImageAsNewWindow
+    },
     upload: {
       // @ts-ignore
       handler: async files => {

@@ -35,7 +35,7 @@
     "sequelize": "^6.6.5",
     "sqlite3": "^5.0.2",
     "style-resources-loader": "^1.4.1",
-    "vditor": "^3.8.17",
+    "vditor": "^3.9.0",
     "vue": "3.2.26",
     "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-router": "^4.0.12"
@@ -78,9 +78,6 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [

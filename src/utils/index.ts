@@ -138,22 +138,16 @@ export const twiceHandle: TwiceHandle = {
   }
 };
 
-export const openImageAsNewWindow = (img: HTMLImageElement) => {
+export const openImageAsNewWindow = (img: Element) => {
   const devicePixelRatio = window.devicePixelRatio;
   const { availWidth, availHeight } = window.screen;
-  const naturalWidth = img.naturalWidth / devicePixelRatio;
-  const naturalHeight = img.naturalHeight / devicePixelRatio;
+  const naturalWidth = (img as HTMLImageElement).naturalWidth / devicePixelRatio;
+  const naturalHeight = (img as HTMLImageElement).naturalHeight / devicePixelRatio;
   const winWidth = naturalWidth < 500 ? 500 : naturalWidth;
   const winHeight = naturalHeight < 300 ? 300 : naturalHeight;
   const winOptWidth = winWidth > availWidth ? availWidth : winWidth;
   const winOptHeight = winHeight > availHeight ? availHeight : winHeight;
 
-  console.log({
-    width: winOptWidth,
-    height: winOptHeight,
-    minWidth: winWidth,
-    minHeight: winHeight
-  });
   createBrowserWindow(
     {
       ...browserWindowOption(),
@@ -162,7 +156,7 @@ export const openImageAsNewWindow = (img: HTMLImageElement) => {
       minWidth: winWidth,
       minHeight: winHeight
     },
-    `/image-preview?src=${img.src}`,
+    `/image-preview?src=${(img as HTMLImageElement).src}`,
     false
   );
 };
