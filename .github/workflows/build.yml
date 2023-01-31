@@ -1,30 +1,16 @@
-# 此工作流的名字
 name: Build 
-# 工作流的执行时机，可以设定为定时执行，每次push后执行，手动执行等
 on:
-  # workflow_dispatch为在Github仓库的Actions面板中手动执行
   workflow_dispatch:
-# 工作/任务，这里的工作是可以并行的。
 jobs:
-  # 工作的名称“编译windows版”
   buildwin:
-    # 运行的操作系统 windows server 2022
     runs-on: windows-2022
-    # 步骤
     steps:
-    # 使用预制action：拉取最新的代码
     - uses: actions/checkout@v2
-    # 步骤一的名称：
     - name: Install and Build
-      # 该步骤运行的终端命令，进入仓库的src目录，安装依赖，运行编译命令
       run:
         npm install && npm run build
-    # 步骤二的名称：将编译后的结果上传
     - name: Upload File
-      # 使用预制action：上传文件，可以将执行路径打包成zip上传
       uses: actions/upload-artifact@v2
       with:
-        # 上传后文件的名称
         name: windows
-        # 打包的路径以及文件过滤，此为仅打包dist目录下的exe文件
-        path: dist/*exe
+        path: dist_electron/*exe
