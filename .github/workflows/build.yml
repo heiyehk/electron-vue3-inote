@@ -12,8 +12,12 @@ env:
 jobs:
   build_macos:
     runs-on: macos-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v2
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
       - name: Install Dependencies
         run: npm install
       - name: Build macOS app
@@ -30,8 +34,12 @@ jobs:
 
   build_windows:
     runs-on: windows-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v2
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
       - name: Install Dependencies
         run: npm install
       - name: Build Windows app
@@ -50,6 +58,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
       - name: Install Dependencies
         run: npm install
       - name: Build Linux app
