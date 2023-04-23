@@ -1,16 +1,61 @@
-name: Build 
+name: Electron Build
+
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main   # 执行分支
+
 jobs:
-  buildwin:
-    runs-on: windows-2022
+  build_macos:
+    runs-on: macos-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Build macOS app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm run build
+          GH_TOKEN=${{ secrets.GH_TOKEN }} npm run pack:mac
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: release-${{env.BUILD_TIME}}-mac
+          path: ./dist_electron/*.dmg
+
+  build_windows:
+    runs-on: windows-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Windows app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm run build
+          GH_TOKEN=${{ secrets.GH_TOKEN }} npm run pack:windows
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: release-${{env.BUILD_TIME}}-win
+          path: ./dist_electron/*.exe
+
+  build_linux:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install and Build
-      run:
-        npm install && npm run build
-    - name: Upload File
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows
-        path: dist_electron/*exe
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Linux app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm run build
+          GH_TOKEN=${{ secrets.GH_TOKEN }} npm run pack:linux
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: release-${{env.BUILD_TIME}}-linux
+          path: ./dist_electron/*.AppImage
