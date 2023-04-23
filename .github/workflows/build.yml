@@ -3,7 +3,8 @@ name: Electron Build
 on:
   push:
     branches:
-      - main   # 执行分支
+      - main   # 执行分支on:
+  workflow_dispatch:
 
 jobs:
   build_macos:
