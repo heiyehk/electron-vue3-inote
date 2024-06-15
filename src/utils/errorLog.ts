@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import fs from 'fs-extra';
 import os from 'os';
 import { remote } from 'electron';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import useMessage from '@/components/IMessage';
 import { constErrorLogPath } from '@/config';
 
@@ -26,7 +26,7 @@ function getShortStack(stack?: string): string {
   return newStack.join('\n    ');
 }
 
-export const errorLogPath = join(remote.app.getPath('userData'), constErrorLogPath);
+export const errorLogPath = join(dirname(remote.app.getPath('exe')), constErrorLogPath);
 
 export default function(error: unknown, vm: ComponentPublicInstance | null, info: string): void {
   const { message, stack } = error as Error;

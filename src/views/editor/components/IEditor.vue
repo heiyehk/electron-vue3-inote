@@ -7,7 +7,7 @@ import { ref, onMounted } from 'vue';
 import Vditor from 'vditor';
 import 'vditor/dist/index.css';
 import CreateRightClick, { MenuOptions } from '@/components/IRightClick';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { remote, shell } from 'electron';
 import { constImagesPath } from '@/config';
 import { openImageAsNewWindow, uuid } from '@/utils';
@@ -70,7 +70,7 @@ const emits = defineEmits(['on-input', 'update:modelValue']);
 const editorRef = ref();
 const vditor = ref<Vditor>();
 const rightClick = new CreateRightClick();
-const currentItemImagePath = join(remote.app.getPath('userData'), constImagesPath);
+const currentItemImagePath = join(dirname(remote.app.getPath('exe')), constImagesPath);
 const urlRegExp = /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/;
 
 const loadVditor = () => {
@@ -104,6 +104,7 @@ const loadVditor = () => {
       preview: openImageAsNewWindow
     },
     upload: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       handler: async files => {
         insertImage(files[0]);
@@ -128,6 +129,7 @@ const insertImage = async (file: File | Blob) => {
 };
 
 const createImageUrl = () => {
+  console.log(currentItemImagePath);
   if (!existsSync(currentItemImagePath)) {
     mkdirSync(currentItemImagePath);
   }

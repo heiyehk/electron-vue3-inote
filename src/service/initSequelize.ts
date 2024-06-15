@@ -1,10 +1,11 @@
 import { Sequelize } from 'sequelize';
 import sqlite3 from 'sqlite3';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { remote } from 'electron';
 import { constStoragePath } from '@/config';
 
-const storagePath = join(remote.app.getPath('userData'), constStoragePath);
+const storagePath = join(dirname(remote.app.getPath('exe')), constStoragePath);
+console.log(storagePath);
 
 export const sequelize = new Sequelize({
   database: 'reading',

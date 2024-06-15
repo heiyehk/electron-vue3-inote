@@ -38,7 +38,7 @@ import { onBeforeMount, onMounted, PropType, Ref, ref, watch } from 'vue';
 import { notesState } from '@/store/notes.state';
 import IMessageBox from '@/components/IMessageBox.vue';
 import { readdir, readdirSync, rmdir, rmdirSync, unlinkSync } from 'fs-extra';
-import { join } from 'path';
+import { join, dirname } from 'path';
 
 const props = defineProps({
   list: {
@@ -171,7 +171,7 @@ const deleteNotes = async () => {
 
 /** 删除便笺后删除本地文件夹 */
 const deleteNotesUidDir = async () => {
-  const uidDir = await join(remote.app.getPath('userData'), constImagesPath, deleteCurrentUid.value);
+  const uidDir = await join(dirname(remote.app.getPath('exe')), constImagesPath, deleteCurrentUid.value);
   const imagesPath = await readdirSync(uidDir);
   for (const imgPath of imagesPath) {
     await unlinkSync(join(uidDir, imgPath));

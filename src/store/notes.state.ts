@@ -1,6 +1,6 @@
 import { ipcRenderer, remote } from 'electron';
 import { ref, watch } from 'vue';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { constImagesPath } from '@/config';
 interface NotesState {
   [key: string]: any;
@@ -76,7 +76,7 @@ const defaultNotesState: NotesState = {
      */
     openSync: false
   },
-  imagesCacheUrl: join(remote.app.getPath('userData'), constImagesPath)
+  imagesCacheUrl: join(dirname(remote.app.getPath('exe')), constImagesPath)
 };
 
 export const notesState = ref<NotesState>({} as NotesState);

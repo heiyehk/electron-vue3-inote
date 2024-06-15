@@ -9,24 +9,24 @@ module.exports = {
       template: 'public/index.html',
       filename: 'index.html',
       title: 'I便笺',
-      chunks: ['chunk-vendors', 'chunk-common', 'index'],
+      // chunks: ['chunk-vendors', 'chunk-common', 'index'],
       platform: process.platform
     }
   },
-  productionSourceMap: false,
+  // productionSourceMap: false,
   configureWebpack: config => {
     config.externals = {
       sqlite3: 'commonjs sqlite3'
     };
-    if (process.env.NODE_ENV !== 'development') {
-      config.optimization.minimizer[0].options.terserOptions.warnings = false;
-      config.optimization.minimizer[0].options.terserOptions.compress = {
-        warnings: false,
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log']
-      };
-    }
+    // if (process.env.NODE_ENV !== 'development') {
+    //   config.optimization.minimizer[0].options.terserOptions.warnings = false;
+    //   config.optimization.minimizer[0].options.terserOptions.compress = {
+    //     warnings: false,
+    //     drop_console: true,
+    //     drop_debugger: true,
+    //     pure_funcs: ['console.log']
+    //   };
+    // }
   },
   pluginOptions: {
     electronBuilder: {

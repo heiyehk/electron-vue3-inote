@@ -1,6 +1,6 @@
 {
   "name": "i-notes",
-  "version": "0.5.2",
+  "version": "0.6.1",
   "private": true,
   "author": "heiyehk",
   "description": "I便笺拥有漂亮的过度效果，允许开启多个窗口方便在桌面端更方便的记录文字",
@@ -33,7 +33,7 @@
     "fs-extra": "^10.0.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.1.7",
     "style-resources-loader": "^1.4.1",
     "vditor": "^3.9.0",
     "vue": "3.2.26",
@@ -90,5 +90,8 @@
   },
   "publish": [
     "github"
-  ]
+  ],
+  "engines": {
+    "node": "<=16"
+  }
 }

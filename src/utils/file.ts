@@ -127,8 +127,10 @@ export const copyImage = async (dom: HTMLImageElement) => {
   const blob = await convertBase64UrlToBlob(base64Url, 'image/png');
   // 向剪切板写入流数据
   navigator.clipboard.write([
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new ClipboardItem({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       [blob.type]: blob
     })
