@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/heiyehk/electron-vue3-inote/compare/0.5.2...0.6.1) (2024-06-15)
+
+
+### Features
+
+feature: [#11](https://github.com/heiyehk/electron-vue3-inote/issues/11) 调整储存位置为当前软件目录下 ([b44ace7](https://github.com/heiyehk/electron-vue3-inote/commit/b44ace721cdf28b3a327fd3fb6b56dea2ccf0392))
+
+
+
 ## [0.5.2](https://github.com/heiyehk/electron-vue3-inote/compare/0.5.1...0.5.2) (2023-01-31)
 
 
